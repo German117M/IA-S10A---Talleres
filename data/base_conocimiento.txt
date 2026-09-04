@@ -1,0 +1,8 @@
+Cuando un equipo presenta temperatura alta se debe revisar ventilación, ventiladores y flujo de aire.
+Cuando un equipo no tiene conexión a internet se debe revisar red, DNS, gateway y conectividad.
+Cuando una aplicación presenta lentitud se debe revisar consumo de CPU, memoria y almacenamiento.
+Cuando una cuenta está bloqueada se deben validar credenciales, permisos y estado del usuario.
+Cuando un equipo no inicia correctamente se debe revisar energía, disco, memoria y sistema operativo.
+Cuando una impresora no responde se debe validar conectividad, controlador, cola de impresión y estado del dispositivo.
+Cuando un usuario no puede iniciar sesión se deben revisar credenciales, dominio y permisos asignados.
+Cuando se detecta poco espacio en disco se deben identificar archivos innecesarios y revisar capacidad de almacenamiento.
