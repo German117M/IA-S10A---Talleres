@@ -74,7 +74,7 @@ python3 proyecto_his/src/his_ia.py
 
 El proyecto continuará evolucionando semana a semana, incorporando nuevas técnicas de Inteligencia Artificial de acuerdo con los temas vistos en clase.
 
-## Autor
+## Autores
 
 German Manrique
 Sebastian Ortiz
