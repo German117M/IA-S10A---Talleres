@@ -1,0 +1,10 @@
+La historia clínica reúne antecedentes, motivo de consulta, evolución y otra información necesaria para comprender el contexto del paciente.
+Los resultados de laboratorio como hemograma, glucosa y creatinina deben estar asociados al registro clínico correspondiente para facilitar su revisión.
+Los estudios de imagen como radiografías, tomografías y resonancias forman parte de la información diagnóstica que puede requerir revisión dentro del HIS.
+Los antecedentes médicos permiten conocer condiciones previas del paciente y deben ser considerados durante la revisión de la historia clínica.
+Los medicamentos registrados deben incluir información relacionada con tratamiento, prescripción o dosis cuando esta información esté disponible.
+Un resultado de laboratorio pendiente debe identificarse para facilitar el seguimiento de la información clínica que aún no ha sido revisada.
+Un estudio de imagen pendiente debe quedar identificado para evitar que información diagnóstica disponible quede sin revisar.
+Cuando existen varios documentos, resultados o imágenes pendientes, el sistema puede apoyar la organización de su orden de revisión.
+La información clínica puede clasificarse en historia clínica, laboratorio, imagen diagnóstica, medicamentos y seguimiento según el contenido identificado.
+HIS_IA funciona como herramienta académica de apoyo para organizar, clasificar y recuperar información clínica, sin reemplazar la valoración realizada por profesionales de salud.
