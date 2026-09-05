@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HIS_IA</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ================================================= -->
+    <!-- SIDEBAR -->
+    <!-- ================================================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ✦
+            </div>
+
+            <div>
+                <h1>HIS_IA</h1>
+                <span>Clinical Intelligence</span>
+            </div>
+
+        </div>
+
+        <nav>
+
+            <button
+                class="nav-item active"
+                onclick="mostrarSeccion('inicio', this)"
+            >
+                <span>⌂</span>
+                Inicio
+            </button>
+
+            <button
+                class="nav-item"
+                onclick="mostrarSeccion('analisis', this)"
+            >
+                <span>◫</span>
+                Analizar información
+            </button>
+
+            <button
+                class="nav-item"
+                onclick="mostrarSeccion('prioridad', this)"
+            >
+                <span>◉</span>
+                Evaluar prioridad
+            </button>
+
+            <button
+                class="nav-item"
+                onclick="mostrarSeccion('revision', this)"
+            >
+                <span>◇</span>
+                Organizar revisión
+            </button>
+
+            <button
+                class="nav-item assistant-button"
+                onclick="mostrarSeccion('asistente', this)"
+            >
+                <span>✦</span>
+                Asistente HIS_IA
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="status-dot"></div>
+
+            <div>
+                <strong>Sistema activo</strong>
+                <small>HIS_IA v1.0</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================================================= -->
+    <!-- CONTENIDO -->
+    <!-- ================================================= -->
+
+    <main class="main">
+
+        <header>
+
+            <div>
+
+                <span class="eyebrow">
+                    SISTEMA INTELIGENTE
+                </span>
+
+                <h2 id="tituloPagina">
+                    Panel principal
+                </h2>
+
+            </div>
+
+            <div class="system-status">
+                <span></span>
+                Operativo
+            </div>
+
+        </header>
+
+
+        <!-- ================================================= -->
+        <!-- INICIO -->
+        <!-- ================================================= -->
+
+        <section
+            id="inicio"
+            class="section active"
+        >
+
+            <div class="hero">
+
+                <div>
+
+                    <span class="hero-tag">
+                        ✦ Módulo de Inteligencia Artificial
+                    </span>
+
+                    <h3>
+                        Bienvenido a <span>HIS_IA</span>
+                    </h3>
+
+                    <p>
+                        Módulo inteligente de apoyo para la organización,
+                        análisis y consulta de información clínica.
+                        Utilice las opciones disponibles para revisar
+                        información, evaluar prioridades, organizar
+                        pendientes y consultar el asistente HIS_IA.
+                    </p>
+
+                </div>
+
+                <div class="orb">
+                    <div class="orb-core">IA</div>
+                </div>
+
+            </div>
+
+
+            <div class="cards">
+
+                <article
+                    class="feature-card"
+                    onclick="abrirDesdeCard('analisis')"
+                >
+
+                    <div class="feature-icon">◫</div>
+
+                    <h4>Analizar información</h4>
+
+                    <p>
+                        Identifica automáticamente el tipo
+                        de información contenida en un texto.
+                    </p>
+
+                    <span>Comenzar →</span>
+
+                </article>
+
+
+                <article
+                    class="feature-card"
+                    onclick="abrirDesdeCard('prioridad')"
+                >
+
+                    <div class="feature-icon">◉</div>
+
+                    <h4>Evaluar prioridad</h4>
+
+                    <p>
+                        Estima la prioridad de revisión
+                        utilizando el modelo entrenado.
+                    </p>
+
+                    <span>Evaluar →</span>
+
+                </article>
+
+
+                <article
+                    class="feature-card"
+                    onclick="abrirDesdeCard('revision')"
+                >
+
+                    <div class="feature-icon">◇</div>
+
+                    <h4>Organizar revisión</h4>
+
+                    <p>
+                        Sugiere una secuencia para revisar
+                        información pendiente.
+                    </p>
+
+                    <span>Organizar →</span>
+
+                </article>
+
+
+                <article
+                    class="feature-card highlighted"
+                    onclick="abrirDesdeCard('asistente')"
+                >
+
+                    <div class="feature-icon">✦</div>
+
+                    <h4>Asistente HIS_IA</h4>
+
+                    <p>
+                        Consulta la base de conocimiento
+                        utilizando lenguaje natural.
+                    </p>
+
+                    <span>Consultar →</span>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================================= -->
+        <!-- ANÁLISIS -->
+        <!-- ================================================= -->
+
+        <section
+            id="analisis"
+            class="section"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-icon">◫</span>
+
+                        <div>
+                            <h3>Analizar información clínica</h3>
+
+                            <p>
+                                Ingrese el texto que desea clasificar.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <textarea
+                    id="textoAnalisis"
+                    placeholder="Ejemplo: Paciente con hemograma pendiente y radiografía disponible..."
+                ></textarea>
+
+
+                <button
+                    class="primary-button"
+                    onclick="analizarInformacion()"
+                >
+                    ✦ Analizar información
+                </button>
+
+
+                <div
+                    id="resultadoAnalisis"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================================= -->
+        <!-- PRIORIDAD -->
+        <!-- ================================================= -->
+
+        <section
+            id="prioridad"
+            class="section"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-icon">◉</span>
+
+                        <div>
+
+                            <h3>Evaluar prioridad</h3>
+
+                            <p>
+                                Complete la información del registro.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <label>
+                        Edad
+                        <input
+                            id="edad"
+                            type="number"
+                            min="0"
+                            placeholder="Ej. 65"
+                        >
+                    </label>
+
+                    <label>
+                        Documentos pendientes
+                        <input
+                            id="documentos"
+                            type="number"
+                            min="0"
+                            placeholder="0"
+                        >
+                    </label>
+
+                    <label>
+                        Resultados pendientes
+                        <input
+                            id="resultados"
+                            type="number"
+                            min="0"
+                            placeholder="0"
+                        >
+                    </label>
+
+                    <label>
+                        Imágenes pendientes
+                        <input
+                            id="imagenes"
+                            type="number"
+                            min="0"
+                            placeholder="0"
+                        >
+                    </label>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    onclick="evaluarPrioridad()"
+                >
+                    Evaluar prioridad
+                </button>
+
+
+                <div
+                    id="resultadoPrioridad"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================================= -->
+        <!-- REVISIÓN -->
+        <!-- ================================================= -->
+
+        <section
+            id="revision"
+            class="section"
+        >
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="panel-icon">◇</span>
+
+                        <div>
+
+                            <h3>Organizar revisión</h3>
+
+                            <p>
+                                Seleccione los elementos pendientes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="check-grid">
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="Historia clínica"
+                            name="elemento"
+                        >
+
+                        <span>Historia clínica</span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="Resultados de laboratorio"
+                            name="elemento"
+                        >
+
+                        <span>Resultados de laboratorio</span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="Estudio de imagen"
+                            name="elemento"
+                        >
+
+                        <span>Estudio de imagen</span>
+
+                    </label>
+
+
+                    <label class="check-card">
+
+                        <input
+                            type="checkbox"
+                            value="Medicamentos"
+                            name="elemento"
+                        >
+
+                        <span>Medicamentos</span>
+
+                    </label>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    onclick="organizarRevision()"
+                >
+                    Generar secuencia
+                </button>
+
+
+                <div
+                    id="resultadoRevision"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================================= -->
+        <!-- ASISTENTE -->
+        <!-- ================================================= -->
+
+        <section
+            id="asistente"
+            class="section"
+        >
+
+            <div class="assistant-panel">
+
+                <div class="assistant-header">
+
+                    <div class="ai-avatar">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <h3>Asistente HIS_IA</h3>
+
+                        <p>
+                            Consulta inteligente de información
+                        </p>
+
+                    </div>
+
+                    <div class="online">
+                        ● En línea
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="chat"
+                    class="chat"
+                >
+
+                    <div class="message ai">
+
+                        <strong>HIS_IA</strong>
+
+                        <p>
+                            Bienvenido al asistente HIS_IA.
+                            Puede consultar información relacionada
+                            con historias clínicas, laboratorio,
+                            estudios de imagen, medicamentos
+                            y elementos pendientes de revisión.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chat-input">
+
+                    <input
+                        id="consulta"
+                        placeholder="Escribe una consulta..."
+                        onkeydown="enviarConEnter(event)"
+                    >
+
+                    <button onclick="consultarAsistente()">
+                        ➜
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<div
+    id="loader"
+    class="loader hidden"
+>
+    <div></div>
+    <span>Procesando información...</span>
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='js/app.js') }}"
+></script>
+
+</body>
+
+</html>

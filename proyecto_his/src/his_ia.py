@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from pathlib import Path
-
 import heapq
 import re
 import unicodedata
@@ -12,14 +11,13 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# =========================================================
+# ============================================================
 # CONFIGURACIÓN GENERAL
-# =========================================================
+# ============================================================
 
 RANDOM_STATE = 42
 
@@ -27,15 +25,17 @@ ROOT = Path(__file__).resolve().parent.parent
 
 DATA_FILE = ROOT / "data" / "datos_his.csv"
 KB_FILE = ROOT / "data" / "base_conocimiento.txt"
+TRAIN_FILE = ROOT / "data" / "ejemplos_clasificacion.csv"
 
 REPORTS_DIR = ROOT / "reports"
 REPORT_SEMANA05 = REPORTS_DIR / "semana05.md"
 
 
-# =========================================================
+# ============================================================
 # SEMANA 3
 # CLASIFICACIÓN SIMBÓLICA
-# =========================================================
+# ============================================================
+
 
 @dataclass(frozen=True)
 class Categoria:
@@ -46,59 +46,53 @@ class Categoria:
 CATEGORIAS = [
 
     Categoria(
-        "Historia clínica",
-        (
-            "historia clinica",
+        nombre="Historia clínica",
+        palabras_clave=(
+            "historia",
+            "antecedente",
             "antecedentes",
             "evolucion",
             "consulta",
-            "paciente",
-            "enfermedad actual",
             "motivo de consulta",
-        )
+            "nota clinica",
+        ),
     ),
 
     Categoria(
-        "Laboratorio clínico",
-        (
+        nombre="Laboratorio clínico",
+        palabras_clave=(
             "laboratorio",
             "hemograma",
-            "glucosa",
             "creatinina",
-            "troponina",
+            "glucosa",
             "resultado",
             "resultados",
-            "muestra",
-            "examen",
             "prueba",
-        )
+        ),
     ),
 
     Categoria(
-        "Imagen diagnóstica",
-        (
+        nombre="Imagen diagnóstica",
+        palabras_clave=(
+            "imagen",
             "radiografia",
-            "rayos x",
             "tomografia",
             "resonancia",
-            "ecografia",
-            "imagen",
-            "imagenes",
-            "estudio radiologico",
-        )
+            "radiologia",
+            "estudio",
+        ),
     ),
 
     Categoria(
-        "Medicamentos",
-        (
+        nombre="Medicamentos",
+        palabras_clave=(
             "medicamento",
             "medicamentos",
             "dosis",
             "tratamiento",
             "prescripcion",
-            "formula",
-            "terapia",
-        )
+            "medicacion",
+        ),
     ),
 ]
 
@@ -106,26 +100,23 @@ CATEGORIAS = [
 CUSTOM_RULES = {
 
     "Historia clínica": (
-        "historial",
-        "registro clinico",
-        "nota medica",
+        "historial clinico",
+        "nota de evolucion",
     ),
 
     "Laboratorio clínico": (
-        "analisis",
-        "valor de referencia",
-        "resultado de laboratorio",
+        "resultado laboratorio",
+        "prueba laboratorio",
     ),
 
     "Imagen diagnóstica": (
-        "diagnostico por imagen",
-        "estudio diagnostico",
-        "informe radiologico",
+        "estudio imagen",
+        "imagen diagnostica",
     ),
 
     "Medicamentos": (
-        "orden medica",
-        "farmaco",
+        "tratamiento actual",
+        "medicamento registrado",
     ),
 }
 
@@ -151,11 +142,13 @@ def normalizar_texto(texto: str) -> str:
         texto
     )
 
-    return re.sub(
+    texto = re.sub(
         r"\s+",
         " ",
         texto
-    ).strip()
+    )
+
+    return texto.strip()
 
 
 def construir_categorias():
@@ -164,16 +157,23 @@ def construir_categorias():
 
     for categoria in CATEGORIAS:
 
-        reglas_extra = CUSTOM_RULES.get(
+        adicionales = CUSTOM_RULES.get(
             categoria.nombre,
             ()
         )
 
+        palabras = (
+            categoria.palabras_clave
+            + adicionales
+        )
+
         categorias_finales.append(
+
             Categoria(
-                categoria.nombre,
-                categoria.palabras_clave + reglas_extra
+                nombre=categoria.nombre,
+                palabras_clave=palabras
             )
+
         )
 
     return categorias_finales
@@ -181,42 +181,55 @@ def construir_categorias():
 
 def clasificar_texto(texto: str):
 
-    texto_normalizado = normalizar_texto(texto)
+    texto_normalizado = normalizar_texto(
+        texto
+    )
+
+    categorias = construir_categorias()
 
     puntuaciones = {}
 
-    for categoria in construir_categorias():
+    for categoria in categorias:
 
-        puntuacion = 0
+        puntos = 0
 
         for palabra in categoria.palabras_clave:
 
-            if (
-                normalizar_texto(palabra)
-                in texto_normalizado
-            ):
-                puntuacion += 1
+            palabra_normalizada = normalizar_texto(
+                palabra
+            )
 
-        puntuaciones[categoria.nombre] = puntuacion
+            if palabra_normalizada in texto_normalizado:
+                puntos += 1
+
+        puntuaciones[
+            categoria.nombre
+        ] = puntos
+
 
     detectadas = [
+
         categoria
-        for categoria, puntos in puntuaciones.items()
+
+        for categoria, puntos
+        in puntuaciones.items()
+
         if puntos > 0
     ]
 
-    if not detectadas:
 
-        return (
-            "Requiere análisis",
-            [],
-            puntuaciones
+    if detectadas:
+
+        principal = max(
+            detectadas,
+            key=lambda categoria:
+                puntuaciones[categoria]
         )
 
-    principal = max(
-        puntuaciones,
-        key=puntuaciones.get
-    )
+    else:
+
+        principal = "Requiere análisis"
+
 
     return (
         principal,
@@ -225,134 +238,152 @@ def clasificar_texto(texto: str):
     )
 
 
-# =========================================================
+# ============================================================
 # SEMANA 2
-# MACHINE LEARNING
-# ESTIMACIÓN DE PRIORIDAD
-# =========================================================
+# MODELO DE PRIORIDAD
+# ============================================================
+
 
 def entrenar_modelo_prioridad():
 
     if not DATA_FILE.exists():
 
-        print(
-            "\nNo se encontró el archivo de datos:"
+        raise FileNotFoundError(
+            f"No se encontró el archivo: {DATA_FILE}"
         )
 
-        print(DATA_FILE)
 
-        return None
+    datos = pd.read_csv(
+        DATA_FILE
+    )
 
-    try:
 
-        datos = pd.read_csv(
-            DATA_FILE,
-            sep=None,
-            engine="python"
+    columnas_requeridas = {
+
+        "edad",
+
+        "documentos_pendientes",
+
+        "resultados_pendientes",
+
+        "imagenes_pendientes",
+
+        "prioridad",
+    }
+
+
+    if not columnas_requeridas.issubset(
+        datos.columns
+    ):
+
+        raise ValueError(
+
+            "El archivo datos_his.csv no contiene "
+            "todas las columnas requeridas."
+
         )
 
-        X = datos[
-            [
-                "edad",
-                "documentos_pendientes",
-                "resultados_pendientes",
-                "imagenes_pendientes",
-            ]
+
+    X = datos[
+        [
+            "edad",
+            "documentos_pendientes",
+            "resultados_pendientes",
+            "imagenes_pendientes",
         ]
+    ]
 
-        y = datos["prioridad"]
 
-        (
-            X_train,
-            X_test,
-            y_train,
-            y_test
-        ) = train_test_split(
+    y = datos[
+        "prioridad"
+    ]
+
+
+    X_train, X_test, y_train, y_test = (
+        train_test_split(
+
             X,
             y,
+
             test_size=0.25,
+
             random_state=RANDOM_STATE,
-            stratify=y,
+
+            stratify=y
         )
+    )
 
-        modelo = make_pipeline(
 
-            StandardScaler(),
+    modelo = make_pipeline(
 
-            LogisticRegression(
-                max_iter=1000,
-                random_state=RANDOM_STATE
-            )
+        StandardScaler(),
+
+        LogisticRegression(
+
+            max_iter=1000,
+
+            random_state=RANDOM_STATE
         )
-
-        modelo.fit(
-            X_train,
-            y_train
-        )
-
-        predicciones = modelo.predict(
-            X_test
-        )
-
-        accuracy = accuracy_score(
-            y_test,
-            predicciones
-        )
-
-        matriz = confusion_matrix(
-            y_test,
-            predicciones
-        )
-
-        print(
-            "\nModelo de prioridad cargado."
-        )
-
-        print(
-            f"Precisión de validación: {accuracy:.3f}"
-        )
-
-        print(
-            "Matriz de validación:"
-        )
-
-        print(matriz)
-
-        return modelo
-
-    except Exception as error:
-
-        print(
-            "\nNo fue posible cargar "
-            "el modelo de prioridad."
-        )
-
-        print(
-            f"Detalle: {error}"
-        )
-
-        return None
+    )
 
 
-def evaluar_prioridad(modelo):
+    modelo.fit(
+        X_train,
+        y_train
+    )
 
-    if modelo is None:
 
-        print(
-            "\nEl modelo de prioridad "
-            "no está disponible."
-        )
+    predicciones = modelo.predict(
+        X_test
+    )
 
-        return
+
+    accuracy = accuracy_score(
+        y_test,
+        predicciones
+    )
+
+
+    matriz = confusion_matrix(
+        y_test,
+        predicciones
+    )
+
+
+    print("\nModelo de prioridad cargado.")
 
     print(
-        "\nIngrese los datos del registro."
+        f"Precisión de validación: "
+        f"{accuracy:.3f}"
     )
+
+    print(
+        "Matriz de validación:"
+    )
+
+    print(
+        matriz
+    )
+
+
+    return modelo
+
+
+def evaluar_prioridad(
+    modelo
+):
+
+    print(
+        "\nEVALUACIÓN DE PRIORIDAD"
+    )
+
 
     try:
 
         edad = int(
-            input("Edad: ")
+            input(
+                "Edad: "
+            )
         )
 
         documentos = int(
@@ -373,135 +404,193 @@ def evaluar_prioridad(modelo):
             )
         )
 
+
     except ValueError:
 
         print(
-            "\nLos valores deben ser numéricos."
+            "Los valores deben ser numéricos."
         )
 
         return
 
+
     registro = pd.DataFrame(
         [
             {
-                "edad": edad,
-                "documentos_pendientes": documentos,
-                "resultados_pendientes": resultados,
-                "imagenes_pendientes": imagenes,
+
+                "edad":
+                    edad,
+
+                "documentos_pendientes":
+                    documentos,
+
+                "resultados_pendientes":
+                    resultados,
+
+                "imagenes_pendientes":
+                    imagenes,
             }
         ]
     )
+
 
     prediccion = modelo.predict(
         registro
     )[0]
 
+
     resultado = (
+
         "Prioritaria"
-        if prediccion == 1
+
+        if int(prediccion) == 1
+
         else "Normal"
     )
 
+
     print(
-        "\nPrioridad estimada:",
-        resultado
+        f"\nPrioridad estimada: "
+        f"{resultado}"
     )
 
 
-# =========================================================
+# ============================================================
 # SEMANA 4
 # BÚSQUEDA A*
-# ORGANIZACIÓN DE REVISIÓN
-# =========================================================
+# ============================================================
+
 
 COSTOS_REVISION = {
 
     "Historia clínica": {
+
         "procesamiento": 1,
+
         "espera": 1,
     },
 
     "Resultados de laboratorio": {
+
         "procesamiento": 2,
+
         "espera": 3,
     },
 
     "Estudio de imagen": {
+
         "procesamiento": 3,
+
         "espera": 3,
     },
 
     "Medicamentos": {
+
         "procesamiento": 2,
+
         "espera": 2,
     },
 }
 
 
-def heuristica(pendientes):
+def heuristica(
+    pendientes
+):
 
     return sum(
-        COSTOS_REVISION[elemento]["procesamiento"]
+
+        COSTOS_REVISION[
+            elemento
+        ]["procesamiento"]
+
         for elemento in pendientes
     )
 
 
 def costo_transicion(
     estado,
-    elemento
+    seleccionado
 ):
 
-    costo_base = (
-        COSTOS_REVISION[elemento][
-            "procesamiento"
-        ]
+    costo = (
+        COSTOS_REVISION[
+            seleccionado
+        ]["procesamiento"]
     )
 
-    pendientes_restantes = [
-        actual
-        for actual in estado
-        if actual != elemento
+
+    restantes = [
+
+        elemento
+
+        for elemento in estado
+
+        if elemento != seleccionado
     ]
 
-    penalizacion = sum(
-        COSTOS_REVISION[pendiente]["espera"]
-        for pendiente in pendientes_restantes
+
+    for elemento in restantes:
+
+        costo += (
+            COSTOS_REVISION[
+                elemento
+            ]["espera"]
+        )
+
+
+    return costo
+
+
+def planificar_revision(
+    elementos
+):
+
+    inicio = tuple(
+        elementos
     )
 
-    return (
-        costo_base
-        + penalizacion
-    )
 
+    if not inicio:
 
-def planificar_revision(elementos):
+        return [], 0
 
-    inicio = tuple(elementos)
-    meta = tuple()
 
     frontera = []
 
     contador = 0
 
+
     heapq.heappush(
+
         frontera,
+
         (
-            heuristica(inicio),
+
+            heuristica(
+                inicio
+            ),
+
             contador,
+
             0,
+
             inicio,
+
             []
         )
     )
 
+
     mejores_costos = {
+
         inicio: 0
     }
+
 
     while frontera:
 
         (
-            _,
+            prioridad,
             _,
             costo_actual,
             estado,
@@ -510,148 +599,180 @@ def planificar_revision(elementos):
             frontera
         )
 
-        if estado == meta:
+
+        if not estado:
 
             return (
                 camino,
                 costo_actual
             )
 
-        if costo_actual > mejores_costos.get(
-            estado,
-            float("inf")
-        ):
-            continue
 
-        for elemento in estado:
-
-            nuevo_estado = list(
-                estado
-            )
-
-            nuevo_estado.remove(
-                elemento
-            )
+        for seleccionado in estado:
 
             nuevo_estado = tuple(
-                nuevo_estado
+
+                elemento
+
+                for elemento in estado
+
+                if elemento != seleccionado
             )
+
 
             costo_paso = costo_transicion(
+
                 estado,
-                elemento
+                seleccionado
             )
 
+
             nuevo_costo = (
+
                 costo_actual
                 + costo_paso
             )
 
-            if nuevo_costo < mejores_costos.get(
-                nuevo_estado,
-                float("inf")
+
+            if (
+
+                nuevo_estado
+                not in mejores_costos
+
+                or
+
+                nuevo_costo
+                < mejores_costos[
+                    nuevo_estado
+                ]
             ):
+
 
                 mejores_costos[
                     nuevo_estado
                 ] = nuevo_costo
 
-                estimacion = heuristica(
-                    nuevo_estado
-                )
-
-                prioridad = (
-                    nuevo_costo
-                    + estimacion
-                )
 
                 contador += 1
 
-                heapq.heappush(
-                    frontera,
-                    (
-                        prioridad,
-                        contador,
-                        nuevo_costo,
-                        nuevo_estado,
-                        camino + [elemento]
+
+                nueva_prioridad = (
+
+                    nuevo_costo
+
+                    + heuristica(
+                        nuevo_estado
                     )
                 )
 
-    return None, None
+
+                heapq.heappush(
+
+                    frontera,
+
+                    (
+
+                        nueva_prioridad,
+
+                        contador,
+
+                        nuevo_costo,
+
+                        nuevo_estado,
+
+                        camino
+                        + [seleccionado]
+                    )
+                )
+
+
+    return [], 0
 
 
 def gestionar_revision():
 
-    print(
-        "\nGESTIÓN DE REVISIÓN DE "
-        "RESULTADOS Y ESTUDIOS"
-    )
+    opciones = {
 
-    print(
-        "\n1. Historia clínica"
-    )
+        "1":
+            "Historia clínica",
 
-    print(
-        "2. Resultados de laboratorio"
-    )
+        "2":
+            "Resultados de laboratorio",
 
-    print(
-        "3. Estudio de imagen"
-    )
+        "3":
+            "Estudio de imagen",
 
-    print(
-        "4. Medicamentos"
-    )
-
-    entrada = input(
-        "\nIngrese las opciones "
-        "separadas por coma: "
-    )
-
-    mapa = {
-
-        "1": "Historia clínica",
-
-        "2": "Resultados de laboratorio",
-
-        "3": "Estudio de imagen",
-
-        "4": "Medicamentos",
+        "4":
+            "Medicamentos",
     }
+
+
+    print(
+        "\nGESTIÓN DE REVISIÓN"
+    )
+
+
+    for numero, nombre in opciones.items():
+
+        print(
+            f"{numero}. {nombre}"
+        )
+
+
+    seleccion = input(
+
+        "\nSeleccione los elementos pendientes "
+        "separados por coma: "
+
+    )
+
+
+    numeros = [
+
+        numero.strip()
+
+        for numero
+        in seleccion.split(",")
+
+        if numero.strip()
+        in opciones
+    ]
+
 
     elementos = []
 
-    for opcion in entrada.split(","):
 
-        opcion = opcion.strip()
+    for numero in numeros:
 
-        if (
-            opcion in mapa
-            and mapa[opcion]
-            not in elementos
-        ):
+        elemento = opciones[
+            numero
+        ]
+
+        if elemento not in elementos:
 
             elementos.append(
-                mapa[opcion]
+                elemento
             )
+
 
     if not elementos:
 
         print(
-            "\nNo se seleccionaron "
-            "elementos válidos."
+            "No se seleccionaron elementos válidos."
         )
 
         return
+
 
     camino, costo = planificar_revision(
         elementos
     )
 
+
     print(
-        "\nSecuencia sugerida de revisión:"
+        "\nSecuencia sugerida:"
     )
+
 
     for numero, elemento in enumerate(
         camino,
@@ -662,151 +783,113 @@ def gestionar_revision():
             f"{numero}. {elemento}"
         )
 
+
     print(
-        f"\nCosto total estimado: {costo}"
+        f"\nCosto total estimado: "
+        f"{costo}"
     )
 
 
-# =========================================================
+# ============================================================
 # SEMANA 5
 # SISTEMA EXPERTO
-# =========================================================
+# ============================================================
+
 
 REGLAS_EXPERTAS = [
 
     (
+
         lambda q:
-        "hemograma" in q
-        or "creatinina" in q
-        or "glucosa" in q
-        or "laboratorio" in q,
+
+            "hemograma" in q
+
+            or "creatinina" in q
+
+            or "glucosa" in q
+
+            or "laboratorio" in q,
 
         "revisar_resultados_laboratorio"
     ),
 
     (
+
         lambda q:
-        "radiografia" in q
-        or "tomografia" in q
-        or "resonancia" in q
-        or "imagen" in q,
+
+            "radiografia" in q
+
+            or "tomografia" in q
+
+            or "resonancia" in q
+
+            or "imagen" in q,
 
         "revisar_estudio_imagen"
     ),
 
     (
+
         lambda q:
-        "historia" in q
-        or "antecedente" in q
-        or "evolucion" in q
-        or "consulta" in q,
+
+            "historia" in q
+
+            or "antecedente" in q
+
+            or "evolucion" in q
+
+            or "consulta" in q,
 
         "revisar_historia_clinica"
     ),
 
     (
+
         lambda q:
-        "medicamento" in q
-        or "dosis" in q
-        or "tratamiento" in q
-        or "prescripcion" in q,
+
+            "medicamento" in q
+
+            or "dosis" in q
+
+            or "tratamiento" in q
+
+            or "prescripcion" in q,
 
         "revisar_medicacion"
     ),
 
     (
+
         lambda q:
-        "pendiente" in q
-        or "prioridad" in q
-        or "urgente" in q
-        or "revisar primero" in q,
+
+            "prioridad" in q
+
+            or "urgente" in q
+
+            or "revisar primero" in q
+
+            or "orden de revision" in q,
 
         "evaluar_prioridad_revision"
     ),
 ]
 
 
-# =========================================================
-# SEMANA 5
-# EJEMPLOS ETIQUETADOS
-# =========================================================
+# ============================================================
+# CARGA DE BASE DE CONOCIMIENTO
+# ============================================================
 
-TRAIN_TEXTOS = [
-
-    # HISTORIA CLÍNICA
-    "revisar antecedentes del paciente",
-    "consultar historia clinica completa",
-    "ver evolucion registrada",
-    "revisar motivo de consulta",
-
-    # LABORATORIO
-    "resultado de hemograma disponible",
-    "revisar resultado de creatinina",
-    "resultado de glucosa pendiente",
-    "consultar resultados de laboratorio",
-
-    # IMÁGENES
-    "radiografia disponible para revision",
-    "consultar tomografia del paciente",
-    "revisar resonancia registrada",
-    "estudio de imagen pendiente",
-
-    # MEDICAMENTOS
-    "consultar medicamentos registrados",
-    "revisar dosis del tratamiento",
-    "ver prescripcion del paciente",
-    "consultar tratamiento actual",
-
-    # SEGUIMIENTO
-    "hay documentos pendientes de revision",
-    "determinar prioridad del registro",
-    "hay resultados pendientes",
-    "organizar informacion para seguimiento",
-]
-
-
-TRAIN_CLASES = [
-
-    "historia_clinica",
-    "historia_clinica",
-    "historia_clinica",
-    "historia_clinica",
-
-    "laboratorio",
-    "laboratorio",
-    "laboratorio",
-    "laboratorio",
-
-    "imagen_diagnostica",
-    "imagen_diagnostica",
-    "imagen_diagnostica",
-    "imagen_diagnostica",
-
-    "medicamentos",
-    "medicamentos",
-    "medicamentos",
-    "medicamentos",
-
-    "seguimiento",
-    "seguimiento",
-    "seguimiento",
-    "seguimiento",
-]
-
-
-# =========================================================
-# SEMANA 5
-# BASE DE CONOCIMIENTO
-# =========================================================
 
 def cargar_base_conocimiento():
 
     if not KB_FILE.exists():
 
         raise FileNotFoundError(
-            "No existe "
-            "proyecto_his/data/base_conocimiento.txt"
+
+            f"No se encontró la base de conocimiento: "
+            f"{KB_FILE}"
         )
+
 
     documentos = [
 
@@ -819,54 +902,214 @@ def cargar_base_conocimiento():
         if linea.strip()
     ]
 
+
     if len(documentos) < 8:
 
         raise ValueError(
-            "La base de conocimiento "
-            "debe contener mínimo 8 entradas."
+
+            "La base de conocimiento debe "
+            "contener al menos 8 entradas."
         )
+
 
     return documentos
 
 
-# =========================================================
-# SEMANA 5
-# SISTEMA HÍBRIDO
-# =========================================================
+# ============================================================
+# CARGA DE EJEMPLOS DE CLASIFICACIÓN
+# ============================================================
+
+
+def cargar_datos_clasificacion():
+
+    if not TRAIN_FILE.exists():
+
+        raise FileNotFoundError(
+
+            f"No se encontró el archivo de entrenamiento: "
+            f"{TRAIN_FILE}"
+        )
+
+
+    datos = pd.read_csv(
+        TRAIN_FILE
+    )
+
+
+    columnas_requeridas = {
+
+        "texto",
+        "clase"
+    }
+
+
+    if not columnas_requeridas.issubset(
+        datos.columns
+    ):
+
+        raise ValueError(
+
+            "El archivo ejemplos_clasificacion.csv "
+            "debe contener las columnas "
+            "'texto' y 'clase'."
+        )
+
+
+    datos = datos.dropna(
+        subset=[
+            "texto",
+            "clase"
+        ]
+    )
+
+
+    textos = (
+
+        datos["texto"]
+
+        .astype(str)
+
+        .tolist()
+    )
+
+
+    clases = (
+
+        datos["clase"]
+
+        .astype(str)
+
+        .tolist()
+    )
+
+
+    if len(textos) < 15:
+
+        raise ValueError(
+
+            "Se requieren al menos "
+            "15 ejemplos de clasificación."
+        )
+
+
+    print(
+
+        f"Ejemplos de clasificación cargados: "
+        f"{len(textos)}"
+    )
+
+
+    print(
+
+        f"Base de conocimiento cargada: "
+        f"{len(cargar_base_conocimiento())} entradas"
+    )
+
+
+    return (
+        textos,
+        clases
+    )
+
+
+# ============================================================
+# SISTEMA HÍBRIDO HIS
+# ============================================================
+
 
 class SistemaHibridoHIS:
 
     def __init__(self):
 
+        # ----------------------------------------------------
+        # BASE DE CONOCIMIENTO
+        # ----------------------------------------------------
+
         self.documentos = (
             cargar_base_conocimiento()
         )
+
+
+        # Guardamos una versión normalizada
+        # para mejorar las comparaciones TF-IDF.
+
+        self.documentos_normalizados = [
+
+            normalizar_texto(
+                documento
+            )
+
+            for documento
+            in self.documentos
+        ]
+
+
+        # ----------------------------------------------------
+        # RECUPERACIÓN TF-IDF
+        # ----------------------------------------------------
 
         self.vectorizador_documentos = (
             TfidfVectorizer()
         )
 
+
         self.matriz_documentos = (
-            self.vectorizador_documentos.fit_transform(
-                self.documentos
+
+            self.vectorizador_documentos
+            .fit_transform(
+                self.documentos_normalizados
             )
         )
+
+
+        # ----------------------------------------------------
+        # CLASIFICADOR DE TEXTO
+        # ----------------------------------------------------
 
         self.clasificador = make_pipeline(
 
             TfidfVectorizer(),
 
             LogisticRegression(
+
                 max_iter=1000,
+
                 random_state=RANDOM_STATE
             )
         )
 
-        self.clasificador.fit(
-            TRAIN_TEXTOS,
-            TRAIN_CLASES
+
+        textos_entrenamiento, clases_entrenamiento = (
+
+            cargar_datos_clasificacion()
         )
 
+
+        # Normalizamos también los ejemplos
+        # utilizados para entrenar.
+
+        textos_entrenamiento_normalizados = [
+
+            normalizar_texto(
+                texto
+            )
+
+            for texto
+            in textos_entrenamiento
+        ]
+
+
+        self.clasificador.fit(
+
+            textos_entrenamiento_normalizados,
+
+            clases_entrenamiento
+        )
+
+
+    # ========================================================
+    # ANALIZAR CONSULTA
+    # ========================================================
 
     def analizar_consulta(
         self,
@@ -878,6 +1121,11 @@ class SistemaHibridoHIS:
                 consulta
             )
         )
+
+
+        # ----------------------------------------------------
+        # REGLAS EXPERTAS
+        # ----------------------------------------------------
 
         reglas = [
 
@@ -891,20 +1139,35 @@ class SistemaHibridoHIS:
             )
         ]
 
+
+        # ----------------------------------------------------
+        # TF-IDF
+        # ----------------------------------------------------
+
         vector_consulta = (
-            self.vectorizador_documentos.transform(
-                [consulta_normalizada]
+
+            self.vectorizador_documentos
+            .transform(
+                [
+                    consulta_normalizada
+                ]
             )
         )
 
+
         similitudes = cosine_similarity(
+
             vector_consulta,
+
             self.matriz_documentos
+
         )[0]
+
 
         mejor_indice = int(
             similitudes.argmax()
         )
+
 
         evidencia = (
             self.documentos[
@@ -912,56 +1175,84 @@ class SistemaHibridoHIS:
             ]
         )
 
+
         similitud = float(
             similitudes[
                 mejor_indice
             ]
         )
 
+
+        # ----------------------------------------------------
+        # CLASIFICACIÓN
+        # ----------------------------------------------------
+
         clase = str(
+
             self.clasificador.predict(
-                [consulta_normalizada]
+                [
+                    consulta_normalizada
+                ]
             )[0]
         )
 
+
         return {
 
-            "consulta": consulta,
+            "consulta":
+                consulta,
 
-            "reglas": reglas,
+            "reglas":
+                reglas,
 
-            "evidencia": evidencia,
+            "evidencia":
+                evidencia,
 
-            "similitud": similitud,
+            "similitud":
+                similitud,
 
-            "clase": clase,
+            "clase":
+                clase,
         }
 
 
-# =========================================================
-# SEMANA 5
-# MOSTRAR RESULTADO
-# =========================================================
+# ============================================================
+# MOSTRAR RESULTADO HÍBRIDO
+# ============================================================
+
 
 def mostrar_resultado_hibrido(
     resultado
 ):
 
-    print("\n" + "=" * 60)
-
     print(
-        "RESULTADO DEL ASISTENTE"
+        "\nRESULTADO HIS_IA"
     )
 
-    print("=" * 60)
 
-    if resultado["reglas"]:
+    print(
+        "\nConsulta:"
+    )
 
-        print(
-            "\nAcción sugerida:"
-        )
+    print(
+        resultado[
+            "consulta"
+        ]
+    )
 
-        for regla in resultado["reglas"]:
+
+    print(
+        "\nAcción sugerida:"
+    )
+
+
+    if resultado[
+        "reglas"
+    ]:
+
+        for regla in resultado[
+            "reglas"
+        ]:
 
             print(
                 f"- {regla}"
@@ -970,32 +1261,39 @@ def mostrar_resultado_hibrido(
     else:
 
         print(
-            "\nNo se activó una regla específica."
+            "- Sin regla específica"
         )
+
 
     print(
         "\nInformación relacionada:"
     )
 
     print(
-        resultado["evidencia"]
+        resultado[
+            "evidencia"
+        ]
     )
 
+
     print(
-        "\nSimilitud:",
+
+        "\nSimilitud: "
         f"{resultado['similitud']:.3f}"
     )
 
+
     print(
-        "\nCategoría:",
-        resultado["clase"]
+
+        "Categoría: "
+        f"{resultado['clase']}"
     )
 
 
-# =========================================================
-# SEMANA 5
-# REPORTE
-# =========================================================
+# ============================================================
+# REPORTE SEMANA 5
+# ============================================================
+
 
 def generar_reporte_semana05(
     resultados
@@ -1006,171 +1304,268 @@ def generar_reporte_semana05(
         exist_ok=True
     )
 
-    lineas = [
 
-        "# Semana 05 - Sistema híbrido HIS_IA",
+    contenido = []
 
-        "",
+    contenido.append(
+        "# Semana 05 - Sistema híbrido HIS_IA"
+    )
 
-        "## Descripción",
+    contenido.append(
+        ""
+    )
 
-        (
-            "HIS_IA integra reglas expertas, "
-            "recuperación de información mediante "
-            "TF-IDF y similitud coseno, clasificación "
-            "de texto y procesamiento básico de "
-            "lenguaje natural."
-        ),
 
-        "",
+    contenido.append(
+        "## Descripción"
+    )
 
-        (
-            "El sistema está orientado a apoyar "
-            "la organización y recuperación de "
-            "información dentro de un HIS."
-        ),
+    contenido.append(
+        ""
+    )
 
-        "",
-    ]
 
-    for numero, resultado in enumerate(
+    contenido.append(
+
+        "HIS_IA integra reglas expertas, "
+        "recuperación de información mediante TF-IDF, "
+        "similitud coseno y clasificación automática "
+        "de texto."
+    )
+
+
+    contenido.append(
+        ""
+    )
+
+
+    contenido.append(
+        f"Base de conocimiento utilizada: "
+        f"{len(cargar_base_conocimiento())} entradas."
+    )
+
+
+    textos, clases = (
+        cargar_datos_clasificacion()
+    )
+
+
+    contenido.append(
+        f"Ejemplos de clasificación utilizados: "
+        f"{len(textos)}."
+    )
+
+
+    contenido.append(
+        ""
+    )
+
+
+    contenido.append(
+        "## Pruebas"
+    )
+
+
+    for indice, resultado in enumerate(
         resultados,
         start=1
     ):
 
-        reglas = ", ".join(
-            resultado["reglas"]
+        contenido.append(
+            ""
         )
 
-        if not reglas:
+        contenido.append(
+            f"### Consulta {indice}"
+        )
 
-            reglas = "Ninguna"
+        contenido.append(
+            ""
+        )
 
-        lineas += [
+        contenido.append(
+            f"**Consulta:** "
+            f"{resultado['consulta']}"
+        )
 
-            f"## Consulta {numero}",
+        contenido.append(
+            ""
+        )
 
-            "",
 
-            (
-                f"**Consulta:** "
-                f"{resultado['consulta']}"
-            ),
+        if resultado[
+            "reglas"
+        ]:
 
-            "",
+            reglas = ", ".join(
+                resultado[
+                    "reglas"
+                ]
+            )
 
-            (
-                f"**Regla activada:** "
-                f"{reglas}"
-            ),
+        else:
 
-            "",
+            reglas = (
+                "Sin regla específica"
+            )
 
-            (
-                f"**Evidencia recuperada:** "
-                f"{resultado['evidencia']}"
-            ),
 
-            "",
+        contenido.append(
+            f"**Regla activada:** "
+            f"{reglas}"
+        )
 
-            (
-                f"**Similitud:** "
-                f"{resultado['similitud']:.3f}"
-            ),
+        contenido.append(
+            ""
+        )
 
-            "",
 
-            (
-                f"**Clasificación:** "
-                f"{resultado['clase']}"
-            ),
+        contenido.append(
+            f"**Evidencia recuperada:** "
+            f"{resultado['evidencia']}"
+        )
 
-            "",
-        ]
+        contenido.append(
+            ""
+        )
 
-    lineas += [
 
-        "## Análisis",
+        contenido.append(
+            f"**Similitud:** "
+            f"{resultado['similitud']:.3f}"
+        )
 
-        "",
+        contenido.append(
+            ""
+        )
 
-        (
-            "El resultado es explicable porque "
-            "el sistema muestra qué regla fue "
-            "activada, qué información recuperó, "
-            "qué similitud obtuvo y qué categoría "
-            "predijo."
-        ),
 
-        "",
+        contenido.append(
+            f"**Clasificación:** "
+            f"{resultado['clase']}"
+        )
 
-        "## Limitaciones",
+        contenido.append(
+            ""
+        )
 
-        "",
 
-        (
-            "La calidad de las respuestas depende "
-            "de las reglas definidas, de la base "
-            "de conocimiento y de los ejemplos "
-            "utilizados para entrenar el clasificador."
-        ),
+    contenido.append(
+        "## Análisis"
+    )
 
-        "",
+    contenido.append(
+        ""
+    )
 
-        (
-            "Este prototipo académico organiza "
-            "y recupera información. No interpreta "
-            "resultados clínicos ni reemplaza "
-            "la valoración de un profesional."
-        ),
-    ]
+
+    contenido.append(
+
+        "El sistema híbrido combina conocimiento "
+        "definido mediante reglas con recuperación "
+        "documental y clasificación automática. "
+        "Esto permite ofrecer respuestas trazables."
+    )
+
+
+    contenido.append(
+        ""
+    )
+
+
+    contenido.append(
+        "## Limitaciones"
+    )
+
+    contenido.append(
+        ""
+    )
+
+
+    contenido.append(
+
+        "- La base de conocimiento es académica."
+    )
+
+
+    contenido.append(
+
+        "- El conjunto de datos es sintético."
+    )
+
+
+    contenido.append(
+
+        "- HIS_IA no realiza diagnósticos médicos."
+    )
+
+
+    contenido.append(
+
+        "- El sistema no reemplaza la valoración "
+        "de profesionales de salud."
+    )
+
 
     REPORT_SEMANA05.write_text(
-        "\n".join(lineas),
+
+        "\n".join(
+            contenido
+        ),
+
         encoding="utf-8"
     )
 
 
-# =========================================================
-# SEMANA 5
+    print(
+
+        f"\nReporte generado en:\n"
+        f"{REPORT_SEMANA05}"
+    )
+
+
+# ============================================================
 # CONSULTA INTERACTIVA
-# =========================================================
+# ============================================================
+
 
 def consultar_asistente(
     sistema_hibrido
 ):
 
-    print(
-        "\nCONSULTA DE INFORMACIÓN CLÍNICA"
-    )
-
     consulta = input(
-        "\nEscriba su consulta:\n"
-    )
 
-    if not consulta.strip():
+        "\nEscriba su consulta: "
+
+    ).strip()
+
+
+    if not consulta:
 
         print(
-            "\nLa consulta está vacía."
+            "La consulta no puede estar vacía."
         )
 
         return
 
+
     resultado = (
-        sistema_hibrido.analizar_consulta(
+        sistema_hibrido
+        .analizar_consulta(
             consulta
         )
     )
+
 
     mostrar_resultado_hibrido(
         resultado
     )
 
 
-# =========================================================
-# SEMANA 5
-# PRUEBAS REPRODUCIBLES
-# =========================================================
+# ============================================================
+# PRUEBAS AUTOMÁTICAS SEMANA 5
+# ============================================================
+
 
 def ejecutar_pruebas_semana05(
     sistema_hibrido
@@ -1179,9 +1574,8 @@ def ejecutar_pruebas_semana05(
     consultas = [
 
         (
-            "Tengo pendiente revisar "
-            "el resultado de creatinina "
-            "del paciente"
+            "Tengo pendiente revisar el resultado "
+            "de creatinina del paciente"
         ),
 
         (
@@ -1194,74 +1588,74 @@ def ejecutar_pruebas_semana05(
             "y la evolución registrada "
             "en la historia clínica"
         ),
+
+        (
+            "Necesito revisar los medicamentos "
+            "registrados del paciente"
+        ),
+
+        (
+            "Necesito determinar qué información "
+            "debo revisar primero"
+        ),
     ]
+
 
     resultados = []
 
-    print("\n" + "=" * 60)
 
     print(
-        "VALIDACIÓN DEL ASISTENTE HIS_IA"
+        "\nVALIDACIÓN DEL SISTEMA HÍBRIDO"
     )
 
-    print("=" * 60)
 
-    for numero, consulta in enumerate(
-        consultas,
-        start=1
-    ):
+    for consulta in consultas:
 
         resultado = (
-            sistema_hibrido.analizar_consulta(
+            sistema_hibrido
+            .analizar_consulta(
                 consulta
             )
         )
+
 
         resultados.append(
             resultado
         )
 
-        print(
-            f"\nConsulta {numero}: "
-            f"{consulta}"
-        )
 
         mostrar_resultado_hibrido(
             resultado
         )
 
+
     generar_reporte_semana05(
         resultados
     )
 
-    print(
-        "\nReporte generado:"
-    )
 
-    print(
-        REPORT_SEMANA05
-    )
+# ============================================================
+# MENÚ
+# ============================================================
 
-
-# =========================================================
-# INTERFAZ PRINCIPAL
-# =========================================================
 
 def mostrar_menu():
 
-    print("\n" + "=" * 60)
-
-    print("HIS_IA")
-
     print(
-        "ASISTENTE DE INTELIGENCIA "
-        "ARTIFICIAL PARA HIS"
+        "\n"
+        + "=" * 55
     )
 
-    print("=" * 60)
+    print(
+        "HIS_IA - ASISTENTE INTELIGENTE"
+    )
 
     print(
-        "\n1. Analizar información clínica"
+        "=" * 55
+    )
+
+    print(
+        "1. Analizar información clínica"
     )
 
     print(
@@ -1269,8 +1663,7 @@ def mostrar_menu():
     )
 
     print(
-        "3. Gestionar revisión de "
-        "resultados y estudios"
+        "3. Gestionar revisión de resultados y estudios"
     )
 
     print(
@@ -1286,19 +1679,32 @@ def mostrar_menu():
     )
 
 
-# =========================================================
+# ============================================================
 # PROGRAMA PRINCIPAL
-# =========================================================
+# ============================================================
+
 
 def main():
 
-    print(
-        "\nIniciando HIS_IA..."
-    )
+    try:
 
-    modelo_prioridad = (
-        entrenar_modelo_prioridad()
-    )
+        modelo_prioridad = (
+            entrenar_modelo_prioridad()
+        )
+
+    except Exception as error:
+
+        print(
+            "\nError cargando "
+            "el modelo de prioridad:"
+        )
+
+        print(
+            error
+        )
+
+        return
+
 
     try:
 
@@ -1307,54 +1713,61 @@ def main():
         )
 
         print(
-            "Base de conocimiento cargada."
+            "\nSistema híbrido cargado correctamente."
         )
 
     except Exception as error:
 
+        print(
+            "\nError cargando "
+            "el sistema híbrido:"
+        )
+
+        print(
+            error
+        )
+
         sistema_hibrido = None
 
-        print(
-            "\nNo fue posible cargar "
-            "el sistema híbrido."
-        )
-
-        print(
-            f"Detalle: {error}"
-        )
 
     while True:
 
         mostrar_menu()
 
+
         opcion = input(
             "\nSeleccione una opción: "
-        )
+        ).strip()
+
 
         if opcion == "1":
 
             texto = input(
-                "\nIngrese la información clínica:\n"
+
+                "\nIngrese la información "
+                "que desea analizar:\n"
             )
 
-            (
-                principal,
-                detectadas,
-                _
-            ) = clasificar_texto(
-                texto
+
+            principal, detectadas, puntuaciones = (
+                clasificar_texto(
+                    texto
+                )
             )
+
 
             print(
-                "\nCategoría principal:",
-                principal
+                f"\nCategoría principal: "
+                f"{principal}"
             )
 
-            if detectadas:
 
-                print(
-                    "\nInformación relacionada:"
-                )
+            print(
+                "\nCategorías detectadas:"
+            )
+
+
+            if detectadas:
 
                 for categoria in detectadas:
 
@@ -1362,23 +1775,31 @@ def main():
                         f"- {categoria}"
                     )
 
+            else:
+
+                print(
+                    "- Ninguna"
+                )
+
+
         elif opcion == "2":
 
             evaluar_prioridad(
                 modelo_prioridad
             )
 
+
         elif opcion == "3":
 
             gestionar_revision()
+
 
         elif opcion == "4":
 
             if sistema_hibrido is None:
 
                 print(
-                    "\nEl asistente no "
-                    "está disponible."
+                    "\nEl asistente no está disponible."
                 )
 
             else:
@@ -1387,13 +1808,14 @@ def main():
                     sistema_hibrido
                 )
 
+
         elif opcion == "5":
 
             if sistema_hibrido is None:
 
                 print(
-                    "\nEl asistente no "
-                    "está disponible."
+                    "\nEl sistema híbrido "
+                    "no está disponible."
                 )
 
             else:
@@ -1401,6 +1823,7 @@ def main():
                 ejecutar_pruebas_semana05(
                     sistema_hibrido
                 )
+
 
         elif opcion == "6":
 
@@ -1410,6 +1833,7 @@ def main():
 
             break
 
+
         else:
 
             print(
@@ -1417,5 +1841,11 @@ def main():
             )
 
 
+# ============================================================
+# EJECUCIÓN
+# ============================================================
+
+
 if __name__ == "__main__":
+
     main()

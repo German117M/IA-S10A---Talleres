@@ -1,10 +1,100 @@
 La historia clínica reúne antecedentes, motivo de consulta, evolución y otra información necesaria para comprender el contexto del paciente.
-Los resultados de laboratorio como hemograma, glucosa y creatinina deben estar asociados al registro clínico correspondiente para facilitar su revisión.
-Los estudios de imagen como radiografías, tomografías y resonancias forman parte de la información diagnóstica que puede requerir revisión dentro del HIS.
-Los antecedentes médicos permiten conocer condiciones previas del paciente y deben ser considerados durante la revisión de la historia clínica.
-Los medicamentos registrados deben incluir información relacionada con tratamiento, prescripción o dosis cuando esta información esté disponible.
-Un resultado de laboratorio pendiente debe identificarse para facilitar el seguimiento de la información clínica que aún no ha sido revisada.
-Un estudio de imagen pendiente debe quedar identificado para evitar que información diagnóstica disponible quede sin revisar.
+Los antecedentes médicos permiten conocer condiciones previas registradas y forman parte del contexto de la historia clínica.
+La evolución clínica registra cambios y observaciones documentadas durante el seguimiento del paciente.
+El motivo de consulta identifica la razón principal por la cual se registra una atención en el sistema.
+Los antecedentes personales deben quedar asociados a la historia clínica correspondiente.
+Los antecedentes familiares pueden formar parte del contexto clínico cuando han sido registrados.
+Las notas de evolución permiten consultar información añadida durante diferentes momentos de la atención.
+La historia clínica puede integrar información proveniente de consultas, resultados, tratamientos y estudios.
+Los registros clínicos deben mantenerse organizados para facilitar su consulta posterior.
+Una historia clínica incompleta puede requerir revisión de documentos pendientes antes de considerarse completa.
+Los datos demográficos ayudan a identificar correctamente el registro de un paciente dentro del HIS.
+La información de una consulta debe conservar relación con el paciente y la atención correspondiente.
+Las observaciones clínicas registradas deben poder consultarse dentro del contexto de la historia del paciente.
+La información cronológica facilita revisar la evolución de un caso a través del tiempo.
+El historial clínico puede contener múltiples atenciones asociadas al mismo paciente.
+Los documentos clínicos deben conservar trazabilidad sobre su origen y momento de registro.
+La revisión de antecedentes puede ayudar a comprender mejor la información disponible en una atención.
+Una nota de evolución puede complementar la información registrada previamente en la historia clínica.
+El HIS debe facilitar la consulta organizada de antecedentes, evoluciones y datos asociados.
+La historia clínica funciona como punto central de referencia para la información registrada del paciente.
+Los resultados de laboratorio como hemograma, glucosa y creatinina deben estar asociados al registro clínico correspondiente.
+Un hemograma puede registrarse como resultado de laboratorio y debe quedar disponible para revisión.
+La creatinina es un ejemplo de resultado de laboratorio que puede aparecer pendiente dentro del HIS.
+La glucosa puede formar parte de los resultados de laboratorio almacenados en el sistema.
+Los resultados pendientes deben identificarse para facilitar el seguimiento de información todavía no revisada.
+El sistema puede mostrar si existen resultados de laboratorio pendientes asociados a un registro.
+Los resultados de laboratorio deben conservar relación con la orden y el paciente correspondiente.
+Una orden de laboratorio puede contener varias pruebas asociadas al mismo proceso de atención.
+Los resultados disponibles pueden consultarse desde el contexto de la historia clínica.
+La información de laboratorio puede clasificarse separadamente de la historia clínica general.
+El seguimiento de resultados pendientes ayuda a organizar la revisión de información dentro del HIS.
+Un resultado marcado como disponible puede pasar a la etapa de revisión dentro del sistema.
+La trazabilidad permite identificar qué resultado pertenece a una orden específica.
+Los valores de laboratorio almacenados deben mantenerse asociados al registro correcto.
+Las pruebas de laboratorio pueden formar parte de diferentes secciones según su tipo.
+La consulta de laboratorio puede incluir nombre de prueba, estado y resultado disponible.
+Los resultados no revisados pueden contarse como elementos pendientes dentro del modelo académico.
+La clasificación de una consulta como laboratorio depende de términos relacionados con pruebas y resultados.
+El asistente puede recuperar información de laboratorio cuando una consulta menciona hemograma o creatinina.
+La base de conocimiento diferencia información de laboratorio de estudios de imagen y medicamentos.
+Los estudios de imagen como radiografías, tomografías y resonancias forman parte de la información diagnóstica registrada.
+Una radiografía disponible puede identificarse como estudio de imagen pendiente de revisión.
+La tomografía es un ejemplo de estudio de imagen que puede estar asociado a una orden diagnóstica.
+La resonancia puede registrarse dentro del HIS como información de imagen diagnóstica.
+Los estudios de imagen pendientes deben quedar identificados para facilitar su seguimiento.
+El sistema puede diferenciar información de imagen frente a resultados de laboratorio.
+Una orden diagnóstica puede incluir un estudio de imagen asociado al paciente.
+La disponibilidad de un estudio no significa que el sistema realice interpretación médica de la imagen.
+HIS_IA organiza referencias a estudios de imagen, pero no analiza radiografías de forma automática.
+Los estudios de imagen pueden consultarse como elementos pendientes dentro del flujo de revisión.
+La información de imagen debe conservar relación con la atención y el paciente correspondiente.
+Una consulta que menciona radiografía puede activar la regla de revisión de estudio de imagen.
+Las tomografías pueden clasificarse dentro de la categoría imagen_diagnostica.
+Las resonancias pueden recuperarse desde la base de conocimiento mediante similitud textual.
+El sistema puede organizar estudios de imagen junto con otros elementos pendientes.
+La trazabilidad de un estudio permite saber a qué orden y atención está asociado.
+Los estudios diagnósticos disponibles pueden mostrarse al usuario como información por revisar.
+El prototipo no emite diagnósticos a partir de imágenes médicas.
+La clasificación de imagen depende de términos presentes en la consulta y de ejemplos etiquetados.
+Imagen diagnóstica es una categoría independiente dentro del clasificador textual de HIS_IA.
+Los medicamentos registrados deben incluir información relacionada con tratamiento, prescripción o dosis cuando esté disponible.
+Una prescripción puede formar parte de la información clínica asociada a una atención.
+La dosis registrada ayuda a identificar cómo fue documentado un medicamento dentro del sistema.
+El tratamiento actual puede consultarse como parte de la información clínica disponible.
+Los medicamentos forman una categoría independiente dentro del clasificador textual.
+Una consulta que menciona medicamento puede activar la regla de revisión de medicación.
+La información de tratamiento debe mantenerse asociada al registro clínico correspondiente.
+Los medicamentos pendientes de revisión pueden incluirse en la planificación académica del sistema.
+La base de conocimiento puede recuperar entradas relacionadas con dosis y tratamiento.
+Una prescripción registrada no es modificada automáticamente por HIS_IA.
+El sistema organiza información de medicamentos sin recomendar cambios de tratamiento.
+Las consultas sobre tratamiento se clasifican según los términos presentes y los ejemplos de entrenamiento.
+La información de medicamentos puede aparecer junto con antecedentes y resultados en una historia clínica.
+La trazabilidad permite conservar el contexto donde se registró una prescripción.
+HIS_IA trata la medicación como información a organizar, no como una decisión médica.
 Cuando existen varios documentos, resultados o imágenes pendientes, el sistema puede apoyar la organización de su orden de revisión.
-La información clínica puede clasificarse en historia clínica, laboratorio, imagen diagnóstica, medicamentos y seguimiento según el contenido identificado.
-HIS_IA funciona como herramienta académica de apoyo para organizar, clasificar y recuperar información clínica, sin reemplazar la valoración realizada por profesionales de salud.
+Los elementos pendientes pueden utilizarse como variables para estimar una prioridad de revisión.
+La cantidad de documentos pendientes es una de las entradas utilizadas por el modelo de prioridad.
+La cantidad de resultados pendientes es una variable del modelo de clasificación numérica.
+La cantidad de imágenes pendientes participa en la estimación de prioridad del prototipo.
+Una consulta sobre qué revisar primero puede activar la regla de evaluación de prioridad.
+El seguimiento permite identificar información que todavía no ha sido revisada.
+Los pendientes pueden pertenecer a historia clínica, laboratorio, imagen o medicamentos.
+La planificación A* utiliza un estado compuesto por los elementos que permanecen pendientes.
+El objetivo de la planificación es llegar a un estado sin elementos pendientes.
+El costo de revisión combina procesamiento y penalización por espera en el modelo académico.
+La heurística estima el costo mínimo restante de los elementos pendientes.
+La prioridad calculada por el modelo depende de los patrones presentes en los datos de entrenamiento.
+El sistema puede organizar la revisión sin reemplazar decisiones profesionales.
+El seguimiento de pendientes aporta trazabilidad sobre qué información continúa sin procesarse.
+HIS_IA funciona como herramienta académica de apoyo para organizar, clasificar y recuperar información clínica.
+El proyecto integra aprendizaje automático, reglas simbólicas, búsqueda A* y recuperación de información.
+TF-IDF convierte documentos y consultas en representaciones numéricas para comparar contenido textual.
+La similitud coseno permite identificar qué entrada de la base de conocimiento es más cercana a una consulta.
+Las reglas expertas permiten justificar qué condición textual activó una acción dentro del asistente.
+El clasificador textual utiliza ejemplos etiquetados para predecir categorías de nuevas consultas.
+La matriz de confusión ayuda a evaluar aciertos y errores del modelo de prioridad.
+El frontend web utiliza Flask como puente entre la interfaz y las funciones de his_ia.py.
+El prototipo está diseñado con fines académicos y no sustituye la valoración de profesionales de salud.
+La trazabilidad del asistente incluye regla activada, evidencia recuperada, similitud y categoría predicha.

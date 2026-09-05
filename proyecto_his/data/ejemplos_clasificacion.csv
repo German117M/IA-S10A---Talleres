@@ -1,0 +1,101 @@
+texto,clase
+revisar antecedentes del paciente,historia_clinica
+consultar antecedentes registrado,historia_clinica
+ver antecedentes pendiente,historia_clinica
+buscar informacion sobre antecedentes,historia_clinica
+necesito revisar antecedentes,historia_clinica
+revisar historia clinica del paciente,historia_clinica
+consultar historia clinica registrado,historia_clinica
+ver historia clinica pendiente,historia_clinica
+buscar informacion sobre historia clinica,historia_clinica
+necesito revisar historia clinica,historia_clinica
+revisar evolucion del paciente,historia_clinica
+consultar evolucion registrado,historia_clinica
+ver evolucion pendiente,historia_clinica
+buscar informacion sobre evolucion,historia_clinica
+necesito revisar evolucion,historia_clinica
+revisar motivo de consulta del paciente,historia_clinica
+consultar motivo de consulta registrado,historia_clinica
+ver motivo de consulta pendiente,historia_clinica
+buscar informacion sobre motivo de consulta,historia_clinica
+necesito revisar motivo de consulta,historia_clinica
+revisar hemograma del paciente,laboratorio
+consultar hemograma registrado,laboratorio
+ver hemograma pendiente,laboratorio
+buscar informacion sobre hemograma,laboratorio
+necesito revisar hemograma,laboratorio
+revisar creatinina del paciente,laboratorio
+consultar creatinina registrado,laboratorio
+ver creatinina pendiente,laboratorio
+buscar informacion sobre creatinina,laboratorio
+necesito revisar creatinina,laboratorio
+revisar glucosa del paciente,laboratorio
+consultar glucosa registrado,laboratorio
+ver glucosa pendiente,laboratorio
+buscar informacion sobre glucosa,laboratorio
+necesito revisar glucosa,laboratorio
+revisar resultado de laboratorio del paciente,laboratorio
+consultar resultado de laboratorio registrado,laboratorio
+ver resultado de laboratorio pendiente,laboratorio
+buscar informacion sobre resultado de laboratorio,laboratorio
+necesito revisar resultado de laboratorio,laboratorio
+revisar radiografia del paciente,imagen_diagnostica
+consultar radiografia registrado,imagen_diagnostica
+ver radiografia pendiente,imagen_diagnostica
+buscar informacion sobre radiografia,imagen_diagnostica
+necesito revisar radiografia,imagen_diagnostica
+revisar tomografia del paciente,imagen_diagnostica
+consultar tomografia registrado,imagen_diagnostica
+ver tomografia pendiente,imagen_diagnostica
+buscar informacion sobre tomografia,imagen_diagnostica
+necesito revisar tomografia,imagen_diagnostica
+revisar resonancia del paciente,imagen_diagnostica
+consultar resonancia registrado,imagen_diagnostica
+ver resonancia pendiente,imagen_diagnostica
+buscar informacion sobre resonancia,imagen_diagnostica
+necesito revisar resonancia,imagen_diagnostica
+revisar estudio de imagen del paciente,imagen_diagnostica
+consultar estudio de imagen registrado,imagen_diagnostica
+ver estudio de imagen pendiente,imagen_diagnostica
+buscar informacion sobre estudio de imagen,imagen_diagnostica
+necesito revisar estudio de imagen,imagen_diagnostica
+revisar medicamentos del paciente,medicamentos
+consultar medicamentos registrado,medicamentos
+ver medicamentos pendiente,medicamentos
+buscar informacion sobre medicamentos,medicamentos
+necesito revisar medicamentos,medicamentos
+revisar dosis del paciente,medicamentos
+consultar dosis registrado,medicamentos
+ver dosis pendiente,medicamentos
+buscar informacion sobre dosis,medicamentos
+necesito revisar dosis,medicamentos
+revisar prescripcion del paciente,medicamentos
+consultar prescripcion registrado,medicamentos
+ver prescripcion pendiente,medicamentos
+buscar informacion sobre prescripcion,medicamentos
+necesito revisar prescripcion,medicamentos
+revisar tratamiento del paciente,medicamentos
+consultar tratamiento registrado,medicamentos
+ver tratamiento pendiente,medicamentos
+buscar informacion sobre tratamiento,medicamentos
+necesito revisar tratamiento,medicamentos
+revisar documentos pendientes del paciente,seguimiento
+consultar documentos pendientes registrado,seguimiento
+ver documentos pendientes pendiente,seguimiento
+buscar informacion sobre documentos pendientes,seguimiento
+necesito revisar documentos pendientes,seguimiento
+revisar prioridad de revision del paciente,seguimiento
+consultar prioridad de revision registrado,seguimiento
+ver prioridad de revision pendiente,seguimiento
+buscar informacion sobre prioridad de revision,seguimiento
+necesito revisar prioridad de revision,seguimiento
+revisar resultados pendientes del paciente,seguimiento
+consultar resultados pendientes registrado,seguimiento
+ver resultados pendientes pendiente,seguimiento
+buscar informacion sobre resultados pendientes,seguimiento
+necesito revisar resultados pendientes,seguimiento
+revisar orden de revision del paciente,seguimiento
+consultar orden de revision registrado,seguimiento
+ver orden de revision pendiente,seguimiento
+buscar informacion sobre orden de revision,seguimiento
+necesito revisar orden de revision,seguimiento
