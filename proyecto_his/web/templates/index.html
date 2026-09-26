@@ -9,7 +9,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>HIS_IA v{{ version }}</title>
+    <meta
+        name="description"
+        content="HIS_IA - Sistema Inteligente Híbrido aplicado al dominio clínico"
+    >
+
+    <title>
+        HIS_IA | Sistema Inteligente Híbrido
+    </title>
 
     <link
         rel="stylesheet"
@@ -20,109 +27,163 @@
 
 <body>
 
-<div class="app-container">
-
-    <!-- ===================================================== -->
-    <!-- SIDEBAR -->
-    <!-- ===================================================== -->
+    <!-- ==================================================
+         SIDEBAR
+    =================================================== -->
 
     <aside class="sidebar">
 
-        <div class="brand">
+        <div class="sidebar-header">
 
             <div class="brand-icon">
-                H
+                IA
             </div>
 
             <div class="brand-text">
-                <h1>HIS_IA</h1>
-                <span>v{{ version }}</span>
+
+                <h1>
+                    HIS_IA
+                </h1>
+
+                <span>
+                    Sistema Inteligente
+                </span>
+
             </div>
 
         </div>
 
 
-        <nav class="menu">
+        <nav class="sidebar-nav">
 
             <button
-                class="menu-item active"
+                class="nav-item active"
                 data-section="inicio"
-                onclick="mostrarSeccion('inicio', this)"
             >
-                <span class="menu-icon">⌂</span>
-                Inicio
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Inicio
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
-                data-section="analisis"
-                onclick="mostrarSeccion('analisis', this)"
+                class="nav-item"
+                data-section="clasificacion"
             >
-                <span class="menu-icon">◈</span>
-                Analizar información
+                <span class="nav-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Clasificación
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
+                class="nav-item"
                 data-section="prioridad"
-                onclick="mostrarSeccion('prioridad', this)"
             >
-                <span class="menu-icon">◎</span>
-                Evaluar prioridad
+                <span class="nav-icon">
+                    ▲
+                </span>
+
+                <span>
+                    Prioridad
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
-                data-section="revision"
-                onclick="mostrarSeccion('revision', this)"
+                class="nav-item"
+                data-section="astar"
             >
-                <span class="menu-icon">⌘</span>
-                Organizar revisión
+                <span class="nav-icon">
+                    ⌘
+                </span>
+
+                <span>
+                    A*
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
+                class="nav-item"
                 data-section="minimax"
-                onclick="mostrarSeccion('minimax', this)"
             >
-                <span class="menu-icon">⇄</span>
-                Priorizar pacientes
+                <span class="nav-icon">
+                    ◫
+                </span>
+
+                <span>
+                    Minimax
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
-                data-section="reconocimiento"
-                onclick="mostrarSeccion('reconocimiento', this)"
+                class="nav-item"
+                data-section="semana7"
             >
-                <span class="menu-icon">◇</span>
-                Reconocimiento del caso
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Semana 7
+                </span>
             </button>
 
 
             <button
-                class="menu-item"
+                class="nav-item"
+                data-section="semana8"
+            >
+                <span class="nav-icon">
+                    ✦
+                </span>
+
+                <span>
+                    Semana 8
+                </span>
+            </button>
+
+
+            <button
+                class="nav-item"
                 data-section="asistente"
-                onclick="mostrarSeccion('asistente', this)"
             >
-                <span class="menu-icon">✦</span>
-                Asistente HIS_IA
+                <span class="nav-icon">
+                    ✧
+                </span>
+
+                <span>
+                    Asistente IA
+                </span>
             </button>
 
         </nav>
 
 
-        <div class="system-status">
+        <div class="sidebar-footer">
 
-            <span class="status-dot"></span>
+            <div class="status-dot"></div>
 
             <div>
-                <small>Sistema activo</small>
-                <strong>HIS_IA v{{ version }}</strong>
+
+                <strong>
+                    Sistema activo
+                </strong>
+
+                <small>
+                    Versión {{ version }}
+                </small>
+
             </div>
 
         </div>
@@ -130,957 +191,1743 @@
     </aside>
 
 
-    <!-- ===================================================== -->
-    <!-- CONTENIDO PRINCIPAL -->
-    <!-- ===================================================== -->
+    <!-- ==================================================
+         CONTENIDO PRINCIPAL
+    =================================================== -->
 
     <main class="main-content">
 
+        <!-- ==================================================
+             CABECERA
+        =================================================== -->
 
-        <!-- ================================================= -->
-        <!-- INICIO -->
-        <!-- ================================================= -->
+        <header class="topbar">
+
+            <div>
+
+                <p class="eyebrow">
+                    Inteligencia Artificial
+                </p>
+
+                <h2 id="tituloSeccion">
+                    Panel principal
+                </h2>
+
+            </div>
+
+
+            <div class="topbar-badge">
+                HIS / IA
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+             INICIO
+        =================================================== -->
 
         <section
             id="inicio"
-            class="section active"
+            class="content-section active"
         >
 
             <div class="hero">
 
-                <span class="hero-tag">
-                    ✦ Módulo de Inteligencia Artificial
-                </span>
+                <div class="hero-content">
 
-                <h2>
-                    Bienvenido a
-                    <span>HIS_IA</span>
-                </h2>
-
-                <p>
-                    Sistema inteligente de apoyo para la organización,
-                    análisis, reconocimiento, priorización y consulta
-                    de información clínica.
-                </p>
-
-            </div>
-
-
-            <div class="cards-grid">
-
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('analisis')"
-                >
-
-                    <span class="card-number">
-                        01
+                    <span class="hero-label">
+                        HIS_IA
                     </span>
 
-                    <div class="card-tag">
-                        Semana 3
-                    </div>
-
-                    <h3>
-                        Analizar información
-                    </h3>
+                    <h2>
+                        Sistema Inteligente Híbrido
+                        aplicado al entorno clínico
+                    </h2>
 
                     <p>
-                        Identifica el tipo de información mediante
-                        reglas y palabras clave.
+                        Plataforma académica que integra
+                        clasificación, búsqueda heurística,
+                        Minimax, representaciones,
+                        reconocimiento mediante redes neuronales,
+                        procesamiento documental y representación
+                        del conocimiento.
                     </p>
 
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
 
-                </article>
+                    <div class="hero-actions">
 
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('prioridad')"
-                >
-
-                    <span class="card-number">
-                        02
-                    </span>
-
-                    <div class="card-tag">
-                        Semana 2
-                    </div>
-
-                    <h3>
-                        Evaluar prioridad
-                    </h3>
-
-                    <p>
-                        Utiliza Machine Learning para clasificar
-                        la prioridad de revisión.
-                    </p>
-
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
-
-                </article>
-
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('revision')"
-                >
-
-                    <span class="card-number">
-                        03
-                    </span>
-
-                    <div class="card-tag">
-                        Semana 4 · A*
-                    </div>
-
-                    <h3>
-                        Organizar revisión
-                    </h3>
-
-                    <p>
-                        Calcula una secuencia de revisión
-                        utilizando el algoritmo A*.
-                    </p>
-
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
-
-                </article>
-
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('minimax')"
-                >
-
-                    <span class="card-number">
-                        04
-                    </span>
-
-                    <div class="card-tag">
-                        Semana 4 · Minimax
-                    </div>
-
-                    <h3>
-                        Priorizar pacientes
-                    </h3>
-
-                    <p>
-                        Compara dos pacientes mediante
-                        indicadores generales y Minimax.
-                    </p>
-
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
-
-                </article>
-
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('reconocimiento')"
-                >
-
-                    <span class="card-number">
-                        05
-                    </span>
-
-                    <div class="card-tag">
-                        Semana 7
-                    </div>
-
-                    <h3>
-                        Reconocimiento del caso
-                    </h3>
-
-                    <p>
-                        Analiza temperatura, frecuencia cardíaca
-                        y presión arterial mediante tres
-                        representaciones.
-                    </p>
-
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
-
-                </article>
-
-
-                <article
-                    class="module-card"
-                    onclick="abrirDesdeCard('asistente')"
-                >
-
-                    <span class="card-number">
-                        06
-                    </span>
-
-                    <div class="card-tag">
-                        Semana 5
-                    </div>
-
-                    <h3>
-                        Asistente HIS_IA
-                    </h3>
-
-                    <p>
-                        Combina reglas, TF-IDF, similitud coseno
-                        y clasificación automática.
-                    </p>
-
-                    <span class="card-action">
-                        Abrir módulo →
-                    </span>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================================================= -->
-        <!-- SEMANA 3 -->
-        <!-- ANALIZAR INFORMACIÓN -->
-        <!-- ================================================= -->
-
-        <section
-            id="analisis"
-            class="section"
-        >
-
-            <div class="section-header">
-
-                <span class="section-tag">
-                    SEMANA 3
-                </span>
-
-                <h2>
-                    Analizar información clínica
-                </h2>
-
-                <p>
-                    Ingrese información en lenguaje natural.
-                    HIS_IA analizará las palabras presentes
-                    y determinará su categoría.
-                </p>
-
-            </div>
-
-
-            <div class="panel">
-
-                <label for="textoAnalisis">
-                    Información clínica
-                </label>
-
-                <textarea
-                    id="textoAnalisis"
-                    placeholder="Ejemplo: Paciente con hemograma pendiente y radiografía disponible."
-                ></textarea>
-
-
-                <button
-                    class="primary-button"
-                    onclick="analizarInformacion()"
-                >
-                    Analizar información
-                </button>
-
-
-                <div
-                    id="resultadoAnalisis"
-                    class="result-box hidden"
-                ></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================================================= -->
-        <!-- SEMANA 2 -->
-        <!-- MACHINE LEARNING -->
-        <!-- ================================================= -->
-
-        <section
-            id="prioridad"
-            class="section"
-        >
-
-            <div class="section-header">
-
-                <span class="section-tag">
-                    SEMANA 2
-                </span>
-
-                <h2>
-                    Evaluar prioridad
-                </h2>
-
-                <p>
-                    El modelo utiliza StandardScaler y
-                    Logistic Regression para realizar
-                    la clasificación.
-                </p>
-
-            </div>
-
-
-            <div class="panel">
-
-                <div class="form-grid">
-
-                    <div class="field">
-
-                        <label for="edad">
-                            Edad
-                        </label>
-
-                        <input
-                            id="edad"
-                            type="number"
-                            min="0"
-                            value="60"
+                        <button
+                            class="btn-primary"
+                            data-go-section="semana8"
                         >
+                            Ir a Semana 8
+                        </button>
 
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="documentos">
-                            Documentos pendientes
-                        </label>
-
-                        <input
-                            id="documentos"
-                            type="number"
-                            min="0"
-                            value="2"
+                        <button
+                            class="btn-secondary"
+                            data-go-section="asistente"
                         >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="resultados">
-                            Resultados pendientes
-                        </label>
-
-                        <input
-                            id="resultados"
-                            type="number"
-                            min="0"
-                            value="3"
-                        >
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="imagenes">
-                            Imágenes pendientes
-                        </label>
-
-                        <input
-                            id="imagenes"
-                            type="number"
-                            min="0"
-                            value="1"
-                        >
+                            Abrir asistente
+                        </button>
 
                     </div>
 
                 </div>
 
 
-                <button
-                    class="primary-button"
-                    onclick="evaluarPrioridad()"
+                <div class="hero-visual">
+
+                    <div class="hero-orbit">
+
+                        <div class="hero-core">
+                            IA
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <article class="dashboard-card">
+
+                    <span class="dashboard-number">
+                        01
+                    </span>
+
+                    <h3>
+                        Clasificación
+                    </h3>
+
+                    <p>
+                        Procesamiento y clasificación
+                        de información textual clínica.
+                    </p>
+
+                </article>
+
+
+                <article class="dashboard-card">
+
+                    <span class="dashboard-number">
+                        02
+                    </span>
+
+                    <h3>
+                        Algoritmos
+                    </h3>
+
+                    <p>
+                        Aplicación de A* y Minimax
+                        dentro del contexto HIS.
+                    </p>
+
+                </article>
+
+
+                <article class="dashboard-card">
+
+                    <span class="dashboard-number">
+                        03
+                    </span>
+
+                    <h3>
+                        Representaciones
+                    </h3>
+
+                    <p>
+                        Análisis numérico, simbólico
+                        y mediante autómatas.
+                    </p>
+
+                </article>
+
+
+                <article class="dashboard-card highlight-card">
+
+                    <span class="dashboard-number">
+                        04
+                    </span>
+
+                    <h3>
+                        Reconocimiento
+                    </h3>
+
+                    <p>
+                        MLP, documentos médicos,
+                        SQLite, interpretación y ontologías.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             CLASIFICACIÓN
+        =================================================== -->
+
+        <section
+            id="clasificacion"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Clasificación
+                    </span>
+
+                    <h2>
+                        Análisis de información clínica
+                    </h2>
+
+                    <p>
+                        Ingresa un texto para realizar
+                        su clasificación mediante HIS_IA.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <form id="formClasificacion">
+
+                    <div class="form-group">
+
+                        <label for="textoClasificacion">
+                            Información a analizar
+                        </label>
+
+                        <textarea
+                            id="textoClasificacion"
+                            rows="7"
+                            placeholder="Escribe aquí la información que deseas analizar..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Analizar información
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="resultadoClasificacion"
+                    class="result-box hidden"
                 >
-                    Evaluar prioridad
-                </button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             PRIORIDAD
+        =================================================== -->
+
+        <section
+            id="prioridad"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Machine Learning
+                    </span>
+
+                    <h2>
+                        Evaluación de prioridad
+                    </h2>
+
+                    <p>
+                        Evalúa los datos ingresados
+                        mediante el modelo de prioridad
+                        integrado al proyecto.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <form id="formPrioridad">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="prioridadEdad">
+                                Edad
+                            </label>
+
+                            <input
+                                type="number"
+                                id="prioridadEdad"
+                                min="0"
+                                value="30"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="prioridadTemperatura">
+                                Temperatura
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.1"
+                                id="prioridadTemperatura"
+                                value="36.5"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="prioridadFrecuencia">
+                                Frecuencia cardiaca
+                            </label>
+
+                            <input
+                                type="number"
+                                id="prioridadFrecuencia"
+                                value="78"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="prioridadPresion">
+                                Presión arterial
+                            </label>
+
+                            <input
+                                type="number"
+                                id="prioridadPresion"
+                                value="120"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Evaluar prioridad
+                    </button>
+
+                </form>
 
 
                 <div
                     id="resultadoPrioridad"
                     class="result-box hidden"
-                ></div>
+                >
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- ================================================= -->
-        <!-- SEMANA 4 -->
-        <!-- A* -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             A*
+        =================================================== -->
 
         <section
-            id="revision"
-            class="section"
+            id="astar"
+            class="content-section"
         >
 
             <div class="section-header">
 
-                <span class="section-tag">
-                    SEMANA 4 · A*
-                </span>
+                <div>
 
-                <h2>
-                    Organizar revisión
-                </h2>
+                    <span class="section-tag">
+                        Semana 4
+                    </span>
 
-                <p>
-                    Seleccione los elementos pendientes.
-                    A* buscará una secuencia de revisión
-                    de acuerdo con los costos definidos.
-                </p>
+                    <h2>
+                        Algoritmo A*
+                    </h2>
+
+                    <p>
+                        Planificación de una ruta
+                        óptima de revisión dentro
+                        de la red definida.
+                    </p>
+
+                </div>
 
             </div>
 
 
             <div class="panel">
 
-                <div class="checkbox-list">
+                <form id="formAstar">
 
-                    <label class="check-card">
+                    <div class="form-grid">
 
-                        <input
-                            type="checkbox"
-                            name="revision"
-                            value="Historia clínica"
-                        >
+                        <div class="form-group">
 
-                        <span>
-                            Historia clínica
-                        </span>
+                            <label for="astarOrigen">
+                                Nodo origen
+                            </label>
 
-                    </label>
+                            <input
+                                type="text"
+                                id="astarOrigen"
+                                placeholder="Ejemplo: Servidor_A"
+                                required
+                            >
 
-
-                    <label class="check-card">
-
-                        <input
-                            type="checkbox"
-                            name="revision"
-                            value="Resultados de laboratorio"
-                        >
-
-                        <span>
-                            Resultados de laboratorio
-                        </span>
-
-                    </label>
+                        </div>
 
 
-                    <label class="check-card">
+                        <div class="form-group">
 
-                        <input
-                            type="checkbox"
-                            name="revision"
-                            value="Estudio de imagen"
-                        >
+                            <label for="astarDestino">
+                                Nodo destino
+                            </label>
 
-                        <span>
-                            Estudio de imagen
-                        </span>
+                            <input
+                                type="text"
+                                id="astarDestino"
+                                placeholder="Ejemplo: Servidor_D"
+                                required
+                            >
 
-                    </label>
+                        </div>
 
-
-                    <label class="check-card">
-
-                        <input
-                            type="checkbox"
-                            name="revision"
-                            value="Medicamentos"
-                        >
-
-                        <span>
-                            Medicamentos
-                        </span>
-
-                    </label>
-
-                </div>
+                    </div>
 
 
-                <button
-                    class="primary-button"
-                    onclick="organizarRevision()"
-                >
-                    Organizar revisión
-                </button>
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Calcular ruta
+                    </button>
+
+                </form>
 
 
                 <div
-                    id="resultadoRevision"
+                    id="resultadoAstar"
                     class="result-box hidden"
-                ></div>
+                >
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- ================================================= -->
-        <!-- SEMANA 4 -->
-        <!-- MINIMAX -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             MINIMAX
+        =================================================== -->
 
         <section
             id="minimax"
-            class="section"
+            class="content-section"
         >
 
             <div class="section-header">
 
-                <span class="section-tag">
-                    SEMANA 4 · MINIMAX
-                </span>
+                <div>
 
-                <h2>
-                    Priorización de pacientes
-                </h2>
+                    <span class="section-tag">
+                        Semana 4
+                    </span>
 
-                <p>
-                    Compare dos pacientes a partir
-                    de indicadores generales de condición.
-                </p>
+                    <h2>
+                        Priorización Minimax
+                    </h2>
 
-            </div>
-
-
-            <div class="patient-grid">
-
-
-                <!-- PACIENTE 1 -->
-
-                <div class="patient-card">
-
-                    <div class="patient-title">
-
-                        <span>
-                            01
-                        </span>
-
-                        <h3>
-                            Paciente 1
-                        </h3>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="p1Motivo">
-                            Motivo de consulta
-                        </label>
-
-                        <input
-                            id="p1Motivo"
-                            type="text"
-                            placeholder="Ejemplo: Migraña"
-                        >
-
-                    </div>
-
-
-                    <div class="checkbox-list compact">
-
-                        <label class="check-card">
-                            <input
-                                id="p1Dolor"
-                                type="checkbox"
-                            >
-                            <span>Dolor intenso</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Respiracion"
-                                type="checkbox"
-                            >
-                            <span>Dificultad respiratoria</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Sangrado"
-                                type="checkbox"
-                            >
-                            <span>Sangrado activo</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Movilidad"
-                                type="checkbox"
-                            >
-                            <span>Pérdida de movilidad</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Conciencia"
-                                type="checkbox"
-                            >
-                            <span>Alteración de conciencia</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Trauma"
-                                type="checkbox"
-                            >
-                            <span>Trauma</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p1Soporte"
-                                type="checkbox"
-                            >
-                            <span>Requiere soporte</span>
-                        </label>
-
-                    </div>
+                    <p>
+                        Simula una estrategia de decisión
+                        para priorizar pacientes o eventos.
+                    </p>
 
                 </div>
-
-
-                <!-- PACIENTE 2 -->
-
-                <div class="patient-card">
-
-                    <div class="patient-title">
-
-                        <span>
-                            02
-                        </span>
-
-                        <h3>
-                            Paciente 2
-                        </h3>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label for="p2Motivo">
-                            Motivo de consulta
-                        </label>
-
-                        <input
-                            id="p2Motivo"
-                            type="text"
-                            placeholder="Ejemplo: Fractura"
-                        >
-
-                    </div>
-
-
-                    <div class="checkbox-list compact">
-
-                        <label class="check-card">
-                            <input
-                                id="p2Dolor"
-                                type="checkbox"
-                            >
-                            <span>Dolor intenso</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Respiracion"
-                                type="checkbox"
-                            >
-                            <span>Dificultad respiratoria</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Sangrado"
-                                type="checkbox"
-                            >
-                            <span>Sangrado activo</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Movilidad"
-                                type="checkbox"
-                            >
-                            <span>Pérdida de movilidad</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Conciencia"
-                                type="checkbox"
-                            >
-                            <span>Alteración de conciencia</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Trauma"
-                                type="checkbox"
-                            >
-                            <span>Trauma</span>
-                        </label>
-
-                        <label class="check-card">
-                            <input
-                                id="p2Soporte"
-                                type="checkbox"
-                            >
-                            <span>Requiere soporte</span>
-                        </label>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <button
-                class="primary-button"
-                onclick="priorizarPacientes()"
-            >
-                Comparar prioridad
-            </button>
-
-
-            <div
-                id="resultadoMinimax"
-                class="result-box hidden"
-            ></div>
-
-        </section>
-
-
-        <!-- ================================================= -->
-        <!-- SEMANA 7 -->
-        <!-- REPRESENTACIONES -->
-        <!-- ================================================= -->
-
-        <section
-            id="reconocimiento"
-            class="section"
-        >
-
-            <div class="section-header">
-
-                <span class="section-tag">
-                    SEMANA 7
-                </span>
-
-                <h2>
-                    Reconocimiento del caso
-                </h2>
-
-                <p>
-                    Ingrese los signos del paciente.
-                    HIS_IA representará la misma información
-                    de forma numérica, simbólica
-                    y mediante un autómata.
-                </p>
 
             </div>
 
 
             <div class="panel">
 
+                <form id="formMinimax">
 
-                <div class="field">
+                    <div class="form-group">
 
-                    <label for="recMotivo">
-                        Motivo de consulta
-                    </label>
+                        <label for="pacientesMinimax">
+                            Valores o pacientes
+                        </label>
 
-                    <input
-                        id="recMotivo"
-                        type="text"
-                        placeholder="Ejemplo: Malestar general"
+                        <textarea
+                            id="pacientesMinimax"
+                            rows="6"
+                            placeholder="Ingresa los datos separados por comas o según el formato configurado."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
                     >
+                        Ejecutar Minimax
+                    </button>
 
-                </div>
-
-
-                <div class="form-grid semana7-form">
-
-
-                    <!-- TEMPERATURA -->
-
-                    <div class="field">
-
-                        <label for="recTemperatura">
-                            Temperatura °C
-                        </label>
-
-                        <input
-                            id="recTemperatura"
-                            type="number"
-                            step="0.1"
-                            placeholder="Ejemplo: 38.2"
-                        >
-
-                    </div>
-
-
-                    <!-- LATIDOS -->
-
-                    <div class="field">
-
-                        <label for="recLatidos">
-                            Latidos por minuto
-                        </label>
-
-                        <input
-                            id="recLatidos"
-                            type="number"
-                            step="1"
-                            placeholder="Ejemplo: 78"
-                        >
-
-                    </div>
-
-
-                    <!-- PRESIÓN -->
-
-                    <div class="field">
-
-                        <label for="recPresion">
-                            Presión arterial
-                        </label>
-
-                        <input
-                            id="recPresion"
-                            type="number"
-                            step="1"
-                            placeholder="Ejemplo: 145"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="primary-button"
-                    onclick="analizarReconocimiento()"
-                >
-                    Analizar caso
-                </button>
+                </form>
 
 
                 <div
-                    id="resultadoReconocimiento"
+                    id="resultadoMinimax"
                     class="result-box hidden"
-                ></div>
+                >
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- ================================================= -->
-        <!-- SEMANA 5 -->
-        <!-- ASISTENTE -->
-        <!-- ================================================= -->
+        <!-- ==================================================
+             SEMANA 7
+        =================================================== -->
 
         <section
-            id="asistente"
-            class="section"
+            id="semana7"
+            class="content-section"
         >
 
             <div class="section-header">
 
-                <span class="section-tag">
-                    SEMANA 5
-                </span>
+                <div>
 
-                <h2>
-                    Asistente HIS_IA
-                </h2>
+                    <span class="section-tag">
+                        Semana 7
+                    </span>
 
-                <p>
-                    Consulte información relacionada con
-                    historias clínicas, laboratorio,
-                    estudios de imagen, medicamentos
-                    y elementos pendientes.
-                </p>
+                    <h2>
+                        Representaciones del conocimiento
+                    </h2>
+
+                    <p>
+                        Representación numérica,
+                        simbólica y mediante autómata
+                        de variables clínicas.
+                    </p>
+
+                </div>
 
             </div>
 
 
-            <div class="chat-container">
+            <div class="panel">
 
-                <div
-                    id="chat"
-                    class="chat"
-                >
+                <form id="formSemana7">
 
-                    <div class="message assistant">
+                    <div class="form-grid">
 
-                        Bienvenido al asistente HIS_IA.
-                        Puede realizar una consulta relacionada
-                        con historia clínica, laboratorio,
-                        imágenes, medicamentos o revisión
-                        de información.
+                        <div class="form-group">
+
+                            <label for="semana7Temperatura">
+                                Temperatura
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.1"
+                                id="semana7Temperatura"
+                                value="36.5"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana7Latidos">
+                                Latidos
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana7Latidos"
+                                value="78"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana7Presion">
+                                Presión arterial
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana7Presion"
+                                value="125"
+                                required
+                            >
+
+                        </div>
 
                     </div>
 
-                </div>
-
-
-                <div class="chat-input">
-
-                    <input
-                        id="consultaAsistente"
-                        type="text"
-                        placeholder="Escriba una consulta..."
-                        onkeydown="enviarConEnter(event)"
-                    >
 
                     <button
-                        onclick="consultarAsistente()"
+                        type="submit"
+                        class="btn-primary"
                     >
-                        Enviar
+                        Analizar representaciones
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div
+                id="resultadoSemana7"
+                class="hidden"
+            >
+
+                <div class="week7-grid">
+
+                    <article class="week7-card">
+
+                        <span class="card-label">
+                            Representación
+                        </span>
+
+                        <h3>
+                            Numérica
+                        </h3>
+
+                        <div id="semana7Numerica">
+                        </div>
+
+                    </article>
+
+
+                    <article class="week7-card">
+
+                        <span class="card-label">
+                            Representación
+                        </span>
+
+                        <h3>
+                            Simbólica
+                        </h3>
+
+                        <div id="semana7Simbolica">
+                        </div>
+
+                    </article>
+
+
+                    <article class="week7-card">
+
+                        <span class="card-label">
+                            Reconocimiento
+                        </span>
+
+                        <h3>
+                            Autómata
+                        </h3>
+
+                        <div id="semana7Automata">
+                        </div>
+
+                    </article>
+
+
+                    <article class="week7-card">
+
+                        <span class="card-label">
+                            Resultado
+                        </span>
+
+                        <h3>
+                            Integración
+                        </h3>
+
+                        <div id="semana7Integrado">
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             SEMANA 8
+        =================================================== -->
+
+        <section
+            id="semana8"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 8
+                    </span>
+
+                    <h2>
+                        Reconocimiento y representación
+                    </h2>
+
+                    <p>
+                        Procesa imágenes mediante MLP y documentos
+                        de laboratorio mediante extracción,
+                        evidencia SQLite, ontología e interpretación
+                        clínica orientativa.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================================
+                 ESTADÍSTICAS
+            =============================================== -->
+
+            <div class="week8-stats">
+
+                <article class="stat-card">
+
+                    <span>
+                        Accuracy MLP
+                    </span>
+
+                    <strong id="semana8Accuracy">
+                        --
+                    </strong>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span>
+                        Documentos
+                    </span>
+
+                    <strong id="semana8Documentos">
+                        0
+                    </strong>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span>
+                        Resultados
+                    </span>
+
+                    <strong id="semana8Resultados">
+                        0
+                    </strong>
+
+                </article>
+
+
+                <article class="stat-card">
+
+                    <span>
+                        Imágenes
+                    </span>
+
+                    <strong id="semana8Imagenes">
+                        0
+                    </strong>
+
+                </article>
+
+            </div>
+
+
+            <!-- ==============================================
+                 CARGA DE ARCHIVOS
+            =============================================== -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            Entrada
+                        </span>
+
+                        <h3>
+                            Analizar archivo
+                        </h3>
+
+                    </div>
+
+
+                    <button
+                        id="btnActualizarSemana8"
+                        class="btn-secondary"
+                        type="button"
+                    >
+                        Actualizar evidencia
                     </button>
 
                 </div>
 
+
+                <div
+                    id="semana8DropZone"
+                    class="upload-zone"
+                >
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <h3>
+                        Arrastra un archivo aquí
+                    </h3>
+
+                    <p>
+                        o haz clic para seleccionarlo
+                    </p>
+
+                    <small>
+                        PDF, PNG, JPG, JPEG o WEBP · Máximo 15 MB
+                    </small>
+
+                </div>
+
+
+                <input
+                    type="file"
+                    id="semana8Archivo"
+                    accept=".pdf,.png,.jpg,.jpeg,.webp"
+                    hidden
+                >
+
+
+                <div
+                    id="semana8ArchivoSeleccionado"
+                    class="selected-file hidden"
+                >
+
+                    <div>
+
+                        <strong id="semana8NombreArchivo">
+                            archivo.pdf
+                        </strong>
+
+                        <span id="semana8TamanoArchivo">
+                            0 KB
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        id="btnQuitarArchivoSemana8"
+                        type="button"
+                        class="btn-icon"
+                        aria-label="Quitar archivo"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <button
+                    id="btnAnalizarSemana8"
+                    type="button"
+                    class="btn-primary"
+                >
+                    Analizar archivo
+                </button>
+
+
+                <div
+                    id="semana8Procesando"
+                    class="processing-box hidden"
+                >
+
+                    <div class="spinner">
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Procesando archivo
+                        </strong>
+
+                        <p>
+                            HIS_IA está analizando la información.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================================
+                 RESULTADO SEMANA 8
+            =============================================== -->
+
+            <div
+                id="resultadoSemana8"
+                class="hidden"
+            >
+
+                <div class="result-header">
+
+                    <div>
+
+                        <span class="section-tag">
+                            Resultado
+                        </span>
+
+                        <h3 id="semana8ResultadoTitulo">
+                            Análisis completado
+                        </h3>
+
+                    </div>
+
+
+                    <span
+                        id="semana8ResultadoTipo"
+                        class="result-type"
+                    >
+                        --
+                    </span>
+
+                </div>
+
+
+                <!-- ==========================================
+                     RESULTADO PDF
+                =========================================== -->
+
+                <div
+                    id="resultadoSemana8PDF"
+                    class="hidden"
+                >
+
+                    <!-- ======================================
+                         DATOS DEL DOCUMENTO
+                    ======================================= -->
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="card-label">
+                                    Documento
+                                </span>
+
+                                <h3>
+                                    Datos identificados
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="document-data-grid">
+
+                            <div class="data-field">
+
+                                <span>
+                                    Paciente
+                                </span>
+
+                                <strong id="semana8Paciente">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div class="data-field">
+
+                                <span>
+                                    Identificación
+                                </span>
+
+                                <strong id="semana8Identificacion">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div class="data-field">
+
+                                <span>
+                                    Fecha
+                                </span>
+
+                                <strong id="semana8Fecha">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div class="data-field">
+
+                                <span>
+                                    Tipo de documento
+                                </span>
+
+                                <strong id="semana8TipoDocumento">
+                                    --
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ======================================
+                         RESULTADOS DE LABORATORIO
+                    ======================================= -->
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="card-label">
+                                    Extracción
+                                </span>
+
+                                <h3>
+                                    Resultados de laboratorio
+                                </h3>
+
+                            </div>
+
+
+                            <span class="counter-badge">
+
+                                <strong id="semana8CantidadExamenes">
+                                    0
+                                </strong>
+
+                                exámenes
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="table-container">
+
+                            <table class="clinical-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Examen
+                                        </th>
+
+                                        <th>
+                                            Resultado
+                                        </th>
+
+                                        <th>
+                                            Unidad
+                                        </th>
+
+                                        <th>
+                                            Referencia
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Página
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="semana8TablaExamenes">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="6"
+                                            class="empty-cell"
+                                        >
+                                            Sin resultados
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div
+                            id="semana8OCR"
+                            class="ocr-alert hidden"
+                        >
+
+                            <strong>
+                                Documento sin texto digital
+                            </strong>
+
+                            <p>
+                                Este archivo requiere OCR
+                                para poder extraer información.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ======================================
+                         NUEVO
+                         INTERPRETACIÓN CLÍNICA
+                    ======================================= -->
+
+                    <div
+                        id="semana8InterpretacionClinica"
+                        class="clinical-analysis hidden"
+                    >
+
+                        <div class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+
+                                    <span class="card-label">
+                                        Sistema de apoyo
+                                    </span>
+
+                                    <h3>
+                                        Análisis clínico orientativo
+                                    </h3>
+
+                                    <p>
+                                        Comparación automática de los
+                                        resultados con los rangos de
+                                        referencia incluidos en el documento.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ==============================
+                                 RESUMEN DE INTERPRETACIÓN
+                            =============================== -->
+
+                            <div class="clinical-summary">
+
+                                <article class="clinical-stat">
+
+                                    <span>
+                                        Evaluados
+                                    </span>
+
+                                    <strong id="clinicaEvaluados">
+                                        0
+                                    </strong>
+
+                                </article>
+
+
+                                <article class="clinical-stat status-normal">
+
+                                    <span>
+                                        En referencia
+                                    </span>
+
+                                    <strong id="clinicaNormales">
+                                        0
+                                    </strong>
+
+                                </article>
+
+
+                                <article class="clinical-stat status-high">
+
+                                    <span>
+                                        Altos
+                                    </span>
+
+                                    <strong id="clinicaAltos">
+                                        0
+                                    </strong>
+
+                                </article>
+
+
+                                <article class="clinical-stat status-low">
+
+                                    <span>
+                                        Bajos
+                                    </span>
+
+                                    <strong id="clinicaBajos">
+                                        0
+                                    </strong>
+
+                                </article>
+
+
+                                <article class="clinical-stat">
+
+                                    <span>
+                                        No evaluables
+                                    </span>
+
+                                    <strong id="clinicaNoEvaluables">
+                                        0
+                                    </strong>
+
+                                </article>
+
+                            </div>
+
+
+                            <!-- ==============================
+                                 HALLAZGOS
+                            =============================== -->
+
+                            <div class="clinical-block">
+
+                                <div class="clinical-block-title">
+
+                                    <div class="clinical-block-icon">
+                                        !
+                                    </div>
+
+                                    <div>
+
+                                        <h4>
+                                            Hallazgos
+                                        </h4>
+
+                                        <p>
+                                            Resultados fuera del rango
+                                            de referencia.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    id="clinicaHallazgos"
+                                    class="clinical-findings"
+                                >
+
+                                    <p class="empty-message">
+                                        No se identificaron hallazgos.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ==============================
+                                 POSIBLES CONDICIONES
+                            =============================== -->
+
+                            <div class="clinical-block">
+
+                                <div class="clinical-block-title">
+
+                                    <div class="clinical-block-icon">
+                                        +
+                                    </div>
+
+                                    <div>
+
+                                        <h4>
+                                            Posibles condiciones asociadas
+                                        </h4>
+
+                                        <p>
+                                            Hipótesis generadas mediante
+                                            reglas del sistema.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    id="clinicaCondiciones"
+                                    class="clinical-conditions"
+                                >
+
+                                    <div class="clinical-empty">
+
+                                        <strong>
+                                            Sin patrones alterados
+                                        </strong>
+
+                                        <p>
+                                            No se identificaron condiciones
+                                            específicas asociadas.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ==============================
+                                 CONCLUSIÓN
+                            =============================== -->
+
+                            <div class="clinical-block">
+
+                                <div class="clinical-block-title">
+
+                                    <div class="clinical-block-icon">
+                                        ✓
+                                    </div>
+
+                                    <div>
+
+                                        <h4>
+                                            Conclusión
+                                        </h4>
+
+                                        <p>
+                                            Resultado integrado del
+                                            motor de interpretación.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    id="clinicaConclusion"
+                                    class="clinical-conclusion"
+                                >
+                                    Sin conclusión disponible.
+                                </div>
+
+                            </div>
+
+
+                            <!-- ==============================
+                                 ADVERTENCIA
+                            =============================== -->
+
+                            <div class="clinical-warning">
+
+                                <div class="clinical-warning-icon">
+                                    ⚠
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Interpretación orientativa
+                                    </strong>
+
+                                    <p id="clinicaAdvertencia">
+                                        Esta información no constituye
+                                        un diagnóstico médico.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================================
+                     RESULTADO DE IMAGEN
+                =========================================== -->
+
+                <div
+                    id="resultadoSemana8Imagen"
+                    class="hidden"
+                >
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="card-label">
+                                    MLP
+                                </span>
+
+                                <h3>
+                                    Reconocimiento de imagen
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="image-result-grid">
+
+                            <article class="prediction-card">
+
+                                <span>
+                                    Dígito reconocido
+                                </span>
+
+                                <strong id="semana8Prediccion">
+                                    --
+                                </strong>
+
+                            </article>
+
+
+                            <article class="data-field">
+
+                                <span>
+                                    Confianza
+                                </span>
+
+                                <strong id="semana8Confianza">
+                                    --
+                                </strong>
+
+                            </article>
+
+
+                            <article class="data-field">
+
+                                <span>
+                                    Accuracy del modelo
+                                </span>
+
+                                <strong id="semana8AccuracyResultado">
+                                    --
+                                </strong>
+
+                            </article>
+
+
+                            <article class="data-field">
+
+                                <span>
+                                    ID SQLite
+                                </span>
+
+                                <strong id="semana8SQLiteImagen">
+                                    --
+                                </strong>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================================
+                     EVIDENCIA
+                =========================================== -->
+
+                <div class="evidence-grid">
+
+                    <article class="evidence-card">
+
+                        <span class="evidence-icon">
+                            DB
+                        </span>
+
+                        <div>
+
+                            <small>
+                                SQLite
+                            </small>
+
+                            <strong id="semana8EstadoSQLite">
+                                Pendiente
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="evidence-card">
+
+                        <span class="evidence-icon">
+                            KG
+                        </span>
+
+                        <div>
+
+                            <small>
+                                Ontología
+                            </small>
+
+                            <strong id="semana8EstadoOntologia">
+                                Pendiente
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="evidence-card">
+
+                        <span class="evidence-icon">
+                            N
+                        </span>
+
+                        <div>
+
+                            <small>
+                                Nodos
+                            </small>
+
+                            <strong id="semana8Nodos">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="evidence-card">
+
+                        <span class="evidence-icon">
+                            R
+                        </span>
+
+                        <div>
+
+                            <small>
+                                Relaciones
+                            </small>
+
+                            <strong id="semana8Relaciones">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
             </div>
 
         </section>
 
 
+        <!-- ==================================================
+             ASISTENTE IA
+        =================================================== -->
+
+        <section
+            id="asistente"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Asistente
+                    </span>
+
+                    <h2>
+                        Asistente HIS_IA
+                    </h2>
+
+                    <p>
+                        Interactúa con el sistema utilizando
+                        lenguaje natural.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="assistant-panel">
+
+                <div
+                    id="assistantMessages"
+                    class="assistant-messages"
+                >
+
+                    <div class="assistant-message bot">
+
+                        <div class="message-avatar">
+                            IA
+                        </div>
+
+                        <div class="message-content">
+
+                            <strong>
+                                HIS_IA
+                            </strong>
+
+                            <p>
+                                Hola. Puedes realizar una consulta
+                                relacionada con el sistema.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="formAsistente"
+                    class="assistant-form"
+                >
+
+                    <input
+                        id="mensajeAsistente"
+                        type="text"
+                        placeholder="Escribe tu consulta..."
+                        autocomplete="off"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Enviar
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
     </main>
 
-</div>
+
+    <!-- ==================================================
+         TOASTS
+    =================================================== -->
+
+    <div
+        id="toastContainer"
+        class="toast-container"
+    >
+    </div>
 
 
-<script
-    src="{{ url_for('static', filename='js/app.js') }}"
-></script>
+    <!-- ==================================================
+         JAVASCRIPT
+    =================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}"
+    ></script>
 
 </body>
 

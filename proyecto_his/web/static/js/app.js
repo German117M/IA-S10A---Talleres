@@ -1,29 +1,287 @@
+"use strict";
+
+
 // ==========================================================
-// HIS_IA v1.3
-// FRONTEND
+// HIS_IA
+// FRONTEND PRINCIPAL
 // ==========================================================
+
+
+// ==========================================================
+// UTILIDADES GENERALES
+// ==========================================================
+
+function obtenerElemento(id) {
+    return document.getElementById(id);
+}
+
+
+function mostrarElemento(elemento) {
+
+    if (!elemento) {
+        return;
+    }
+
+    elemento.classList.remove("hidden");
+}
+
+
+function ocultarElemento(elemento) {
+
+    if (!elemento) {
+        return;
+    }
+
+    elemento.classList.add("hidden");
+}
+
+
+function escaparHTML(valor) {
+
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
+        return "";
+    }
+
+    return String(valor)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function valorSeguro(
+    valor,
+    defecto = "--"
+) {
+
+    if (
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ) {
+        return defecto;
+    }
+
+    return valor;
+}
+
+
+function porcentaje(valor) {
+
+    if (
+        valor === null ||
+        valor === undefined ||
+        Number.isNaN(Number(valor))
+    ) {
+        return "--";
+    }
+
+    return `${(Number(valor) * 100).toFixed(2)}%`;
+}
+
+
+function formatearTamano(bytes) {
+
+    if (!bytes) {
+        return "0 KB";
+    }
+
+    const kb = bytes / 1024;
+
+    if (kb < 1024) {
+        return `${kb.toFixed(1)} KB`;
+    }
+
+    const mb = kb / 1024;
+
+    return `${mb.toFixed(2)} MB`;
+}
+
+
+// ==========================================================
+// NORMALIZAR TEXTO
+// ==========================================================
+
+function normalizarTexto(texto) {
+
+    return String(
+        texto || ""
+    )
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase();
+}
+
+
+// ==========================================================
+// TOAST
+// ==========================================================
+
+function mostrarToast(
+    mensaje,
+    tipo = "info"
+) {
+
+    const contenedor = obtenerElemento(
+        "toastContainer"
+    );
+
+    if (!contenedor) {
+        return;
+    }
+
+    const toast = document.createElement(
+        "div"
+    );
+
+    toast.className = `toast toast-${tipo}`;
+
+    toast.innerHTML = `
+        <span>
+            ${escaparHTML(mensaje)}
+        </span>
+    `;
+
+    contenedor.appendChild(
+        toast
+    );
+
+    requestAnimationFrame(() => {
+        toast.classList.add("show");
+    });
+
+    setTimeout(() => {
+
+        toast.classList.remove(
+            "show"
+        );
+
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+
+    }, 4000);
+}
+
+
+// ==========================================================
+// PETICIONES JSON
+// ==========================================================
+
+async function apiJSON(
+    url,
+    opciones = {}
+) {
+
+    const respuesta = await fetch(
+        url,
+        opciones
+    );
+
+    let datos;
+
+    try {
+
+        datos = await respuesta.json();
+
+    } catch {
+
+        throw new Error(
+            "El servidor devolvió una respuesta no válida."
+        );
+    }
+
+
+    if (!respuesta.ok) {
+
+        const mensaje =
+            datos.error ||
+            datos.detalle ||
+            "Ocurrió un error en el servidor.";
+
+        throw new Error(
+            mensaje
+        );
+    }
+
+
+    if (
+        datos &&
+        datos.ok === false
+    ) {
+
+        throw new Error(
+            datos.error ||
+            "La operación no pudo completarse."
+        );
+    }
+
+
+    return datos;
+}
 
 
 // ==========================================================
 // NAVEGACIÓN
 // ==========================================================
 
-function mostrarSeccion(id, boton = null) {
+const titulosSeccion = {
+
+    inicio:
+        "Panel principal",
+
+    clasificacion:
+        "Clasificación",
+
+    prioridad:
+        "Evaluación de prioridad",
+
+    astar:
+        "Algoritmo A*",
+
+    minimax:
+        "Priorización Minimax",
+
+    semana7:
+        "Representaciones",
+
+    semana8:
+        "Reconocimiento y representación",
+
+    asistente:
+        "Asistente HIS_IA"
+};
+
+
+function cambiarSeccion(
+    nombreSeccion
+) {
 
     document
-        .querySelectorAll(".section")
+        .querySelectorAll(
+            ".content-section"
+        )
         .forEach(seccion => {
+
             seccion.classList.remove(
                 "active"
             );
         });
 
 
-    const destino =
-        document.getElementById(id);
+    const destino = obtenerElemento(
+        nombreSeccion
+    );
 
 
     if (destino) {
+
         destino.classList.add(
             "active"
         );
@@ -31,33 +289,38 @@ function mostrarSeccion(id, boton = null) {
 
 
     document
-        .querySelectorAll(".menu-item")
+        .querySelectorAll(
+            ".nav-item"
+        )
         .forEach(item => {
-            item.classList.remove(
-                "active"
+
+            item.classList.toggle(
+                "active",
+                item.dataset.section === nombreSeccion
             );
         });
 
 
-    if (boton) {
-
-        boton.classList.add(
-            "active"
-        );
-
-    } else {
-
-        const botonCorrespondiente =
-            document.querySelector(
-                `.menu-item[data-section="${id}"]`
-            );
+    const titulo = obtenerElemento(
+        "tituloSeccion"
+    );
 
 
-        if (botonCorrespondiente) {
-            botonCorrespondiente.classList.add(
-                "active"
-            );
-        }
+    if (titulo) {
+
+        titulo.textContent =
+            titulosSeccion[
+                nombreSeccion
+            ] ||
+            "HIS_IA";
+    }
+
+
+    if (
+        nombreSeccion === "semana8"
+    ) {
+
+        cargarResumenSemana8();
     }
 
 
@@ -68,1632 +331,2671 @@ function mostrarSeccion(id, boton = null) {
 }
 
 
-
-function abrirDesdeCard(id) {
-    mostrarSeccion(id);
-}
-
-
-
 // ==========================================================
-// PROTECCIÓN HTML
+// NAVEGACIÓN LATERAL
 // ==========================================================
 
-function escaparHTML(valor) {
-
-    return String(
-        valor ?? ""
+document
+    .querySelectorAll(
+        ".nav-item"
     )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-}
+    .forEach(item => {
 
+        item.addEventListener(
+            "click",
+            () => {
 
-
-// ==========================================================
-// PETICIONES API
-// ==========================================================
-
-async function enviarAPI(
-    url,
-    datos
-) {
-
-    const respuesta =
-        await fetch(
-            url,
-            {
-                method:
-                    "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(
-                        datos
-                    )
+                cambiarSeccion(
+                    item.dataset.section
+                );
             }
         );
+    });
 
 
-    let resultado;
+// ==========================================================
+// BOTONES INTERNOS DE NAVEGACIÓN
+// ==========================================================
 
+document
+    .querySelectorAll(
+        "[data-go-section]"
+    )
+    .forEach(boton => {
 
-    try {
+        boton.addEventListener(
+            "click",
+            () => {
 
-        resultado =
-            await respuesta.json();
-
-    }
-
-    catch {
-
-        throw new Error(
-            "El servidor devolvió una respuesta no válida."
+                cambiarSeccion(
+                    boton.dataset.goSection
+                );
+            }
         );
-    }
+    });
 
 
-    if (!respuesta.ok) {
+// ==========================================================
+// CLASIFICACIÓN
+// ==========================================================
 
-        throw new Error(
-            resultado.error
-            || "Ocurrió un error al procesar la solicitud."
-        );
-    }
-
-
-    return resultado;
-}
-
-
-
-function mostrarError(
-    contenedor,
-    error
-) {
-
-    contenedor.classList.remove(
-        "hidden"
+const formClasificacion =
+    obtenerElemento(
+        "formClasificacion"
     );
 
 
-    contenedor.innerHTML = `
+if (formClasificacion) {
 
-        <div class="error-message">
+    formClasificacion.addEventListener(
+        "submit",
+        async evento => {
 
-            <strong>
-                Error:
-            </strong>
-
-            ${escaparHTML(
-                error.message
-            )}
-
-        </div>
-    `;
-}
+            evento.preventDefault();
 
 
-
-// ==========================================================
-// SEMANA 3
-// ==========================================================
-
-async function analizarInformacion() {
-
-    const texto =
-        document
-            .getElementById(
-                "textoAnalisis"
-            )
-            .value
-            .trim();
+            const texto =
+                obtenerElemento(
+                    "textoClasificacion"
+                )?.value.trim();
 
 
-    const contenedor =
-        document.getElementById(
-            "resultadoAnalisis"
-        );
+            const contenedor =
+                obtenerElemento(
+                    "resultadoClasificacion"
+                );
 
 
-    if (!texto) {
+            if (!texto) {
 
-        mostrarError(
-            contenedor,
-            new Error(
-                "Debe ingresar información para analizar."
-            )
-        );
+                mostrarToast(
+                    "Debe ingresar información para analizar.",
+                    "error"
+                );
 
-        return;
-    }
+                return;
+            }
 
 
-    try {
+            try {
 
-        const resultado =
-            await enviarAPI(
-                "/api/analizar",
-                {
-                    texto:
-                        texto
+                const datos = await apiJSON(
+                    "/api/analizar",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            texto:
+                                texto
+                        })
+                    }
+                );
+
+
+                mostrarElemento(
+                    contenedor
+                );
+
+
+                if (contenedor) {
+
+                    contenedor.innerHTML = `
+                        <h3>
+                            Resultado
+                        </h3>
+
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                datos.resultado,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
                 }
-            );
 
 
-        const categorias =
-            Array.isArray(
-                resultado.categorias
-            )
-            && resultado.categorias.length
+            } catch (error) {
 
-                ? resultado.categorias
-                    .map(
-                        escaparHTML
-                    )
-                    .join(
-                        ", "
-                    )
-
-                : "No se identificaron categorías";
-
-
-        contenedor.classList.remove(
-            "hidden"
-        );
-
-
-        contenedor.innerHTML = `
-
-            <div class="result-header">
-
-                <span>
-                    Resultado
-                </span>
-
-                <h3>
-                    Análisis de información
-                </h3>
-
-            </div>
-
-
-            <div class="result-row">
-
-                <span>
-                    Categoría principal
-                </span>
-
-                <strong>
-                    ${escaparHTML(
-                        resultado.principal
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="result-row">
-
-                <span>
-                    Categorías detectadas
-                </span>
-
-                <strong>
-                    ${categorias}
-                </strong>
-
-            </div>
-        `;
-
-    }
-
-    catch (error) {
-
-        mostrarError(
-            contenedor,
-            error
-        );
-    }
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
 }
 
 
-
 // ==========================================================
-// SEMANA 2
+// PRIORIDAD
 // ==========================================================
 
-async function evaluarPrioridad() {
-
-    const contenedor =
-        document.getElementById(
-            "resultadoPrioridad"
-        );
+const formPrioridad =
+    obtenerElemento(
+        "formPrioridad"
+    );
 
 
-    const datos = {
+if (formPrioridad) {
 
-        edad:
-            Number(
-                document
-                    .getElementById(
-                        "edad"
+    formPrioridad.addEventListener(
+        "submit",
+        async evento => {
+
+            evento.preventDefault();
+
+
+            const datosEntrada = {
+
+                edad:
+                    Number(
+                        obtenerElemento(
+                            "prioridadEdad"
+                        )?.value
+                    ),
+
+                temperatura:
+                    Number(
+                        obtenerElemento(
+                            "prioridadTemperatura"
+                        )?.value
+                    ),
+
+                frecuencia_cardiaca:
+                    Number(
+                        obtenerElemento(
+                            "prioridadFrecuencia"
+                        )?.value
+                    ),
+
+                presion:
+                    Number(
+                        obtenerElemento(
+                            "prioridadPresion"
+                        )?.value
                     )
-                    .value
-            ),
-
-        documentos_pendientes:
-            Number(
-                document
-                    .getElementById(
-                        "documentos"
-                    )
-                    .value
-            ),
-
-        resultados_pendientes:
-            Number(
-                document
-                    .getElementById(
-                        "resultados"
-                    )
-                    .value
-            ),
-
-        imagenes_pendientes:
-            Number(
-                document
-                    .getElementById(
-                        "imagenes"
-                    )
-                    .value
-            )
-    };
+            };
 
 
-    if (
-        Object
-            .values(
-                datos
-            )
-            .some(
-                valor =>
-                    Number.isNaN(
-                        valor
-                    )
-                    || valor < 0
-            )
-    ) {
+            try {
 
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese valores numéricos válidos."
-            )
-        );
+                const datos = await apiJSON(
+                    "/api/prioridad",
+                    {
+                        method:
+                            "POST",
 
-        return;
-    }
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datosEntrada
+                            )
+                    }
+                );
 
 
-    try {
-
-        const resultado =
-            await enviarAPI(
-                "/api/prioridad",
-                datos
-            );
+                const contenedor =
+                    obtenerElemento(
+                        "resultadoPrioridad"
+                    );
 
 
-        contenedor.classList.remove(
-            "hidden"
-        );
+                mostrarElemento(
+                    contenedor
+                );
 
 
-        contenedor.innerHTML = `
+                if (contenedor) {
 
-            <div class="result-header">
+                    contenedor.innerHTML = `
+                        <h3>
+                            Evaluación
+                        </h3>
 
-                <span>
-                    Machine Learning
-                </span>
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                datos.resultado,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
+                }
 
-                <h3>
-                    Resultado de prioridad
-                </h3>
 
-            </div>
+            } catch (error) {
 
-
-            <div class="priority-result">
-
-                ${escaparHTML(
-                    resultado.prioridad
-                )}
-
-            </div>
-        `;
-
-    }
-
-    catch (error) {
-
-        mostrarError(
-            contenedor,
-            error
-        );
-    }
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
 }
 
 
-
 // ==========================================================
-// SEMANA 4
 // A*
 // ==========================================================
 
-async function organizarRevision() {
-
-    const seleccionados = [
-
-        ...document.querySelectorAll(
-            'input[name="revision"]:checked'
-        )
-
-    ].map(
-        elemento =>
-            elemento.value
+const formAstar =
+    obtenerElemento(
+        "formAstar"
     );
 
 
-    const contenedor =
-        document.getElementById(
-            "resultadoRevision"
-        );
+if (formAstar) {
+
+    formAstar.addEventListener(
+        "submit",
+        async evento => {
+
+            evento.preventDefault();
 
 
-    if (!seleccionados.length) {
-
-        mostrarError(
-            contenedor,
-            new Error(
-                "Seleccione al menos un elemento."
-            )
-        );
-
-        return;
-    }
+            const origen =
+                obtenerElemento(
+                    "astarOrigen"
+                )?.value.trim();
 
 
-    try {
+            const destino =
+                obtenerElemento(
+                    "astarDestino"
+                )?.value.trim();
 
-        const resultado =
-            await enviarAPI(
-                "/api/revision",
-                {
-                    elementos:
-                        seleccionados
+
+            try {
+
+                const datos = await apiJSON(
+                    "/api/revision",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                origen,
+                                destino
+                            })
+                    }
+                );
+
+
+                const contenedor =
+                    obtenerElemento(
+                        "resultadoAstar"
+                    );
+
+
+                mostrarElemento(
+                    contenedor
+                );
+
+
+                if (contenedor) {
+
+                    contenedor.innerHTML = `
+                        <h3>
+                            Ruta calculada
+                        </h3>
+
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                datos.resultado,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
                 }
-            );
 
 
-        const ordenHTML =
-            resultado.orden
-                .map(
-                    elemento => `
-                        <li>
-                            ${escaparHTML(
-                                elemento
-                            )}
-                        </li>
-                    `
-                )
-                .join("");
+            } catch (error) {
 
-
-        contenedor.classList.remove(
-            "hidden"
-        );
-
-
-        contenedor.innerHTML = `
-
-            <div class="result-header">
-
-                <span>
-                    Algoritmo A*
-                </span>
-
-                <h3>
-                    Orden de revisión
-                </h3>
-
-            </div>
-
-
-            <ol class="result-list">
-                ${ordenHTML}
-            </ol>
-
-
-            <div class="result-row">
-
-                <span>
-                    Costo total estimado
-                </span>
-
-                <strong>
-                    ${escaparHTML(
-                        resultado.costo_total
-                    )}
-                </strong>
-
-            </div>
-        `;
-
-    }
-
-    catch (error) {
-
-        mostrarError(
-            contenedor,
-            error
-        );
-    }
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
 }
 
 
-
 // ==========================================================
-// SEMANA 4
 // MINIMAX
 // ==========================================================
 
-function obtenerPaciente(
-    numero
-) {
-
-    return {
-
-        motivo_consulta:
-            document
-                .getElementById(
-                    `p${numero}Motivo`
-                )
-                .value
-                .trim(),
-
-        dolor_intenso:
-            document
-                .getElementById(
-                    `p${numero}Dolor`
-                )
-                .checked,
-
-        dificultad_respiratoria:
-            document
-                .getElementById(
-                    `p${numero}Respiracion`
-                )
-                .checked,
-
-        sangrado_activo:
-            document
-                .getElementById(
-                    `p${numero}Sangrado`
-                )
-                .checked,
-
-        perdida_movilidad:
-            document
-                .getElementById(
-                    `p${numero}Movilidad`
-                )
-                .checked,
-
-        alteracion_conciencia:
-            document
-                .getElementById(
-                    `p${numero}Conciencia`
-                )
-                .checked,
-
-        trauma:
-            document
-                .getElementById(
-                    `p${numero}Trauma`
-                )
-                .checked,
-
-        requiere_soporte:
-            document
-                .getElementById(
-                    `p${numero}Soporte`
-                )
-                .checked
-    };
-}
+const formMinimax =
+    obtenerElemento(
+        "formMinimax"
+    );
 
 
+if (formMinimax) {
 
-async function priorizarPacientes() {
+    formMinimax.addEventListener(
+        "submit",
+        async evento => {
 
-    const paciente1 =
-        obtenerPaciente(
-            1
-        );
-
-
-    const paciente2 =
-        obtenerPaciente(
-            2
-        );
+            evento.preventDefault();
 
 
-    const contenedor =
-        document.getElementById(
-            "resultadoMinimax"
-        );
+            const texto =
+                obtenerElemento(
+                    "pacientesMinimax"
+                )?.value.trim();
 
 
-    if (
-        !paciente1.motivo_consulta
-        || !paciente2.motivo_consulta
-    ) {
+            if (!texto) {
 
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese el motivo de consulta de ambos pacientes."
-            )
-        );
+                mostrarToast(
+                    "Debe ingresar datos para Minimax.",
+                    "error"
+                );
 
-        return;
-    }
+                return;
+            }
 
 
-    try {
+            let pacientes;
 
-        const resultado =
-            await enviarAPI(
-                "/api/priorizar-pacientes",
-                {
-                    paciente1:
-                        paciente1,
 
-                    paciente2:
-                        paciente2
+            try {
+
+                pacientes = JSON.parse(
+                    texto
+                );
+
+            } catch {
+
+                pacientes = texto
+                    .split(",")
+                    .map(valor => valor.trim())
+                    .filter(Boolean);
+            }
+
+
+            try {
+
+                const datos = await apiJSON(
+                    "/api/priorizar-pacientes",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                pacientes:
+                                    pacientes
+                            })
+                    }
+                );
+
+
+                const contenedor =
+                    obtenerElemento(
+                        "resultadoMinimax"
+                    );
+
+
+                mostrarElemento(
+                    contenedor
+                );
+
+
+                if (contenedor) {
+
+                    contenedor.innerHTML = `
+                        <h3>
+                            Resultado Minimax
+                        </h3>
+
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                datos.resultado,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
                 }
-            );
 
 
-        contenedor.classList.remove(
-            "hidden"
-        );
+            } catch (error) {
 
-
-        contenedor.innerHTML = `
-
-            <div class="result-header">
-
-                <span>
-                    Minimax
-                </span>
-
-                <h3>
-                    Comparación de prioridad
-                </h3>
-
-            </div>
-
-
-            <div class="priority-result large">
-
-                ${escaparHTML(
-                    resultado
-                        .paciente_prioritario
-                )}
-
-            </div>
-
-
-            <div class="comparison-grid">
-
-
-                <div class="comparison-card">
-
-                    <span class="comparison-label">
-                        Paciente 1
-                    </span>
-
-                    <h4>
-                        ${escaparHTML(
-                            resultado
-                                .paciente1
-                                .motivo_consulta
-                        )}
-                    </h4>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Gravedad
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente1
-                                    .gravedad
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Impacto
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente1
-                                    .impacto
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric highlight">
-
-                        <span>
-                            Valor Minimax
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente1
-                                    .valor_minimax
-                            )}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="comparison-card">
-
-                    <span class="comparison-label">
-                        Paciente 2
-                    </span>
-
-                    <h4>
-                        ${escaparHTML(
-                            resultado
-                                .paciente2
-                                .motivo_consulta
-                        )}
-                    </h4>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Gravedad
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente2
-                                    .gravedad
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Impacto
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente2
-                                    .impacto
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric highlight">
-
-                        <span>
-                            Valor Minimax
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                resultado
-                                    .paciente2
-                                    .valor_minimax
-                            )}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-
-    }
-
-    catch (error) {
-
-        mostrarError(
-            contenedor,
-            error
-        );
-    }
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
 }
-
 
 
 // ==========================================================
 // SEMANA 7
 // ==========================================================
 
-async function analizarReconocimiento() {
+const formSemana7 =
+    obtenerElemento(
+        "formSemana7"
+    );
 
-    const contenedor =
-        document.getElementById(
-            "resultadoReconocimiento"
+
+if (formSemana7) {
+
+    formSemana7.addEventListener(
+        "submit",
+        async evento => {
+
+            evento.preventDefault();
+
+
+            const temperatura =
+                Number(
+                    obtenerElemento(
+                        "semana7Temperatura"
+                    )?.value
+                );
+
+
+            const latidos =
+                Number(
+                    obtenerElemento(
+                        "semana7Latidos"
+                    )?.value
+                );
+
+
+            const presion =
+                Number(
+                    obtenerElemento(
+                        "semana7Presion"
+                    )?.value
+                );
+
+
+            try {
+
+                const datos = await apiJSON(
+                    "/api/reconocimiento",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                temperatura,
+                                latidos,
+                                presion
+                            })
+                    }
+                );
+
+
+                const resultado =
+                    datos.resultado || {};
+
+
+                const contenedor =
+                    obtenerElemento(
+                        "resultadoSemana7"
+                    );
+
+
+                mostrarElemento(
+                    contenedor
+                );
+
+
+                const numerica =
+                    resultado.numerica ||
+                    resultado.representacion_numerica ||
+                    {};
+
+
+                const simbolica =
+                    resultado.simbolica ||
+                    resultado.representacion_simbolica ||
+                    {};
+
+
+                const automata =
+                    resultado.automata ||
+                    {};
+
+
+                const integrado =
+                    resultado.integrado ||
+                    resultado.resultado_integrado ||
+                    resultado.conclusion ||
+                    {};
+
+
+                const elementoNumerica =
+                    obtenerElemento(
+                        "semana7Numerica"
+                    );
+
+
+                if (elementoNumerica) {
+
+                    elementoNumerica.innerHTML = `
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                numerica,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
+                }
+
+
+                const elementoSimbolica =
+                    obtenerElemento(
+                        "semana7Simbolica"
+                    );
+
+
+                if (elementoSimbolica) {
+
+                    elementoSimbolica.innerHTML = `
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                simbolica,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
+                }
+
+
+                const elementoAutomata =
+                    obtenerElemento(
+                        "semana7Automata"
+                    );
+
+
+                if (elementoAutomata) {
+
+                    elementoAutomata.innerHTML = `
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                automata,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
+                }
+
+
+                const elementoIntegrado =
+                    obtenerElemento(
+                        "semana7Integrado"
+                    );
+
+
+                if (elementoIntegrado) {
+
+                    elementoIntegrado.innerHTML = `
+                        <pre>${escaparHTML(
+                            JSON.stringify(
+                                integrado,
+                                null,
+                                2
+                            )
+                        )}</pre>
+                    `;
+                }
+
+
+            } catch (error) {
+
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
+}
+
+
+// ==========================================================
+// SEMANA 8
+// ==========================================================
+
+const semana8DropZone =
+    obtenerElemento(
+        "semana8DropZone"
+    );
+
+
+const semana8InputArchivo =
+    obtenerElemento(
+        "semana8Archivo"
+    );
+
+
+const semana8ArchivoSeleccionado =
+    obtenerElemento(
+        "semana8ArchivoSeleccionado"
+    );
+
+
+const semana8NombreArchivo =
+    obtenerElemento(
+        "semana8NombreArchivo"
+    );
+
+
+const semana8TamanoArchivo =
+    obtenerElemento(
+        "semana8TamanoArchivo"
+    );
+
+
+const btnQuitarArchivoSemana8 =
+    obtenerElemento(
+        "btnQuitarArchivoSemana8"
+    );
+
+
+const btnAnalizarSemana8 =
+    obtenerElemento(
+        "btnAnalizarSemana8"
+    );
+
+
+const semana8Procesando =
+    obtenerElemento(
+        "semana8Procesando"
+    );
+
+
+let archivoActualSemana8 = null;
+
+
+const extensionesSemana8 = [
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+];
+
+
+const TAMANO_MAXIMO_SEMANA8 =
+    15 * 1024 * 1024;
+
+
+// ==========================================================
+// VALIDAR ARCHIVO SEMANA 8
+// ==========================================================
+
+function validarArchivoSemana8(
+    archivo
+) {
+
+    if (!archivo) {
+
+        return {
+            valido:
+                false,
+
+            mensaje:
+                "No se seleccionó ningún archivo."
+        };
+    }
+
+
+    const nombre =
+        archivo.name.toLowerCase();
+
+
+    const extensionValida =
+        extensionesSemana8.some(
+            extension =>
+                nombre.endsWith(
+                    extension
+                )
         );
 
 
-    const motivo =
-        document
-            .getElementById(
-                "recMotivo"
-            )
-            .value
-            .trim();
+    if (!extensionValida) {
 
+        return {
+            valido:
+                false,
 
-    const campoTemperatura =
-        document.getElementById(
-            "recTemperatura"
-        );
-
-
-    const campoLatidos =
-        document.getElementById(
-            "recLatidos"
-        );
-
-
-    const campoPresion =
-        document.getElementById(
-            "recPresion"
-        );
-
-
-    if (!motivo) {
-
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese el motivo de consulta."
-            )
-        );
-
-        return;
+            mensaje:
+                (
+                    "Formato no permitido. " +
+                    "Utilice PDF, PNG, JPG, JPEG o WEBP."
+                )
+        };
     }
 
 
     if (
-        campoTemperatura.value.trim()
-        === ""
+        archivo.size >
+        TAMANO_MAXIMO_SEMANA8
     ) {
 
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese la temperatura."
-            )
-        );
+        return {
+            valido:
+                false,
 
-        return;
+            mensaje:
+                "El archivo supera el límite de 15 MB."
+        };
     }
 
 
-    if (
-        campoLatidos.value.trim()
-        === ""
-    ) {
-
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese los latidos."
-            )
-        );
-
-        return;
-    }
-
-
-    if (
-        campoPresion.value.trim()
-        === ""
-    ) {
-
-        mostrarError(
-            contenedor,
-            new Error(
-                "Ingrese la presión."
-            )
-        );
-
-        return;
-    }
-
-
-    const temperatura =
-        Number(
-            campoTemperatura.value
-        );
-
-
-    const latidos =
-        Number(
-            campoLatidos.value
-        );
-
-
-    const presion =
-        Number(
-            campoPresion.value
-        );
-
-
-    const caso = {
-
-        motivo_consulta:
-            motivo,
-
-        temperatura:
-            temperatura,
-
-        latidos:
-            latidos,
-
-        presion:
-            presion
+    return {
+        valido:
+            true
     };
+}
 
+
+// ==========================================================
+// SELECCIONAR ARCHIVO
+// ==========================================================
+
+function seleccionarArchivoSemana8(
+    archivo
+) {
+
+    const validacion =
+        validarArchivoSemana8(
+            archivo
+        );
+
+
+    if (!validacion.valido) {
+
+        archivoActualSemana8 = null;
+
+        mostrarToast(
+            validacion.mensaje,
+            "error"
+        );
+
+        return;
+    }
+
+
+    archivoActualSemana8 =
+        archivo;
+
+
+    if (
+        semana8NombreArchivo
+    ) {
+
+        semana8NombreArchivo.textContent =
+            archivo.name;
+    }
+
+
+    if (
+        semana8TamanoArchivo
+    ) {
+
+        semana8TamanoArchivo.textContent =
+            formatearTamano(
+                archivo.size
+            );
+    }
+
+
+    mostrarElemento(
+        semana8ArchivoSeleccionado
+    );
+
+
+    limpiarResultadoSemana8();
+}
+
+
+// ==========================================================
+// QUITAR ARCHIVO
+// ==========================================================
+
+function quitarArchivoSemana8() {
+
+    archivoActualSemana8 =
+        null;
+
+
+    if (
+        semana8InputArchivo
+    ) {
+
+        semana8InputArchivo.value =
+            "";
+    }
+
+
+    ocultarElemento(
+        semana8ArchivoSeleccionado
+    );
+
+
+    limpiarResultadoSemana8();
+}
+
+
+// ==========================================================
+// CLICK DROPZONE
+// ==========================================================
+
+if (
+    semana8DropZone &&
+    semana8InputArchivo
+) {
+
+    semana8DropZone.addEventListener(
+        "click",
+        () => {
+
+            semana8InputArchivo.click();
+        }
+    );
+}
+
+
+// ==========================================================
+// INPUT ARCHIVO
+// ==========================================================
+
+if (
+    semana8InputArchivo
+) {
+
+    semana8InputArchivo.addEventListener(
+        "change",
+        evento => {
+
+            const archivo =
+                evento.target.files?.[0];
+
+
+            if (archivo) {
+
+                seleccionarArchivoSemana8(
+                    archivo
+                );
+            }
+        }
+    );
+}
+
+
+// ==========================================================
+// DRAG AND DROP
+// ==========================================================
+
+if (
+    semana8DropZone
+) {
+
+    [
+        "dragenter",
+        "dragover"
+    ].forEach(
+        eventoNombre => {
+
+            semana8DropZone.addEventListener(
+                eventoNombre,
+                evento => {
+
+                    evento.preventDefault();
+
+                    evento.stopPropagation();
+
+                    semana8DropZone.classList.add(
+                        "dragging"
+                    );
+                }
+            );
+        }
+    );
+
+
+    [
+        "dragleave",
+        "drop"
+    ].forEach(
+        eventoNombre => {
+
+            semana8DropZone.addEventListener(
+                eventoNombre,
+                evento => {
+
+                    evento.preventDefault();
+
+                    evento.stopPropagation();
+
+                    semana8DropZone.classList.remove(
+                        "dragging"
+                    );
+                }
+            );
+        }
+    );
+
+
+    semana8DropZone.addEventListener(
+        "drop",
+        evento => {
+
+            const archivo =
+                evento.dataTransfer
+                    ?.files?.[0];
+
+
+            if (archivo) {
+
+                seleccionarArchivoSemana8(
+                    archivo
+                );
+            }
+        }
+    );
+}
+
+
+// ==========================================================
+// QUITAR ARCHIVO
+// ==========================================================
+
+if (
+    btnQuitarArchivoSemana8
+) {
+
+    btnQuitarArchivoSemana8.addEventListener(
+        "click",
+        evento => {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            quitarArchivoSemana8();
+        }
+    );
+}
+
+
+// ==========================================================
+// LIMPIAR RESULTADO SEMANA 8
+// ==========================================================
+
+function limpiarResultadoSemana8() {
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana8"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana8PDF"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana8Imagen"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "semana8InterpretacionClinica"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "semana8OCR"
+        )
+    );
+}
+
+
+// ==========================================================
+// CARGAR RESUMEN SEMANA 8
+// ==========================================================
+
+async function cargarResumenSemana8() {
 
     try {
 
-        const resultado =
-            await enviarAPI(
-                "/api/reconocimiento",
-                {
-                    caso:
-                        caso
-                }
+        const datos =
+            await apiJSON(
+                "/api/semana8/resumen"
             );
 
 
-        const numerica =
-            resultado
-                .representacion_numerica;
+        const resultado =
+            datos.resultado || {};
 
 
-        const simbolica =
-            resultado
-                .representacion_simbolica;
+        const evidencia =
+            resultado.evidencia ||
+            resultado.base ||
+            {};
 
 
-        const automata =
-            resultado
-                .automata;
+        const ontologia =
+            resultado.ontologia ||
+            {};
 
 
-        const integrado =
-            resultado
-                .resultado_integrado;
+        const accuracy =
+            resultado.accuracy;
 
 
-        const referencias =
-            numerica
-                .referencias;
+        const elementoAccuracy =
+            obtenerElemento(
+                "semana8Accuracy"
+            );
 
 
-        const detallesHTML =
-            integrado
-                .detalles
-                .map(
-                    detalle => `
-                        <li>
-                            ${escaparHTML(
-                                detalle
-                            )}
-                        </li>
-                    `
-                )
-                .join("");
+        if (elementoAccuracy) {
 
+            elementoAccuracy.textContent =
+                accuracy !== null &&
+                accuracy !== undefined
+                    ? porcentaje(
+                        accuracy
+                    )
+                    : "--";
+        }
 
-        contenedor.classList.remove(
-            "hidden"
-        );
 
+        const documentos =
+            obtenerElemento(
+                "semana8Documentos"
+            );
 
-        contenedor.innerHTML = `
 
-            <div class="result-header">
+        if (documentos) {
 
-                <span>
-                    Semana 7
-                </span>
+            documentos.textContent =
+                valorSeguro(
+                    evidencia.documentos,
+                    0
+                );
+        }
 
-                <h3>
-                    Resultado del reconocimiento
-                </h3>
 
-            </div>
+        const resultados =
+            obtenerElemento(
+                "semana8Resultados"
+            );
 
 
-            <div class="case-summary">
+        if (resultados) {
 
-                <span>
-                    Motivo de consulta
-                </span>
+            resultados.textContent =
+                valorSeguro(
+                    evidencia.resultados_extraidos,
+                    0
+                );
+        }
 
-                <strong>
-                    ${escaparHTML(
-                        resultado
-                            .motivo_consulta
-                    )}
-                </strong>
 
-            </div>
+        const imagenes =
+            obtenerElemento(
+                "semana8Imagenes"
+            );
 
 
-            <div class="recognition-grid">
+        if (imagenes) {
 
+            imagenes.textContent =
+                valorSeguro(
+                    evidencia.imagenes_reconocidas,
+                    0
+                );
+        }
 
-                <!-- NUMÉRICA -->
 
-                <div class="recognition-card">
+        const nodos =
+            obtenerElemento(
+                "semana8Nodos"
+            );
 
-                    <span class="recognition-number">
-                        01
-                    </span>
 
-                    <h4>
-                        Representación numérica
-                    </h4>
+        if (nodos) {
 
-                    <p class="recognition-description">
+            nodos.textContent =
+                valorSeguro(
+                    ontologia.nodos,
+                    0
+                );
+        }
 
-                        Los signos se representan
-                        mediante un vector numérico.
 
-                    </p>
+        const relaciones =
+            obtenerElemento(
+                "semana8Relaciones"
+            );
 
 
-                    <div class="metric highlight">
+        if (relaciones) {
 
-                        <span>
-                            Vector
-                        </span>
+            relaciones.textContent =
+                valorSeguro(
+                    ontologia.relaciones,
+                    0
+                );
+        }
 
-                        <strong>
-                            [
-                            ${numerica.vector.join(", ")}
-                            ]
-                        </strong>
 
-                    </div>
+    } catch (error) {
 
-
-                    <div class="metric">
-
-                        <span>
-                            Temperatura
-                        </span>
-
-                        <strong>
-                            ${numerica.temperatura} °C
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Latidos
-                        </span>
-
-                        <strong>
-                            ${numerica.latidos} lpm
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Presión
-                        </span>
-
-                        <strong>
-                            ${numerica.presion} mmHg
-                        </strong>
-
-                    </div>
-
-
-                    <p class="recognition-description">
-                        Rangos de referencia
-                    </p>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Temperatura normal
-                        </span>
-
-                        <strong>
-                            ${referencias.temperatura.min}
-                            -
-                            ${referencias.temperatura.max}
-                            ${referencias.temperatura.unidad}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Frecuencia cardíaca normal
-                        </span>
-
-                        <strong>
-                            ${referencias.latidos.min}
-                            -
-                            ${referencias.latidos.max}
-                            ${referencias.latidos.unidad}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Presión normal
-                        </span>
-
-                        <strong>
-                            ${referencias.presion.min}
-                            -
-                            ${referencias.presion.max}
-                            ${referencias.presion.unidad}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SIMBÓLICA -->
-
-                <div class="recognition-card">
-
-                    <span class="recognition-number">
-                        02
-                    </span>
-
-                    <h4>
-                        Representación simbólica
-                    </h4>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Temperatura
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                simbolica
-                                    .hechos
-                                    .temperatura
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Frecuencia cardíaca
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                simbolica
-                                    .hechos
-                                    .latidos
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Presión arterial
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                simbolica
-                                    .hechos
-                                    .presion
-                            )}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <!-- AUTÓMATA -->
-
-                <div class="recognition-card">
-
-                    <span class="recognition-number">
-                        03
-                    </span>
-
-                    <h4>
-                        Autómata
-                    </h4>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Secuencia
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                automata.secuencia
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Estado final
-                        </span>
-
-                        <strong>
-                            ${escaparHTML(
-                                automata.estado_final
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Consulta procesada
-                        </span>
-
-                        <strong>
-                            ${
-                                automata.aceptada
-                                    ? "Sí"
-                                    : "No"
-                            }
-                        </strong>
-
-                    </div>
-
-
-                    <div class="automata-route">
-
-                        <span>
-                            Recorrido
-                        </span>
-
-                        <p>
-                            ${
-                                automata
-                                    .recorrido
-                                    .map(
-                                        escaparHTML
-                                    )
-                                    .join(
-                                        " → "
-                                    )
-                            }
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RESULTADO INTEGRADO -->
-
-                <div class="recognition-card">
-
-                    <span class="recognition-number">
-                        04
-                    </span>
-
-                    <h4>
-                        Resultado integrado
-                    </h4>
-
-
-                    <p class="recognition-description">
-
-                        HIS_IA integra las tres variables
-                        y genera una conclusión a partir
-                        de las reglas definidas.
-
-                    </p>
-
-
-                    <div class="metric">
-
-                        <span>
-                            Variables evaluadas
-                        </span>
-
-                        <strong>
-                            ${integrado.variables_evaluadas}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                        <span>
-                            En categoría esperada
-                        </span>
-
-                        <strong>
-                            ${
-                                integrado
-                                    .variables_en_categoria_esperada
-                            }
-                        </strong>
-
-                    </div>
-
-
-                    <div class="metric highlight">
-
-                        <span>
-                            Con hallazgos
-                        </span>
-
-                        <strong>
-                            ${
-                                integrado
-                                    .variables_con_hallazgos
-                            }
-                        </strong>
-
-                    </div>
-
-
-                    <p class="recognition-description">
-                        Detalle
-                    </p>
-
-
-                    <ul class="result-list">
-
-                        ${detallesHTML}
-
-                    </ul>
-
-
-                    <div class="automata-route">
-
-                        <span>
-                            Conclusión
-                        </span>
-
-                        <p>
-                            ${escaparHTML(
-                                integrado
-                                    .conclusion
-                            )}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-
-    }
-
-    catch (error) {
-
-        mostrarError(
-            contenedor,
+        console.error(
+            "Error resumen Semana 8:",
             error
         );
     }
 }
 
 
-
 // ==========================================================
-// SEMANA 5
-// ASISTENTE
+// ESTADO CLÍNICO
 // ==========================================================
 
-function agregarMensaje(
-    contenido,
-    tipo,
-    html = false
+function claseEstadoClinico(
+    estado
 ) {
 
-    const chat =
-        document.getElementById(
-            "chat"
+    const normalizado =
+        normalizarTexto(
+            estado
         );
 
 
-    const mensaje =
-        document.createElement(
-            "div"
-        );
+    if (
+        normalizado ===
+        "dentro de referencia"
+    ) {
 
-
-    mensaje.className =
-        `message ${tipo}`;
-
-
-    if (html) {
-
-        mensaje.innerHTML =
-            contenido;
-
-    } else {
-
-        mensaje.textContent =
-            contenido;
+        return "status-normal";
     }
 
 
-    chat.appendChild(
-        mensaje
-    );
+    if (
+        normalizado === "alto"
+    ) {
+
+        return "status-high";
+    }
 
 
-    chat.scrollTop =
-        chat.scrollHeight;
+    if (
+        normalizado === "bajo"
+    ) {
+
+        return "status-low";
+    }
+
+
+    return "status-unknown";
 }
 
 
+// ==========================================================
+// ETIQUETA DE ESTADO
+// ==========================================================
 
-async function consultarAsistente() {
+function crearBadgeEstado(
+    estado
+) {
 
-    const entrada =
-        document.getElementById(
-            "consultaAsistente"
+    const texto =
+        valorSeguro(
+            estado,
+            "NO EVALUABLE"
         );
 
 
-    const consulta =
-        entrada.value.trim();
+    return `
+        <span class="
+            clinical-status
+            ${claseEstadoClinico(texto)}
+        ">
+            ${escaparHTML(texto)}
+        </span>
+    `;
+}
 
 
-    if (!consulta) {
+// ==========================================================
+// MAPA DE RESULTADOS INTERPRETADOS
+// ==========================================================
+
+function crearMapaInterpretacion(
+    interpretacion
+) {
+
+    const mapa =
+        new Map();
+
+
+    const resultados =
+        interpretacion?.resultados ||
+        [];
+
+
+    resultados.forEach(
+        resultado => {
+
+            const clave =
+                normalizarTexto(
+                    resultado.examen
+                );
+
+
+            if (clave) {
+
+                mapa.set(
+                    clave,
+                    resultado
+                );
+            }
+        }
+    );
+
+
+    return mapa;
+}
+
+
+// ==========================================================
+// MOSTRAR RESULTADO PDF
+// ==========================================================
+
+function mostrarResultadoPDFSemana8(
+    respuesta
+) {
+
+    const resultado =
+        respuesta.resultado ||
+        {};
+
+
+    mostrarElemento(
+        obtenerElemento(
+            "resultadoSemana8"
+        )
+    );
+
+
+    mostrarElemento(
+        obtenerElemento(
+            "resultadoSemana8PDF"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana8Imagen"
+        )
+    );
+
+
+    const titulo =
+        obtenerElemento(
+            "semana8ResultadoTitulo"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "Documento médico procesado";
+    }
+
+
+    const tipo =
+        obtenerElemento(
+            "semana8ResultadoTipo"
+        );
+
+
+    if (tipo) {
+
+        tipo.textContent =
+            "PDF";
+    }
+
+
+    // ======================================================
+    // DATOS DEL PACIENTE
+    // ======================================================
+
+    const paciente =
+        resultado.paciente ||
+        {};
+
+
+    const campoPaciente =
+        obtenerElemento(
+            "semana8Paciente"
+        );
+
+
+    if (campoPaciente) {
+
+        campoPaciente.textContent =
+            valorSeguro(
+                paciente.nombre,
+                "No detectado"
+            );
+    }
+
+
+    const identificacion =
+        obtenerElemento(
+            "semana8Identificacion"
+        );
+
+
+    if (identificacion) {
+
+        identificacion.textContent =
+            valorSeguro(
+                paciente.identificacion,
+                "No detectada"
+            );
+    }
+
+
+    const fecha =
+        obtenerElemento(
+            "semana8Fecha"
+        );
+
+
+    if (fecha) {
+
+        fecha.textContent =
+            valorSeguro(
+                paciente.fecha,
+                "No detectada"
+            );
+    }
+
+
+    const tipoDocumento =
+        obtenerElemento(
+            "semana8TipoDocumento"
+        );
+
+
+    if (tipoDocumento) {
+
+        tipoDocumento.textContent =
+            valorSeguro(
+                resultado.tipo_documento,
+                "No identificado"
+            );
+    }
+
+
+    // ======================================================
+    // OCR
+    // ======================================================
+
+    const alertaOCR =
+        obtenerElemento(
+            "semana8OCR"
+        );
+
+
+    if (
+        resultado.requiere_ocr
+    ) {
+
+        mostrarElemento(
+            alertaOCR
+        );
+
+    } else {
+
+        ocultarElemento(
+            alertaOCR
+        );
+    }
+
+
+    // ======================================================
+    // INTERPRETACIÓN
+    // ======================================================
+
+    const interpretacion =
+        resultado.interpretacion_clinica ||
+        null;
+
+
+    const mapaInterpretacion =
+        crearMapaInterpretacion(
+            interpretacion
+        );
+
+
+    // ======================================================
+    // TABLA EXÁMENES
+    // ======================================================
+
+    const examenes =
+        resultado.examenes ||
+        [];
+
+
+    const cantidad =
+        obtenerElemento(
+            "semana8CantidadExamenes"
+        );
+
+
+    if (cantidad) {
+
+        cantidad.textContent =
+            examenes.length;
+    }
+
+
+    const tabla =
+        obtenerElemento(
+            "semana8TablaExamenes"
+        );
+
+
+    if (tabla) {
+
+        if (
+            examenes.length === 0
+        ) {
+
+            tabla.innerHTML = `
+                <tr>
+                    <td
+                        colspan="6"
+                        class="empty-cell"
+                    >
+                        No se detectaron resultados
+                        de laboratorio.
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            tabla.innerHTML =
+                examenes
+                    .map(examen => {
+
+                        const interpretado =
+                            mapaInterpretacion.get(
+                                normalizarTexto(
+                                    examen.examen
+                                )
+                            );
+
+
+                        const estado =
+                            interpretado?.estado ||
+                            "NO EVALUABLE";
+
+
+                        return `
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        ${escaparHTML(
+                                            valorSeguro(
+                                                examen.examen
+                                            )
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            examen.resultado
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            examen.unidad
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            examen.referencia
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${crearBadgeEstado(
+                                        estado
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            examen.pagina
+                                        )
+                                    )}
+                                </td>
+
+                            </tr>
+                        `;
+                    })
+                    .join("");
+        }
+    }
+
+
+    // ======================================================
+    // INTERPRETACIÓN CLÍNICA
+    // ======================================================
+
+    mostrarInterpretacionClinica(
+        interpretacion,
+        resultado.requiere_ocr
+    );
+
+
+    // ======================================================
+    // EVIDENCIA
+    // ======================================================
+
+    const sqlite =
+        obtenerElemento(
+            "semana8EstadoSQLite"
+        );
+
+
+    if (sqlite) {
+
+        sqlite.textContent =
+            resultado.evidencia_sqlite
+                ? "Registrada"
+                : "No registrada";
+    }
+
+
+    const ontologia =
+        obtenerElemento(
+            "semana8EstadoOntologia"
+        );
+
+
+    if (ontologia) {
+
+        ontologia.textContent =
+            resultado.ontologia_actualizada
+                ? "Actualizada"
+                : "Sin actualizar";
+    }
+}
+
+
+// ==========================================================
+// MOSTRAR INTERPRETACIÓN CLÍNICA
+// ==========================================================
+
+function mostrarInterpretacionClinica(
+    interpretacion,
+    requiereOCR = false
+) {
+
+    const contenedor =
+        obtenerElemento(
+            "semana8InterpretacionClinica"
+        );
+
+
+    if (
+        requiereOCR ||
+        !interpretacion
+    ) {
+
+        ocultarElemento(
+            contenedor
+        );
 
         return;
     }
 
 
-    agregarMensaje(
-        consulta,
-        "user"
+    mostrarElemento(
+        contenedor
     );
 
 
-    entrada.value =
-        "";
+    // ======================================================
+    // CONTADORES
+    // ======================================================
 
-
-    try {
-
-        const resultado =
-            await enviarAPI(
-                "/api/asistente",
-                {
-                    consulta:
-                        consulta
-                }
-            );
-
-
-        const reglas =
-            Array.isArray(
-                resultado.reglas
-            )
-            && resultado.reglas.length
-
-                ? resultado.reglas
-                    .map(
-                        escaparHTML
-                    )
-                    .join(
-                        ", "
-                    )
-
-                : "Sin regla específica";
-
-
-        const similitud =
-            Number(
-                resultado.similitud
-            );
-
-
-        agregarMensaje(
-            `
-
-                <div class="assistant-result">
-
-                    <p>
-
-                        <strong>
-                            Categoría:
-                        </strong>
-
-                        ${escaparHTML(
-                            resultado.clase
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            Acción:
-                        </strong>
-
-                        ${reglas}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            Información relacionada:
-                        </strong>
-
-                        ${escaparHTML(
-                            resultado.evidencia
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <strong>
-                            Similitud:
-                        </strong>
-
-                        ${
-                            Number.isNaN(
-                                similitud
-                            )
-
-                                ? "N/D"
-
-                                : similitud
-                                    .toFixed(
-                                        3
-                                    )
-                        }
-
-                    </p>
-
-                </div>
-            `,
-            "assistant",
-            true
+    const evaluados =
+        obtenerElemento(
+            "clinicaEvaluados"
         );
 
+
+    if (evaluados) {
+
+        evaluados.textContent =
+            valorSeguro(
+                interpretacion.resultados_evaluados,
+                0
+            );
     }
 
-    catch (error) {
 
-        agregarMensaje(
-            error.message,
-            "assistant"
+    const normales =
+        obtenerElemento(
+            "clinicaNormales"
         );
+
+
+    if (normales) {
+
+        normales.textContent =
+            valorSeguro(
+                interpretacion.normales,
+                0
+            );
+    }
+
+
+    const altos =
+        obtenerElemento(
+            "clinicaAltos"
+        );
+
+
+    if (altos) {
+
+        altos.textContent =
+            valorSeguro(
+                interpretacion.altos,
+                0
+            );
+    }
+
+
+    const bajos =
+        obtenerElemento(
+            "clinicaBajos"
+        );
+
+
+    if (bajos) {
+
+        bajos.textContent =
+            valorSeguro(
+                interpretacion.bajos,
+                0
+            );
+    }
+
+
+    const noEvaluables =
+        obtenerElemento(
+            "clinicaNoEvaluables"
+        );
+
+
+    if (noEvaluables) {
+
+        noEvaluables.textContent =
+            valorSeguro(
+                interpretacion.no_evaluables,
+                0
+            );
+    }
+
+
+    // ======================================================
+    // HALLAZGOS
+    // ======================================================
+
+    mostrarHallazgosClinicos(
+        interpretacion.hallazgos ||
+        []
+    );
+
+
+    // ======================================================
+    // CONDICIONES
+    // ======================================================
+
+    mostrarCondicionesClinicas(
+        interpretacion.posibles_condiciones ||
+        []
+    );
+
+
+    // ======================================================
+    // CONCLUSIÓN
+    // ======================================================
+
+    const conclusion =
+        obtenerElemento(
+            "clinicaConclusion"
+        );
+
+
+    if (conclusion) {
+
+        conclusion.textContent =
+            valorSeguro(
+                interpretacion.conclusion,
+                "Sin conclusión disponible."
+            );
+    }
+
+
+    // ======================================================
+    // ADVERTENCIA
+    // ======================================================
+
+    const advertencia =
+        obtenerElemento(
+            "clinicaAdvertencia"
+        );
+
+
+    if (advertencia) {
+
+        advertencia.textContent =
+            valorSeguro(
+                interpretacion.advertencia,
+                (
+                    "Esta interpretación es orientativa " +
+                    "y no constituye un diagnóstico médico."
+                )
+            );
     }
 }
 
 
+// ==========================================================
+// MOSTRAR HALLAZGOS
+// ==========================================================
 
-function enviarConEnter(
-    evento
+function mostrarHallazgosClinicos(
+    hallazgos
 ) {
 
+    const contenedor =
+        obtenerElemento(
+            "clinicaHallazgos"
+        );
+
+
+    if (!contenedor) {
+        return;
+    }
+
+
     if (
-        evento.key === "Enter"
+        !Array.isArray(
+            hallazgos
+        ) ||
+        hallazgos.length === 0
     ) {
 
-        evento.preventDefault();
+        contenedor.innerHTML = `
+            <div class="clinical-empty">
 
-        consultarAsistente();
+                <strong>
+                    Sin alteraciones detectadas
+                </strong>
+
+                <p>
+                    No se identificaron resultados
+                    fuera de los rangos de referencia
+                    evaluables.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    contenedor.innerHTML =
+        hallazgos
+            .map(hallazgo => {
+
+                const estado =
+                    valorSeguro(
+                        hallazgo.estado,
+                        "NO EVALUABLE"
+                    );
+
+
+                return `
+                    <article class="clinical-finding">
+
+                        <div class="clinical-finding-header">
+
+                            <strong>
+                                ${escaparHTML(
+                                    valorSeguro(
+                                        hallazgo.examen
+                                    )
+                                )}
+                            </strong>
+
+                            ${crearBadgeEstado(
+                                estado
+                            )}
+
+                        </div>
+
+                        <div class="clinical-finding-data">
+
+                            <span>
+                                Resultado:
+                                <strong>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            hallazgo.resultado
+                                        )
+                                    )}
+
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            hallazgo.unidad,
+                                            ""
+                                        )
+                                    )}
+                                </strong>
+                            </span>
+
+                            <span>
+                                Referencia:
+                                <strong>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            hallazgo.referencia
+                                        )
+                                    )}
+                                </strong>
+                            </span>
+
+                        </div>
+
+                    </article>
+                `;
+            })
+            .join("");
+}
+
+
+// ==========================================================
+// MOSTRAR CONDICIONES CLÍNICAS
+// ==========================================================
+
+function mostrarCondicionesClinicas(
+    condiciones
+) {
+
+    const contenedor =
+        obtenerElemento(
+            "clinicaCondiciones"
+        );
+
+
+    if (!contenedor) {
+        return;
+    }
+
+
+    if (
+        !Array.isArray(
+            condiciones
+        ) ||
+        condiciones.length === 0
+    ) {
+
+        contenedor.innerHTML = `
+            <div class="clinical-empty">
+
+                <strong>
+                    Sin patrones alterados
+                </strong>
+
+                <p>
+                    No se identificaron condiciones
+                    específicas asociadas con los
+                    resultados evaluados.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    contenedor.innerHTML =
+        condiciones
+            .map(condicion => {
+
+                const examenes =
+                    Array.isArray(
+                        condicion.examenes_relacionados
+                    )
+                        ? condicion
+                            .examenes_relacionados
+                            .join(", ")
+                        : valorSeguro(
+                            condicion.examenes_relacionados,
+                            "No especificados"
+                        );
+
+
+                const nivel =
+                    valorSeguro(
+                        condicion.nivel,
+                        "orientativo"
+                    );
+
+
+                return `
+                    <article class="clinical-condition">
+
+                        <div class="clinical-condition-header">
+
+                            <div>
+
+                                <span class="condition-label">
+                                    Posible condición
+                                </span>
+
+                                <h4>
+                                    ${escaparHTML(
+                                        valorSeguro(
+                                            condicion.condicion
+                                        )
+                                    )}
+                                </h4>
+
+                            </div>
+
+                            <span class="condition-level">
+                                ${escaparHTML(
+                                    nivel
+                                )}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            ${escaparHTML(
+                                valorSeguro(
+                                    condicion.descripcion
+                                )
+                            )}
+                        </p>
+
+
+                        <div class="condition-exams">
+
+                            <span>
+                                Exámenes relacionados
+                            </span>
+
+                            <strong>
+                                ${escaparHTML(
+                                    examenes
+                                )}
+                            </strong>
+
+                        </div>
+
+                    </article>
+                `;
+            })
+            .join("");
+}
+
+
+// ==========================================================
+// MOSTRAR RESULTADO DE IMAGEN
+// ==========================================================
+
+function mostrarResultadoImagenSemana8(
+    respuesta
+) {
+
+    const resultado =
+        respuesta.resultado ||
+        {};
+
+
+    mostrarElemento(
+        obtenerElemento(
+            "resultadoSemana8"
+        )
+    );
+
+
+    mostrarElemento(
+        obtenerElemento(
+            "resultadoSemana8Imagen"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana8PDF"
+        )
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "semana8InterpretacionClinica"
+        )
+    );
+
+
+    const titulo =
+        obtenerElemento(
+            "semana8ResultadoTitulo"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "Imagen reconocida por MLP";
+    }
+
+
+    const tipo =
+        obtenerElemento(
+            "semana8ResultadoTipo"
+        );
+
+
+    if (tipo) {
+
+        tipo.textContent =
+            "IMAGEN";
+    }
+
+
+    const prediccion =
+        obtenerElemento(
+            "semana8Prediccion"
+        );
+
+
+    if (prediccion) {
+
+        prediccion.textContent =
+            valorSeguro(
+                resultado.prediccion
+            );
+    }
+
+
+    const confianza =
+        obtenerElemento(
+            "semana8Confianza"
+        );
+
+
+    if (confianza) {
+
+        confianza.textContent =
+            porcentaje(
+                resultado.confianza
+            );
+    }
+
+
+    const accuracy =
+        obtenerElemento(
+            "semana8AccuracyResultado"
+        );
+
+
+    if (accuracy) {
+
+        accuracy.textContent =
+            porcentaje(
+                resultado.accuracy_modelo
+            );
+    }
+
+
+    const sqliteID =
+        obtenerElemento(
+            "semana8SQLiteImagen"
+        );
+
+
+    if (sqliteID) {
+
+        sqliteID.textContent =
+            valorSeguro(
+                resultado.reconocimiento_id
+            );
+    }
+
+
+    const sqlite =
+        obtenerElemento(
+            "semana8EstadoSQLite"
+        );
+
+
+    if (sqlite) {
+
+        sqlite.textContent =
+            resultado.evidencia_sqlite
+                ? "Registrada"
+                : "No registrada";
+    }
+
+
+    const ontologia =
+        obtenerElemento(
+            "semana8EstadoOntologia"
+        );
+
+
+    if (ontologia) {
+
+        ontologia.textContent =
+            resultado.ontologia_actualizada
+                ? "Actualizada"
+                : "Sin actualizar";
     }
 }
+
+
+// ==========================================================
+// ANALIZAR ARCHIVO SEMANA 8
+// ==========================================================
+
+if (
+    btnAnalizarSemana8
+) {
+
+    btnAnalizarSemana8.addEventListener(
+        "click",
+        async () => {
+
+            if (!archivoActualSemana8) {
+
+                mostrarToast(
+                    "Primero seleccione un archivo.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const validacion =
+                validarArchivoSemana8(
+                    archivoActualSemana8
+                );
+
+
+            if (!validacion.valido) {
+
+                mostrarToast(
+                    validacion.mensaje,
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "archivo",
+                archivoActualSemana8
+            );
+
+
+            ocultarElemento(
+                obtenerElemento(
+                    "resultadoSemana8"
+                )
+            );
+
+
+            mostrarElemento(
+                semana8Procesando
+            );
+
+
+            btnAnalizarSemana8.disabled =
+                true;
+
+
+            try {
+
+                const respuesta =
+                    await fetch(
+                        "/api/semana8/archivo",
+                        {
+                            method:
+                                "POST",
+
+                            body:
+                                formData
+                        }
+                    );
+
+
+                let datos;
+
+
+                try {
+
+                    datos =
+                        await respuesta.json();
+
+                } catch {
+
+                    throw new Error(
+                        "El servidor no devolvió una respuesta JSON válida."
+                    );
+                }
+
+
+                if (
+                    !respuesta.ok ||
+                    datos.ok === false
+                ) {
+
+                    throw new Error(
+                        datos.error ||
+                        datos.detalle ||
+                        "No fue posible analizar el archivo."
+                    );
+                }
+
+
+                const tipo =
+                    normalizarTexto(
+                        datos.tipo
+                    );
+
+
+                if (
+                    tipo === "pdf"
+                ) {
+
+                    mostrarResultadoPDFSemana8(
+                        datos
+                    );
+
+                } else {
+
+                    mostrarResultadoImagenSemana8(
+                        datos
+                    );
+                }
+
+
+                mostrarToast(
+                    "Archivo analizado correctamente.",
+                    "success"
+                );
+
+
+                await cargarResumenSemana8();
+
+
+                const resultado =
+                    obtenerElemento(
+                        "resultadoSemana8"
+                    );
+
+
+                if (resultado) {
+
+                    resultado.scrollIntoView({
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
+                    });
+                }
+
+
+            } catch (error) {
+
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+
+
+                console.error(
+                    error
+                );
+
+
+            } finally {
+
+                ocultarElemento(
+                    semana8Procesando
+                );
+
+
+                btnAnalizarSemana8.disabled =
+                    false;
+            }
+        }
+    );
+}
+
+
+// ==========================================================
+// ACTUALIZAR RESUMEN SEMANA 8
+// ==========================================================
+
+const btnActualizarSemana8 =
+    obtenerElemento(
+        "btnActualizarSemana8"
+    );
+
+
+if (
+    btnActualizarSemana8
+) {
+
+    btnActualizarSemana8.addEventListener(
+        "click",
+        async () => {
+
+            await cargarResumenSemana8();
+
+
+            mostrarToast(
+                "Evidencia actualizada.",
+                "success"
+            );
+        }
+    );
+}
+
+
+// ==========================================================
+// ASISTENTE IA
+// ==========================================================
+
+const formAsistente =
+    obtenerElemento(
+        "formAsistente"
+    );
+
+
+function agregarMensajeAsistente(
+    tipo,
+    mensaje
+) {
+
+    const contenedor =
+        obtenerElemento(
+            "assistantMessages"
+        );
+
+
+    if (!contenedor) {
+        return;
+    }
+
+
+    const elemento =
+        document.createElement(
+            "div"
+        );
+
+
+    elemento.className =
+        `assistant-message ${tipo}`;
+
+
+    const avatar =
+        tipo === "user"
+            ? "TÚ"
+            : "IA";
+
+
+    elemento.innerHTML = `
+        <div class="message-avatar">
+            ${avatar}
+        </div>
+
+        <div class="message-content">
+
+            <strong>
+                ${
+                    tipo === "user"
+                        ? "Usuario"
+                        : "HIS_IA"
+                }
+            </strong>
+
+            <p>
+                ${escaparHTML(
+                    mensaje
+                )}
+            </p>
+
+        </div>
+    `;
+
+
+    contenedor.appendChild(
+        elemento
+    );
+
+
+    contenedor.scrollTop =
+        contenedor.scrollHeight;
+}
+
+
+if (
+    formAsistente
+) {
+
+    formAsistente.addEventListener(
+        "submit",
+        async evento => {
+
+            evento.preventDefault();
+
+
+            const input =
+                obtenerElemento(
+                    "mensajeAsistente"
+                );
+
+
+            const mensaje =
+                input?.value.trim();
+
+
+            if (!mensaje) {
+
+                return;
+            }
+
+
+            agregarMensajeAsistente(
+                "user",
+                mensaje
+            );
+
+
+            input.value =
+                "";
+
+
+            try {
+
+                const datos = await apiJSON(
+                    "/api/asistente",
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                mensaje
+                            })
+                    }
+                );
+
+
+                let respuesta =
+                    datos.respuesta;
+
+
+                if (
+                    typeof respuesta ===
+                    "object"
+                ) {
+
+                    respuesta =
+                        JSON.stringify(
+                            respuesta,
+                            null,
+                            2
+                        );
+                }
+
+
+                agregarMensajeAsistente(
+                    "bot",
+                    valorSeguro(
+                        respuesta,
+                        "Sin respuesta."
+                    )
+                );
+
+
+            } catch (error) {
+
+                agregarMensajeAsistente(
+                    "bot",
+                    (
+                        "No fue posible procesar " +
+                        "la consulta."
+                    )
+                );
+
+
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+    );
+}
+
+
+// ==========================================================
+// INICIALIZACIÓN
+// ==========================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        cambiarSeccion(
+            "inicio"
+        );
+
+
+        cargarResumenSemana8();
+    }
+);

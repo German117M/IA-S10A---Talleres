@@ -1,0 +1,994 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d7" for="edge" attr.name="rel" attr.type="string" />
+  <key id="d6" for="node" attr.name="nivel" attr.type="string" />
+  <key id="d5" for="node" attr.name="conclusion" attr.type="string" />
+  <key id="d4" for="node" attr.name="estado" attr.type="string" />
+  <key id="d3" for="node" attr.name="valor" attr.type="string" />
+  <key id="d2" for="node" attr.name="nombre" attr.type="string" />
+  <key id="d1" for="node" attr.name="archivo" attr.type="string" />
+  <key id="d0" for="node" attr.name="tipo" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="documento_medico" />
+    <node id="paciente" />
+    <node id="examen" />
+    <node id="resultado" />
+    <node id="unidad" />
+    <node id="rango_referencia" />
+    <node id="modelo_mlp" />
+    <node id="prediccion" />
+    <node id="digito" />
+    <node id="imagen" />
+    <node id="dato_clinico" />
+    <node id="temperatura" />
+    <node id="frecuencia_cardiaca" />
+    <node id="presion_arterial" />
+    <node id="documento_7">
+      <data key="d0">documento_medico</data>
+      <data key="d1">laboratorio_prueba_semana8.pdf</data>
+    </node>
+    <node id="paciente_carlos_gomez">
+      <data key="d0">paciente</data>
+      <data key="d2">Carlos Gomez</data>
+    </node>
+    <node id="examen_7_1_glucosa">
+      <data key="d0">examen</data>
+      <data key="d2">Glucosa</data>
+    </node>
+    <node id="resultado_7_1">
+      <data key="d0">resultado</data>
+      <data key="d3">95</data>
+    </node>
+    <node id="unidad_mg_dl">
+      <data key="d0">unidad</data>
+      <data key="d3">mg/dL</data>
+    </node>
+    <node id="referencia_7_1">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">70 - 100</data>
+    </node>
+    <node id="examen_7_2_creatinina">
+      <data key="d0">examen</data>
+      <data key="d2">Creatinina</data>
+    </node>
+    <node id="resultado_7_2">
+      <data key="d0">resultado</data>
+      <data key="d3">0.92</data>
+    </node>
+    <node id="referencia_7_2">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">0.70 - 1.20</data>
+    </node>
+    <node id="examen_7_3_hemoglobina">
+      <data key="d0">examen</data>
+      <data key="d2">Hemoglobina</data>
+    </node>
+    <node id="resultado_7_3">
+      <data key="d0">resultado</data>
+      <data key="d3">14.3</data>
+    </node>
+    <node id="unidad_g_dl">
+      <data key="d0">unidad</data>
+      <data key="d3">g/dL</data>
+    </node>
+    <node id="referencia_7_3">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">12.0 - 16.0</data>
+    </node>
+    <node id="examen_7_4_hematocrito">
+      <data key="d0">examen</data>
+      <data key="d2">Hematocrito</data>
+    </node>
+    <node id="resultado_7_4">
+      <data key="d0">resultado</data>
+      <data key="d3">43</data>
+    </node>
+    <node id="unidad_sin_dato">
+      <data key="d0">unidad</data>
+      <data key="d3">%</data>
+    </node>
+    <node id="referencia_7_4">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">36 - 48</data>
+    </node>
+    <node id="examen_7_5_plaquetas">
+      <data key="d0">examen</data>
+      <data key="d2">Plaquetas</data>
+    </node>
+    <node id="resultado_7_5">
+      <data key="d0">resultado</data>
+      <data key="d3">250</data>
+    </node>
+    <node id="unidad_10_3_ul">
+      <data key="d0">unidad</data>
+      <data key="d3">10^3/uL</data>
+    </node>
+    <node id="referencia_7_5">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">150 - 450</data>
+    </node>
+    <node id="clasificacion_resultado" />
+    <node id="condicion_clinica" />
+    <node id="interpretacion_clinica" />
+    <node id="documento_8">
+      <data key="d0">documento_medico</data>
+      <data key="d1">laboratorio_prueba_semana8.pdf</data>
+    </node>
+    <node id="examen_8_1_glucosa">
+      <data key="d0">examen</data>
+      <data key="d2">Glucosa</data>
+    </node>
+    <node id="resultado_8_1">
+      <data key="d0">resultado</data>
+      <data key="d3">95</data>
+    </node>
+    <node id="referencia_8_1">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">70 - 100</data>
+    </node>
+    <node id="clasificacion_8_1_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_8_2_creatinina">
+      <data key="d0">examen</data>
+      <data key="d2">Creatinina</data>
+    </node>
+    <node id="resultado_8_2">
+      <data key="d0">resultado</data>
+      <data key="d3">0.92</data>
+    </node>
+    <node id="referencia_8_2">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">0.70 - 1.20</data>
+    </node>
+    <node id="clasificacion_8_2_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_8_3_hemoglobina">
+      <data key="d0">examen</data>
+      <data key="d2">Hemoglobina</data>
+    </node>
+    <node id="resultado_8_3">
+      <data key="d0">resultado</data>
+      <data key="d3">14.3</data>
+    </node>
+    <node id="referencia_8_3">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">12.0 - 16.0</data>
+    </node>
+    <node id="clasificacion_8_3_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_8_4_hematocrito">
+      <data key="d0">examen</data>
+      <data key="d2">Hematocrito</data>
+    </node>
+    <node id="resultado_8_4">
+      <data key="d0">resultado</data>
+      <data key="d3">43</data>
+    </node>
+    <node id="referencia_8_4">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">36 - 48</data>
+    </node>
+    <node id="clasificacion_8_4_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_8_5_plaquetas">
+      <data key="d0">examen</data>
+      <data key="d2">Plaquetas</data>
+    </node>
+    <node id="resultado_8_5">
+      <data key="d0">resultado</data>
+      <data key="d3">250</data>
+    </node>
+    <node id="referencia_8_5">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">150 - 450</data>
+    </node>
+    <node id="clasificacion_8_5_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="interpretacion_8">
+      <data key="d0">interpretacion_clinica</data>
+      <data key="d5">Los resultados evaluados se encuentran dentro de los rangos de referencia proporcionados en el documento. No se identificaron patrones alterados con los parámetros analizados.</data>
+    </node>
+    <node id="documento_9">
+      <data key="d0">documento_medico</data>
+      <data key="d1">17ffec83ea41_laboratorio_prueba_semana8.pdf</data>
+    </node>
+    <node id="examen_9_1_glucosa">
+      <data key="d0">examen</data>
+      <data key="d2">Glucosa</data>
+    </node>
+    <node id="resultado_9_1">
+      <data key="d0">resultado</data>
+      <data key="d3">95</data>
+    </node>
+    <node id="referencia_9_1">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">70 - 100</data>
+    </node>
+    <node id="clasificacion_9_1_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_9_2_creatinina">
+      <data key="d0">examen</data>
+      <data key="d2">Creatinina</data>
+    </node>
+    <node id="resultado_9_2">
+      <data key="d0">resultado</data>
+      <data key="d3">0.92</data>
+    </node>
+    <node id="referencia_9_2">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">0.70 - 1.20</data>
+    </node>
+    <node id="clasificacion_9_2_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_9_3_hemoglobina">
+      <data key="d0">examen</data>
+      <data key="d2">Hemoglobina</data>
+    </node>
+    <node id="resultado_9_3">
+      <data key="d0">resultado</data>
+      <data key="d3">14.3</data>
+    </node>
+    <node id="referencia_9_3">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">12.0 - 16.0</data>
+    </node>
+    <node id="clasificacion_9_3_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_9_4_hematocrito">
+      <data key="d0">examen</data>
+      <data key="d2">Hematocrito</data>
+    </node>
+    <node id="resultado_9_4">
+      <data key="d0">resultado</data>
+      <data key="d3">43</data>
+    </node>
+    <node id="referencia_9_4">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">36 - 48</data>
+    </node>
+    <node id="clasificacion_9_4_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_9_5_plaquetas">
+      <data key="d0">examen</data>
+      <data key="d2">Plaquetas</data>
+    </node>
+    <node id="resultado_9_5">
+      <data key="d0">resultado</data>
+      <data key="d3">250</data>
+    </node>
+    <node id="referencia_9_5">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">150 - 450</data>
+    </node>
+    <node id="clasificacion_9_5_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="interpretacion_9">
+      <data key="d0">interpretacion_clinica</data>
+      <data key="d5">Los resultados evaluados se encuentran dentro de los rangos de referencia proporcionados en el documento. No se identificaron patrones alterados con los parámetros analizados.</data>
+    </node>
+    <node id="documento_10">
+      <data key="d0">documento_medico</data>
+      <data key="d1">b41c54bab0c0_laboratorio_prueba_semana8.pdf</data>
+    </node>
+    <node id="examen_10_1_glucosa">
+      <data key="d0">examen</data>
+      <data key="d2">Glucosa</data>
+    </node>
+    <node id="resultado_10_1">
+      <data key="d0">resultado</data>
+      <data key="d3">95</data>
+    </node>
+    <node id="referencia_10_1">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">70 - 100</data>
+    </node>
+    <node id="clasificacion_10_1_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_10_2_creatinina">
+      <data key="d0">examen</data>
+      <data key="d2">Creatinina</data>
+    </node>
+    <node id="resultado_10_2">
+      <data key="d0">resultado</data>
+      <data key="d3">0.92</data>
+    </node>
+    <node id="referencia_10_2">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">0.70 - 1.20</data>
+    </node>
+    <node id="clasificacion_10_2_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_10_3_hemoglobina">
+      <data key="d0">examen</data>
+      <data key="d2">Hemoglobina</data>
+    </node>
+    <node id="resultado_10_3">
+      <data key="d0">resultado</data>
+      <data key="d3">14.3</data>
+    </node>
+    <node id="referencia_10_3">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">12.0 - 16.0</data>
+    </node>
+    <node id="clasificacion_10_3_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_10_4_hematocrito">
+      <data key="d0">examen</data>
+      <data key="d2">Hematocrito</data>
+    </node>
+    <node id="resultado_10_4">
+      <data key="d0">resultado</data>
+      <data key="d3">43</data>
+    </node>
+    <node id="referencia_10_4">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">36 - 48</data>
+    </node>
+    <node id="clasificacion_10_4_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="examen_10_5_plaquetas">
+      <data key="d0">examen</data>
+      <data key="d2">Plaquetas</data>
+    </node>
+    <node id="resultado_10_5">
+      <data key="d0">resultado</data>
+      <data key="d3">250</data>
+    </node>
+    <node id="referencia_10_5">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">150 - 450</data>
+    </node>
+    <node id="clasificacion_10_5_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="interpretacion_10">
+      <data key="d0">interpretacion_clinica</data>
+      <data key="d5">Los resultados evaluados se encuentran dentro de los rangos de referencia proporcionados en el documento. No se identificaron patrones alterados con los parámetros analizados.</data>
+    </node>
+    <node id="documento_11">
+      <data key="d0">documento_medico</data>
+      <data key="d1">f41146790dcb_laboratorio_prueba_semana8_alterado.pdf</data>
+    </node>
+    <node id="examen_11_1_glucosa">
+      <data key="d0">examen</data>
+      <data key="d2">Glucosa</data>
+    </node>
+    <node id="resultado_11_1">
+      <data key="d0">resultado</data>
+      <data key="d3">165</data>
+    </node>
+    <node id="referencia_11_1">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">70 - 100</data>
+    </node>
+    <node id="clasificacion_11_1_alto">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">ALTO</data>
+    </node>
+    <node id="examen_11_2_creatinina">
+      <data key="d0">examen</data>
+      <data key="d2">Creatinina</data>
+    </node>
+    <node id="resultado_11_2">
+      <data key="d0">resultado</data>
+      <data key="d3">2.10</data>
+    </node>
+    <node id="referencia_11_2">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">0.70 - 1.20</data>
+    </node>
+    <node id="clasificacion_11_2_alto">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">ALTO</data>
+    </node>
+    <node id="examen_11_3_hemoglobina">
+      <data key="d0">examen</data>
+      <data key="d2">Hemoglobina</data>
+    </node>
+    <node id="resultado_11_3">
+      <data key="d0">resultado</data>
+      <data key="d3">9.2</data>
+    </node>
+    <node id="referencia_11_3">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">12.0 - 16.0</data>
+    </node>
+    <node id="clasificacion_11_3_bajo">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">BAJO</data>
+    </node>
+    <node id="examen_11_4_hematocrito">
+      <data key="d0">examen</data>
+      <data key="d2">Hematocrito</data>
+    </node>
+    <node id="resultado_11_4">
+      <data key="d0">resultado</data>
+      <data key="d3">29</data>
+    </node>
+    <node id="referencia_11_4">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">36 - 48</data>
+    </node>
+    <node id="clasificacion_11_4_bajo">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">BAJO</data>
+    </node>
+    <node id="examen_11_5_plaquetas">
+      <data key="d0">examen</data>
+      <data key="d2">Plaquetas</data>
+    </node>
+    <node id="resultado_11_5">
+      <data key="d0">resultado</data>
+      <data key="d3">90</data>
+    </node>
+    <node id="referencia_11_5">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">150 - 450</data>
+    </node>
+    <node id="clasificacion_11_5_bajo">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">BAJO</data>
+    </node>
+    <node id="examen_11_6_leucocitos">
+      <data key="d0">examen</data>
+      <data key="d2">Leucocitos</data>
+    </node>
+    <node id="resultado_11_6">
+      <data key="d0">resultado</data>
+      <data key="d3">7.2</data>
+    </node>
+    <node id="referencia_11_6">
+      <data key="d0">rango_referencia</data>
+      <data key="d3">4.0 - 11.0</data>
+    </node>
+    <node id="clasificacion_11_6_dentro_de_referencia">
+      <data key="d0">clasificacion_resultado</data>
+      <data key="d4">DENTRO DE REFERENCIA</data>
+    </node>
+    <node id="interpretacion_11">
+      <data key="d0">interpretacion_clinica</data>
+      <data key="d5">Se identificaron resultados fuera de los rangos de referencia y se generaron las siguientes hipótesis orientativas: Hallazgo compatible con hiperglucemia; Posible alteración de la función renal; Patrón compatible con anemia; Trombocitopenia. Estas asociaciones no constituyen un diagnóstico médico.</data>
+    </node>
+    <node id="condicion_11_1_hallazgo_compatible_con_hiperglucemia">
+      <data key="d0">condicion_clinica</data>
+      <data key="d2">Hallazgo compatible con hiperglucemia</data>
+      <data key="d6">orientativo</data>
+    </node>
+    <node id="condicion_11_2_posible_alteracion_de_la_funcion_renal">
+      <data key="d0">condicion_clinica</data>
+      <data key="d2">Posible alteración de la función renal</data>
+      <data key="d6">orientativo</data>
+    </node>
+    <node id="condicion_11_3_patron_compatible_con_anemia">
+      <data key="d0">condicion_clinica</data>
+      <data key="d2">Patrón compatible con anemia</data>
+      <data key="d6">orientativo</data>
+    </node>
+    <node id="condicion_11_4_trombocitopenia">
+      <data key="d0">condicion_clinica</data>
+      <data key="d2">Trombocitopenia</data>
+      <data key="d6">orientativo</data>
+    </node>
+    <edge source="documento_medico" target="paciente">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_medico" target="examen">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_medico" target="interpretacion_clinica">
+      <data key="d7">genera_interpretacion</data>
+    </edge>
+    <edge source="examen" target="resultado">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado" target="unidad">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado" target="rango_referencia">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado" target="clasificacion_resultado">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="modelo_mlp" target="prediccion">
+      <data key="d7">produce</data>
+    </edge>
+    <edge source="prediccion" target="digito">
+      <data key="d7">asigna_clase</data>
+    </edge>
+    <edge source="digito" target="dato_clinico">
+      <data key="d7">puede_formar_parte_de</data>
+    </edge>
+    <edge source="imagen" target="prediccion">
+      <data key="d7">genera</data>
+    </edge>
+    <edge source="dato_clinico" target="temperatura">
+      <data key="d7">puede_representar</data>
+    </edge>
+    <edge source="dato_clinico" target="frecuencia_cardiaca">
+      <data key="d7">puede_representar</data>
+    </edge>
+    <edge source="dato_clinico" target="presion_arterial">
+      <data key="d7">puede_representar</data>
+    </edge>
+    <edge source="documento_7" target="documento_medico">
+      <data key="d7">es_instancia_de</data>
+    </edge>
+    <edge source="documento_7" target="paciente_carlos_gomez">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_7" target="examen_7_1_glucosa">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_7" target="examen_7_2_creatinina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_7" target="examen_7_3_hemoglobina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_7" target="examen_7_4_hematocrito">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_7" target="examen_7_5_plaquetas">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="examen_7_1_glucosa" target="resultado_7_1">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_7_1" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_7_1" target="referencia_7_1">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="examen_7_2_creatinina" target="resultado_7_2">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_7_2" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_7_2" target="referencia_7_2">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="examen_7_3_hemoglobina" target="resultado_7_3">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_7_3" target="unidad_g_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_7_3" target="referencia_7_3">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="examen_7_4_hematocrito" target="resultado_7_4">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_7_4" target="unidad_sin_dato">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_7_4" target="referencia_7_4">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="examen_7_5_plaquetas" target="resultado_7_5">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_7_5" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_7_5" target="referencia_7_5">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="clasificacion_resultado" target="condicion_clinica">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="interpretacion_clinica" target="condicion_clinica">
+      <data key="d7">incluye_hipotesis</data>
+    </edge>
+    <edge source="documento_8" target="documento_medico">
+      <data key="d7">es_instancia_de</data>
+    </edge>
+    <edge source="documento_8" target="paciente_carlos_gomez">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_8" target="examen_8_1_glucosa">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_8" target="examen_8_2_creatinina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_8" target="examen_8_3_hemoglobina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_8" target="examen_8_4_hematocrito">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_8" target="examen_8_5_plaquetas">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_8" target="interpretacion_8">
+      <data key="d7">genera_interpretacion</data>
+    </edge>
+    <edge source="examen_8_1_glucosa" target="resultado_8_1">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_8_1" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_8_1" target="referencia_8_1">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_8_1" target="clasificacion_8_1_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_8_2_creatinina" target="resultado_8_2">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_8_2" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_8_2" target="referencia_8_2">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_8_2" target="clasificacion_8_2_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_8_3_hemoglobina" target="resultado_8_3">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_8_3" target="unidad_g_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_8_3" target="referencia_8_3">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_8_3" target="clasificacion_8_3_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_8_4_hematocrito" target="resultado_8_4">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_8_4" target="unidad_sin_dato">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_8_4" target="referencia_8_4">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_8_4" target="clasificacion_8_4_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_8_5_plaquetas" target="resultado_8_5">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_8_5" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_8_5" target="referencia_8_5">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_8_5" target="clasificacion_8_5_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="documento_9" target="documento_medico">
+      <data key="d7">es_instancia_de</data>
+    </edge>
+    <edge source="documento_9" target="paciente_carlos_gomez">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_9" target="examen_9_1_glucosa">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_9" target="examen_9_2_creatinina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_9" target="examen_9_3_hemoglobina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_9" target="examen_9_4_hematocrito">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_9" target="examen_9_5_plaquetas">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_9" target="interpretacion_9">
+      <data key="d7">genera_interpretacion</data>
+    </edge>
+    <edge source="examen_9_1_glucosa" target="resultado_9_1">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_9_1" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_9_1" target="referencia_9_1">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_9_1" target="clasificacion_9_1_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_9_2_creatinina" target="resultado_9_2">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_9_2" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_9_2" target="referencia_9_2">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_9_2" target="clasificacion_9_2_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_9_3_hemoglobina" target="resultado_9_3">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_9_3" target="unidad_g_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_9_3" target="referencia_9_3">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_9_3" target="clasificacion_9_3_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_9_4_hematocrito" target="resultado_9_4">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_9_4" target="unidad_sin_dato">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_9_4" target="referencia_9_4">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_9_4" target="clasificacion_9_4_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_9_5_plaquetas" target="resultado_9_5">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_9_5" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_9_5" target="referencia_9_5">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_9_5" target="clasificacion_9_5_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="documento_10" target="documento_medico">
+      <data key="d7">es_instancia_de</data>
+    </edge>
+    <edge source="documento_10" target="paciente_carlos_gomez">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_10" target="examen_10_1_glucosa">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_10" target="examen_10_2_creatinina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_10" target="examen_10_3_hemoglobina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_10" target="examen_10_4_hematocrito">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_10" target="examen_10_5_plaquetas">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_10" target="interpretacion_10">
+      <data key="d7">genera_interpretacion</data>
+    </edge>
+    <edge source="examen_10_1_glucosa" target="resultado_10_1">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_10_1" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_10_1" target="referencia_10_1">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_10_1" target="clasificacion_10_1_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_10_2_creatinina" target="resultado_10_2">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_10_2" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_10_2" target="referencia_10_2">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_10_2" target="clasificacion_10_2_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_10_3_hemoglobina" target="resultado_10_3">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_10_3" target="unidad_g_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_10_3" target="referencia_10_3">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_10_3" target="clasificacion_10_3_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_10_4_hematocrito" target="resultado_10_4">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_10_4" target="unidad_sin_dato">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_10_4" target="referencia_10_4">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_10_4" target="clasificacion_10_4_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="examen_10_5_plaquetas" target="resultado_10_5">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_10_5" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_10_5" target="referencia_10_5">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_10_5" target="clasificacion_10_5_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="documento_11" target="documento_medico">
+      <data key="d7">es_instancia_de</data>
+    </edge>
+    <edge source="documento_11" target="paciente_carlos_gomez">
+      <data key="d7">pertenece_a</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_1_glucosa">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_2_creatinina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_3_hemoglobina">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_4_hematocrito">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_5_plaquetas">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="examen_11_6_leucocitos">
+      <data key="d7">contiene</data>
+    </edge>
+    <edge source="documento_11" target="interpretacion_11">
+      <data key="d7">genera_interpretacion</data>
+    </edge>
+    <edge source="examen_11_1_glucosa" target="resultado_11_1">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_1" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_1" target="referencia_11_1">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_1" target="clasificacion_11_1_alto">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="resultado_11_1" target="condicion_11_1_hallazgo_compatible_con_hiperglucemia">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="examen_11_2_creatinina" target="resultado_11_2">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_2" target="unidad_mg_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_2" target="referencia_11_2">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_2" target="clasificacion_11_2_alto">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="resultado_11_2" target="condicion_11_2_posible_alteracion_de_la_funcion_renal">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="examen_11_3_hemoglobina" target="resultado_11_3">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_3" target="unidad_g_dl">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_3" target="referencia_11_3">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_3" target="clasificacion_11_3_bajo">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="resultado_11_3" target="condicion_11_3_patron_compatible_con_anemia">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="examen_11_4_hematocrito" target="resultado_11_4">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_4" target="unidad_sin_dato">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_4" target="referencia_11_4">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_4" target="clasificacion_11_4_bajo">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="resultado_11_4" target="condicion_11_3_patron_compatible_con_anemia">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="examen_11_5_plaquetas" target="resultado_11_5">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_5" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_5" target="referencia_11_5">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_5" target="clasificacion_11_5_bajo">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="resultado_11_5" target="condicion_11_4_trombocitopenia">
+      <data key="d7">puede_sugerir</data>
+    </edge>
+    <edge source="examen_11_6_leucocitos" target="resultado_11_6">
+      <data key="d7">tiene_resultado</data>
+    </edge>
+    <edge source="resultado_11_6" target="unidad_10_3_ul">
+      <data key="d7">tiene_unidad</data>
+    </edge>
+    <edge source="resultado_11_6" target="referencia_11_6">
+      <data key="d7">tiene_referencia</data>
+    </edge>
+    <edge source="resultado_11_6" target="clasificacion_11_6_dentro_de_referencia">
+      <data key="d7">se_clasifica_como</data>
+    </edge>
+    <edge source="interpretacion_11" target="condicion_11_1_hallazgo_compatible_con_hiperglucemia">
+      <data key="d7">incluye_hipotesis</data>
+    </edge>
+    <edge source="interpretacion_11" target="condicion_11_2_posible_alteracion_de_la_funcion_renal">
+      <data key="d7">incluye_hipotesis</data>
+    </edge>
+    <edge source="interpretacion_11" target="condicion_11_3_patron_compatible_con_anemia">
+      <data key="d7">incluye_hipotesis</data>
+    </edge>
+    <edge source="interpretacion_11" target="condicion_11_4_trombocitopenia">
+      <data key="d7">incluye_hipotesis</data>
+    </edge>
+  </graph>
+</graphml>

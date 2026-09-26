@@ -2,6 +2,7 @@ from pathlib import Path
 import heapq
 import itertools
 import re
+import sys
 import unicodedata
 
 import numpy as np
@@ -20,10 +21,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 # CONFIGURACIÓN GENERAL
 # ==========================================================
 
-VERSION = "1.3"
+VERSION = "1.4"
 RANDOM_STATE = 42
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# /ia_semestre/
+PROJECT_ROOT = ROOT.parent
 
 DATA_FILE = ROOT / "data" / "datos_his.csv"
 KB_FILE = ROOT / "data" / "base_conocimiento.txt"
@@ -34,11 +38,49 @@ REPORT_SEMANA05 = REPORTS_DIR / "semana05.md"
 
 
 # ==========================================================
+# SEMANA 8
+# CARGAR MÓDULO EXTERNO
+# ==========================================================
+
+SEMANA8_SRC = PROJECT_ROOT / "src"
+
+if str(SEMANA8_SRC) not in sys.path:
+    sys.path.insert(
+        0,
+        str(SEMANA8_SRC)
+    )
+
+
+try:
+    from semana08_red_ontologia import (
+        SistemaReconocimientoSemana8
+    )
+
+    SEMANA8_DISPONIBLE = True
+    SEMANA8_ERROR = None
+
+except Exception as error:
+
+    SistemaReconocimientoSemana8 = None
+
+    SEMANA8_DISPONIBLE = False
+
+    SEMANA8_ERROR = str(
+        error
+    )
+
+
+_SISTEMA_SEMANA8 = None
+
+
+# ==========================================================
 # UTILIDADES
 # ==========================================================
 
 def normalizar_texto(texto):
-    texto = str(texto).lower().strip()
+    texto = str(
+        texto
+    ).lower().strip()
 
     texto = unicodedata.normalize(
         "NFD",
@@ -48,7 +90,9 @@ def normalizar_texto(texto):
     texto = "".join(
         caracter
         for caracter in texto
-        if unicodedata.category(caracter) != "Mn"
+        if unicodedata.category(
+            caracter
+        ) != "Mn"
     )
 
     texto = re.sub(
@@ -67,14 +111,22 @@ def normalizar_texto(texto):
 
 
 def valor_booleano(valor):
-    if isinstance(valor, bool):
+    if isinstance(
+        valor,
+        bool
+    ):
         return valor
 
-    if isinstance(valor, int):
+    if isinstance(
+        valor,
+        int
+    ):
         return valor == 1
 
     texto = normalizar_texto(
-        str(valor)
+        str(
+            valor
+        )
     )
 
     return texto in {
@@ -89,6 +141,7 @@ def valor_booleano(valor):
 
 def solicitar_criterio(nombre):
     while True:
+
         respuesta = input(
             f"{nombre} (s/n): "
         ).strip().lower()
@@ -126,6 +179,7 @@ VARIABLES_PRIORIDAD = [
 
 def cargar_datos_prioridad():
     if not DATA_FILE.exists():
+
         raise FileNotFoundError(
             f"No se encontró el archivo: {DATA_FILE}"
         )
@@ -146,9 +200,12 @@ def cargar_datos_prioridad():
     ]
 
     if faltantes:
+
         raise ValueError(
             "Faltan columnas en datos_his.csv: "
-            + ", ".join(faltantes)
+            + ", ".join(
+                faltantes
+            )
         )
 
     return datos[
@@ -180,19 +237,21 @@ def entrenar_modelo_prioridad():
         stratify=y
     )
 
-    modelo = Pipeline([
-        (
-            "scaler",
-            StandardScaler()
-        ),
-        (
-            "modelo",
-            LogisticRegression(
-                max_iter=1000,
-                random_state=RANDOM_STATE
+    modelo = Pipeline(
+        [
+            (
+                "scaler",
+                StandardScaler()
+            ),
+            (
+                "modelo",
+                LogisticRegression(
+                    max_iter=1000,
+                    random_state=RANDOM_STATE
+                )
             )
-        )
-    ])
+        ]
+    )
 
     modelo.fit(
         X_train,
@@ -244,12 +303,14 @@ def evaluar_prioridad(
     imagenes
 ):
     entrada = pd.DataFrame(
-        [[
-            edad,
-            documentos,
-            resultados,
-            imagenes
-        ]],
+        [
+            [
+                edad,
+                documentos,
+                resultados,
+                imagenes
+            ]
+        ],
         columns=VARIABLES_PRIORIDAD
     )
 
@@ -257,7 +318,10 @@ def evaluar_prioridad(
         entrada
     )[0]
 
-    if int(prediccion) == 1:
+    if int(
+        prediccion
+    ) == 1:
+
         return "Prioritaria"
 
     return "Normal"
@@ -269,6 +333,7 @@ def evaluar_prioridad(
 # ==========================================================
 
 PALABRAS_CLAVE = {
+
     "Historia clínica": [
         "historia",
         "antecedente",
@@ -312,13 +377,17 @@ PALABRAS_CLAVE = {
 
 
 def clasificar_texto(texto):
+
     texto_normalizado = normalizar_texto(
         texto
     )
 
     resultados = {}
 
-    for categoria, palabras in PALABRAS_CLAVE.items():
+    for categoria, palabras in (
+        PALABRAS_CLAVE.items()
+    ):
+
         coincidencias = sum(
             1
             for palabra in palabras
@@ -337,6 +406,7 @@ def clasificar_texto(texto):
     ]
 
     if not categorias_detectadas:
+
         return {
             "principal":
                 "No identificada",
@@ -371,6 +441,7 @@ def clasificar_texto(texto):
 # ==========================================================
 
 COSTOS_REVISION = {
+
     "Historia clínica": {
         "procesamiento": 1,
         "espera": 1
@@ -393,10 +464,16 @@ COSTOS_REVISION = {
 }
 
 
-def heuristica_revision(pendientes):
+def heuristica_revision(
+    pendientes
+):
     return sum(
-        COSTOS_REVISION[elemento]["procesamiento"]
-        for elemento in pendientes
+        COSTOS_REVISION[
+            elemento
+        ]["procesamiento"]
+
+        for elemento
+        in pendientes
     )
 
 
@@ -404,6 +481,7 @@ def costo_transicion(
     seleccionado,
     restantes
 ):
+
     procesamiento = (
         COSTOS_REVISION[
             seleccionado
@@ -411,14 +489,24 @@ def costo_transicion(
     )
 
     espera = sum(
-        COSTOS_REVISION[elemento]["espera"]
-        for elemento in restantes
+        COSTOS_REVISION[
+            elemento
+        ]["espera"]
+
+        for elemento
+        in restantes
     )
 
-    return procesamiento + espera
+    return (
+        procesamiento
+        + espera
+    )
 
 
-def planificar_revision(elementos):
+def planificar_revision(
+    elementos
+):
+
     elementos = list(
         dict.fromkeys(
             elementos
@@ -432,12 +520,16 @@ def planificar_revision(elementos):
     ]
 
     if invalidos:
+
         raise ValueError(
             "Elementos no reconocidos: "
-            + ", ".join(invalidos)
+            + ", ".join(
+                invalidos
+            )
         )
 
     if not elementos:
+
         return {
             "orden": [],
             "costo_total": 0
@@ -458,7 +550,9 @@ def planificar_revision(elementos):
                 estado_inicial
             ),
             0,
-            next(contador),
+            next(
+                contador
+            ),
             estado_inicial,
             []
         )
@@ -469,6 +563,7 @@ def planificar_revision(elementos):
     }
 
     while cola:
+
         (
             _,
             costo_actual,
@@ -480,6 +575,7 @@ def planificar_revision(elementos):
         )
 
         if not pendientes:
+
             return {
                 "orden":
                     camino,
@@ -489,6 +585,7 @@ def planificar_revision(elementos):
             }
 
         for seleccionado in pendientes:
+
             restantes = tuple(
                 elemento
                 for elemento in pendientes
@@ -506,8 +603,11 @@ def planificar_revision(elementos):
             if (
                 restantes not in mejor_costo
                 or nuevo_costo
-                < mejor_costo[restantes]
+                < mejor_costo[
+                    restantes
+                ]
             ):
+
                 mejor_costo[
                     restantes
                 ] = nuevo_costo
@@ -524,7 +624,9 @@ def planificar_revision(elementos):
                     (
                         f,
                         nuevo_costo,
-                        next(contador),
+                        next(
+                            contador
+                        ),
                         restantes,
                         camino
                         + [seleccionado]
@@ -542,6 +644,7 @@ def planificar_revision(elementos):
 # ==========================================================
 
 CRITERIOS_PRIORIZACION = {
+
     "dolor_intenso": {
         "gravedad": 1,
         "impacto": 4
@@ -583,17 +686,20 @@ def calcular_dimension_paciente(
     paciente,
     dimension
 ):
+
     total = 0
 
     for criterio, pesos in (
         CRITERIOS_PRIORIZACION.items()
     ):
+
         if valor_booleano(
             paciente.get(
                 criterio,
                 False
             )
         ):
+
             total += pesos[
                 dimension
             ]
@@ -605,10 +711,12 @@ def minimax(
     nodo,
     maximizando=True
 ):
+
     if isinstance(
         nodo,
         (int, float)
     ):
+
         return nodo
 
     valores = [
@@ -616,10 +724,13 @@ def minimax(
             hijo,
             not maximizando
         )
-        for hijo in nodo
+
+        for hijo
+        in nodo
     ]
 
     if maximizando:
+
         return max(
             valores
         )
@@ -629,15 +740,22 @@ def minimax(
     )
 
 
-def evaluar_paciente_minimax(paciente):
-    gravedad = calcular_dimension_paciente(
-        paciente,
-        "gravedad"
+def evaluar_paciente_minimax(
+    paciente
+):
+
+    gravedad = (
+        calcular_dimension_paciente(
+            paciente,
+            "gravedad"
+        )
     )
 
-    impacto = calcular_dimension_paciente(
-        paciente,
-        "impacto"
+    impacto = (
+        calcular_dimension_paciente(
+            paciente,
+            "impacto"
+        )
     )
 
     valor_minimax = minimax(
@@ -670,22 +788,35 @@ def priorizar_pacientes_minimax(
     paciente1,
     paciente2
 ):
-    evaluacion1 = evaluar_paciente_minimax(
-        paciente1
+
+    evaluacion1 = (
+        evaluar_paciente_minimax(
+            paciente1
+        )
     )
 
-    evaluacion2 = evaluar_paciente_minimax(
-        paciente2
+    evaluacion2 = (
+        evaluar_paciente_minimax(
+            paciente2
+        )
     )
 
     arbol = [
         [
-            evaluacion1["gravedad"],
-            evaluacion1["impacto"]
+            evaluacion1[
+                "gravedad"
+            ],
+            evaluacion1[
+                "impacto"
+            ]
         ],
         [
-            evaluacion2["gravedad"],
-            evaluacion2["impacto"]
+            evaluacion2[
+                "gravedad"
+            ],
+            evaluacion2[
+                "impacto"
+            ]
         ]
     ]
 
@@ -704,14 +835,29 @@ def priorizar_pacientes_minimax(
         True
     )
 
-    if valor_paciente1 > valor_paciente2:
-        prioritario = "Paciente 1"
+    if (
+        valor_paciente1
+        > valor_paciente2
+    ):
 
-    elif valor_paciente2 > valor_paciente1:
-        prioritario = "Paciente 2"
+        prioritario = (
+            "Paciente 1"
+        )
+
+    elif (
+        valor_paciente2
+        > valor_paciente1
+    ):
+
+        prioritario = (
+            "Paciente 2"
+        )
 
     else:
-        prioritario = "Prioridad equivalente"
+
+        prioritario = (
+            "Prioridad equivalente"
+        )
 
     return {
         "paciente_prioritario":
@@ -734,6 +880,7 @@ def priorizar_pacientes_minimax(
 # ==========================================================
 
 REGLAS_EXPERTAS = [
+
     (
         lambda q:
             "hemograma" in q
@@ -787,13 +934,16 @@ REGLAS_EXPERTAS = [
 
 
 def cargar_base_conocimiento():
+
     if not KB_FILE.exists():
+
         raise FileNotFoundError(
             f"No se encontró: {KB_FILE}"
         )
 
     documentos = [
         linea.strip()
+
         for linea in (
             KB_FILE
             .read_text(
@@ -801,10 +951,14 @@ def cargar_base_conocimiento():
             )
             .splitlines()
         )
+
         if linea.strip()
     ]
 
-    if len(documentos) < 8:
+    if len(
+        documentos
+    ) < 8:
+
         raise ValueError(
             "La base de conocimiento debe "
             "contener mínimo 8 entradas."
@@ -814,7 +968,9 @@ def cargar_base_conocimiento():
 
 
 def cargar_datos_clasificacion():
+
     if not TRAIN_FILE.exists():
+
         raise FileNotFoundError(
             f"No se encontró: {TRAIN_FILE}"
         )
@@ -831,6 +987,7 @@ def cargar_datos_clasificacion():
     if not requeridas.issubset(
         datos.columns
     ):
+
         raise ValueError(
             "ejemplos_clasificacion.csv debe "
             "contener texto y clase."
@@ -844,14 +1001,22 @@ def cargar_datos_clasificacion():
     ].dropna()
 
     textos = (
-        datos["texto"]
-        .astype(str)
+        datos[
+            "texto"
+        ]
+        .astype(
+            str
+        )
         .tolist()
     )
 
     clases = (
-        datos["clase"]
-        .astype(str)
+        datos[
+            "clase"
+        ]
+        .astype(
+            str
+        )
         .tolist()
     )
 
@@ -869,6 +1034,7 @@ def cargar_datos_clasificacion():
 class SistemaHibridoHIS:
 
     def __init__(self):
+
         self.documentos = (
             cargar_base_conocimiento()
         )
@@ -877,7 +1043,9 @@ class SistemaHibridoHIS:
             normalizar_texto(
                 documento
             )
-            for documento in self.documentos
+
+            for documento
+            in self.documentos
         ]
 
         self.vectorizador_documentos = (
@@ -899,22 +1067,26 @@ class SistemaHibridoHIS:
             normalizar_texto(
                 texto
             )
-            for texto in textos
+
+            for texto
+            in textos
         ]
 
-        self.clasificador = Pipeline([
-            (
-                "tfidf",
-                TfidfVectorizer()
-            ),
-            (
-                "modelo",
-                LogisticRegression(
-                    max_iter=1000,
-                    random_state=RANDOM_STATE
+        self.clasificador = Pipeline(
+            [
+                (
+                    "tfidf",
+                    TfidfVectorizer()
+                ),
+                (
+                    "modelo",
+                    LogisticRegression(
+                        max_iter=1000,
+                        random_state=RANDOM_STATE
+                    )
                 )
-            )
-        ])
+            ]
+        )
 
         self.clasificador.fit(
             textos_normalizados,
@@ -930,14 +1102,19 @@ class SistemaHibridoHIS:
         self,
         consulta
     ):
-        consulta_normalizada = normalizar_texto(
-            consulta
+
+        consulta_normalizada = (
+            normalizar_texto(
+                consulta
+            )
         )
 
         reglas = [
             nombre
+
             for condicion, nombre
             in REGLAS_EXPERTAS
+
             if condicion(
                 consulta_normalizada
             )
@@ -945,15 +1122,19 @@ class SistemaHibridoHIS:
 
         vector_consulta = (
             self.vectorizador_documentos
-            .transform([
-                consulta_normalizada
-            ])
+            .transform(
+                [
+                    consulta_normalizada
+                ]
+            )
         )
 
-        similitudes = cosine_similarity(
-            vector_consulta,
-            self.matriz_documentos
-        )[0]
+        similitudes = (
+            cosine_similarity(
+                vector_consulta,
+                self.matriz_documentos
+            )[0]
+        )
 
         mejor_indice = int(
             similitudes.argmax()
@@ -971,9 +1152,11 @@ class SistemaHibridoHIS:
 
         clase = str(
             self.clasificador
-            .predict([
-                consulta_normalizada
-            ])[0]
+            .predict(
+                [
+                    consulta_normalizada
+                ]
+            )[0]
         )
 
         return {
@@ -998,13 +1181,17 @@ class SistemaHibridoHIS:
 # VALIDACIÓN SEMANA 5
 # ==========================================================
 
-def generar_reporte_semana5(resultados):
+def generar_reporte_semana5(
+    resultados
+):
+
     REPORTS_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
 
     lineas = [
+
         "# Semana 5 - Sistema híbrido HIS_IA",
         "",
         "## Validación de funcionamiento",
@@ -1021,38 +1208,54 @@ def generar_reporte_semana5(resultados):
         resultados,
         start=1
     ):
+
         reglas = (
             ", ".join(
                 resultado[
                     "reglas"
                 ]
             )
+
             if resultado[
                 "reglas"
             ]
-            else "Sin regla específica"
+
+            else (
+                "Sin regla específica"
+            )
         )
 
-        lineas.extend([
-            f"### Consulta {indice}",
-            "",
-            f"**Consulta:** {resultado['consulta']}",
-            "",
-            f"**Categoría:** {resultado['clase']}",
-            "",
-            f"**Acciones sugeridas:** {reglas}",
-            "",
-            (
-                "**Información relacionada:** "
-                f"{resultado['evidencia']}"
-            ),
-            "",
-            (
-                "**Similitud:** "
-                f"{resultado['similitud']:.3f}"
-            ),
-            ""
-        ])
+        lineas.extend(
+            [
+                f"### Consulta {indice}",
+                "",
+                (
+                    f"**Consulta:** "
+                    f"{resultado['consulta']}"
+                ),
+                "",
+                (
+                    f"**Categoría:** "
+                    f"{resultado['clase']}"
+                ),
+                "",
+                (
+                    f"**Acciones sugeridas:** "
+                    f"{reglas}"
+                ),
+                "",
+                (
+                    "**Información relacionada:** "
+                    f"{resultado['evidencia']}"
+                ),
+                "",
+                (
+                    "**Similitud:** "
+                    f"{resultado['similitud']:.3f}"
+                ),
+                ""
+            ]
+        )
 
     REPORT_SEMANA05.write_text(
         "\n".join(
@@ -1065,23 +1268,29 @@ def generar_reporte_semana5(resultados):
 def validar_funcionamiento_semana5(
     sistema_hibrido
 ):
+
     consultas = [
+
         (
             "Necesito revisar el resultado "
             "de creatinina del paciente."
         ),
+
         (
             "Hay una resonancia pendiente "
             "de revisión."
         ),
+
         (
             "Se requiere consultar los antecedentes "
             "y evolución de la historia clínica."
         ),
+
         (
             "El paciente tiene medicamentos "
             "y tratamiento registrados."
         ),
+
         (
             "¿Qué información debería "
             "revisar primero?"
@@ -1091,6 +1300,7 @@ def validar_funcionamiento_semana5(
     resultados = []
 
     for consulta in consultas:
+
         resultado = (
             sistema_hibrido
             .analizar_consulta(
@@ -1128,10 +1338,14 @@ def validar_funcionamiento_semana5(
                     "reglas"
                 ]
             )
+
             if resultado[
                 "reglas"
             ]
-            else "Sin regla específica"
+
+            else (
+                "Sin regla específica"
+            )
         )
 
         print(
@@ -1171,15 +1385,11 @@ def validar_funcionamiento_semana5(
 
 # ==========================================================
 # SEMANA 7
-# REPRESENTACIONES DEL RECONOCIMIENTO
-# ==========================================================
-
-
-# ==========================================================
 # REFERENCIAS
 # ==========================================================
 
 REFERENCIAS_SEMANA7 = {
+
     "temperatura": {
         "min": 36,
         "max": 37.5,
@@ -1204,17 +1414,20 @@ REFERENCIAS_SEMANA7 = {
 
 
 # ==========================================================
-# CLASIFICACIÓN DE TEMPERATURA
+# SEMANA 7
+# CLASIFICACIONES
 # ==========================================================
 
 def clasificar_temperatura(
     temperatura
 ):
+
     temperatura = float(
         temperatura
     )
 
     if temperatura < 35:
+
         return "Hipotermia"
 
     elif (
@@ -1222,6 +1435,7 @@ def clasificar_temperatura(
         <= temperatura
         < 37.5
     ):
+
         return "Normal"
 
     elif (
@@ -1229,6 +1443,7 @@ def clasificar_temperatura(
         <= temperatura
         < 39.5
     ):
+
         return "Fiebre"
 
     elif (
@@ -1236,9 +1451,11 @@ def clasificar_temperatura(
         <= temperatura
         < 41
     ):
+
         return "Fiebre alta"
 
     elif temperatura >= 41:
+
         return "Hipertermia"
 
     return (
@@ -1247,18 +1464,16 @@ def clasificar_temperatura(
     )
 
 
-# ==========================================================
-# CLASIFICACIÓN DE LATIDOS
-# ==========================================================
-
 def clasificar_latidos(
     latidos
 ):
+
     latidos = int(
         latidos
     )
 
     if latidos <= 62:
+
         return "Excelente"
 
     elif (
@@ -1266,6 +1481,7 @@ def clasificar_latidos(
         <= latidos
         <= 70
     ):
+
         return "Bueno"
 
     elif (
@@ -1273,9 +1489,11 @@ def clasificar_latidos(
         <= latidos
         <= 84
     ):
+
         return "Normal"
 
     elif latidos >= 86:
+
         return "Inadecuado"
 
     return (
@@ -1284,18 +1502,16 @@ def clasificar_latidos(
     )
 
 
-# ==========================================================
-# CLASIFICACIÓN DE PRESIÓN
-# ==========================================================
-
 def clasificar_presion(
     presion
 ):
+
     presion = int(
         presion
     )
 
     if presion < 120:
+
         return "Óptima"
 
     elif (
@@ -1303,6 +1519,7 @@ def clasificar_presion(
         <= presion
         <= 129
     ):
+
         return "Normal"
 
     elif (
@@ -1310,6 +1527,7 @@ def clasificar_presion(
         <= presion
         <= 139
     ):
+
         return "Presión fronteriza"
 
     elif (
@@ -1317,6 +1535,7 @@ def clasificar_presion(
         <= presion
         <= 159
     ):
+
         return "Hipertensión nivel 1"
 
     elif (
@@ -1324,9 +1543,11 @@ def clasificar_presion(
         <= presion
         <= 179
     ):
+
         return "Hipertensión nivel 2"
 
     elif presion > 180:
+
         return "Hipertensión nivel 3"
 
     return (
@@ -1336,12 +1557,14 @@ def clasificar_presion(
 
 
 # ==========================================================
+# SEMANA 7
 # REPRESENTACIÓN NUMÉRICA
 # ==========================================================
 
 def representacion_numerica(
     caso
 ):
+
     temperatura = float(
         caso.get(
             "temperatura"
@@ -1388,12 +1611,14 @@ def representacion_numerica(
 
 
 # ==========================================================
+# SEMANA 7
 # REPRESENTACIÓN SIMBÓLICA
 # ==========================================================
 
 def representacion_simbolica(
     caso
 ):
+
     temperatura = float(
         caso.get(
             "temperatura"
@@ -1466,12 +1691,14 @@ def representacion_simbolica(
 
 
 # ==========================================================
+# SEMANA 7
 # RESULTADO INTEGRADO
 # ==========================================================
 
 def generar_resultado_integrado(
     simbolica
 ):
+
     hechos = simbolica[
         "hechos"
     ]
@@ -1488,12 +1715,6 @@ def generar_resultado_integrado(
         "presion"
     ]
 
-
-    # ------------------------------------------------------
-    # CATEGORÍAS CONSIDERADAS ESPERADAS
-    # DENTRO DE LAS REGLAS DEL PROYECTO
-    # ------------------------------------------------------
-
     temperatura_esperada = {
         "Normal"
     }
@@ -1509,7 +1730,6 @@ def generar_resultado_integrado(
         "Normal"
     }
 
-
     variables_en_categoria_esperada = 0
 
     hallazgos = []
@@ -1517,84 +1737,94 @@ def generar_resultado_integrado(
     detalles = []
 
 
-    # ------------------------------------------------------
-    # TEMPERATURA
-    # ------------------------------------------------------
-
     if temperatura in temperatura_esperada:
+
         variables_en_categoria_esperada += 1
 
         detalles.append(
-            "Temperatura: "
-            + temperatura
-            + " - categoría esperada."
+            (
+                "Temperatura: "
+                + temperatura
+                + " - categoría esperada."
+            )
         )
 
     else:
+
         hallazgos.append(
             "Temperatura: "
             + temperatura
         )
 
         detalles.append(
-            "Temperatura: "
-            + temperatura
-            + " - clasificación diferente "
-            "de la categoría esperada."
+            (
+                "Temperatura: "
+                + temperatura
+                + " - clasificación diferente "
+                "de la categoría esperada."
+            )
         )
 
-
-    # ------------------------------------------------------
-    # LATIDOS
-    # ------------------------------------------------------
 
     if latidos in latidos_esperados:
+
         variables_en_categoria_esperada += 1
 
         detalles.append(
-            "Frecuencia cardíaca: "
-            + latidos
-            + " - categoría esperada."
+            (
+                "Frecuencia cardíaca: "
+                + latidos
+                + " - categoría esperada."
+            )
         )
 
     else:
+
         hallazgos.append(
-            "Frecuencia cardíaca: "
-            + latidos
+            (
+                "Frecuencia cardíaca: "
+                + latidos
+            )
         )
 
         detalles.append(
-            "Frecuencia cardíaca: "
-            + latidos
-            + " - clasificación diferente "
-            "de las categorías esperadas."
+            (
+                "Frecuencia cardíaca: "
+                + latidos
+                + " - clasificación diferente "
+                "de las categorías esperadas."
+            )
         )
 
-
-    # ------------------------------------------------------
-    # PRESIÓN ARTERIAL
-    # ------------------------------------------------------
 
     if presion in presion_esperada:
+
         variables_en_categoria_esperada += 1
 
         detalles.append(
-            "Presión arterial: "
-            + presion
-            + " - categoría esperada."
+            (
+                "Presión arterial: "
+                + presion
+                + " - categoría esperada."
+            )
         )
 
     else:
+
         hallazgos.append(
-            "Presión arterial: "
-            + presion
+            (
+                "Presión arterial: "
+                + presion
+            )
         )
 
         detalles.append(
-            "Presión arterial: "
-            + presion
-            + " - clasificación diferente "
-            "de las categorías esperadas."
+            (
+                "Presión arterial: "
+                + presion
+                + " - clasificación diferente "
+                "de las categorías esperadas."
+            )
         )
 
 
@@ -1605,11 +1835,8 @@ def generar_resultado_integrado(
     )
 
 
-    # ------------------------------------------------------
-    # CONCLUSIÓN
-    # ------------------------------------------------------
-
     if variables_con_hallazgos == 0:
+
         conclusion = (
             "Las tres variables evaluadas se encuentran "
             "dentro de las categorías esperadas definidas "
@@ -1617,6 +1844,7 @@ def generar_resultado_integrado(
         )
 
     elif variables_con_hallazgos == 1:
+
         conclusion = (
             "Se identificó 1 variable con una clasificación "
             "diferente de las categorías esperadas definidas "
@@ -1624,6 +1852,7 @@ def generar_resultado_integrado(
         )
 
     else:
+
         conclusion = (
             f"Se identificaron {variables_con_hallazgos} "
             "variables con clasificaciones diferentes de "
@@ -1654,39 +1883,54 @@ def generar_resultado_integrado(
 
 
 # ==========================================================
+# SEMANA 7
 # AUTÓMATA
 # ==========================================================
 
 def automata_consulta_paciente(
     caso
 ):
+
     secuencia = ""
 
     if caso.get(
         "temperatura"
     ) is not None:
+
         secuencia += "T"
 
     if caso.get(
         "latidos"
     ) is not None:
+
         secuencia += "L"
 
     if caso.get(
         "presion"
     ) is not None:
+
         secuencia += "P"
 
     estado = "q0"
 
     transiciones = {
-        ("q0", "T"):
+
+        (
+            "q0",
+            "T"
+        ):
             "q1",
 
-        ("q1", "L"):
+        (
+            "q1",
+            "L"
+        ):
             "q2",
 
-        ("q2", "P"):
+        (
+            "q2",
+            "P"
+        ):
             "q3"
     }
 
@@ -1695,12 +1939,14 @@ def automata_consulta_paciente(
     ]
 
     for simbolo in secuencia:
+
         transicion = (
             estado,
             simbolo
         )
 
         if transicion not in transiciones:
+
             return {
                 "secuencia":
                     secuencia,
@@ -1715,8 +1961,7 @@ def automata_consulta_paciente(
                     recorrido,
 
                 "mensaje":
-                    "La secuencia de datos "
-                    "no es válida."
+                    "La secuencia de datos no es válida."
             }
 
         estado = transiciones[
@@ -1732,12 +1977,14 @@ def automata_consulta_paciente(
     )
 
     if aceptada:
+
         mensaje = (
             "Consulta completa: temperatura, "
             "latidos y presión fueron procesados."
         )
 
     else:
+
         mensaje = (
             "La consulta está incompleta."
         )
@@ -1761,12 +2008,14 @@ def automata_consulta_paciente(
 
 
 # ==========================================================
-# INTEGRACIÓN SEMANA 7
+# SEMANA 7
+# INTEGRACIÓN
 # ==========================================================
 
 def analizar_representaciones(
     caso
 ):
+
     numerica = (
         representacion_numerica(
             caso
@@ -1813,10 +2062,124 @@ def analizar_representaciones(
 
 
 # ==========================================================
+# SEMANA 8
+# INTEGRACIÓN HIS_IA
+# ==========================================================
+
+def obtener_sistema_semana8():
+    global _SISTEMA_SEMANA8
+
+    if not SEMANA8_DISPONIBLE:
+
+        raise RuntimeError(
+            (
+                "Semana 8 no está disponible. "
+                f"Detalle: {SEMANA8_ERROR}"
+            )
+        )
+
+    if _SISTEMA_SEMANA8 is None:
+
+        _SISTEMA_SEMANA8 = (
+            SistemaReconocimientoSemana8()
+        )
+
+        _SISTEMA_SEMANA8.inicializar()
+
+    return _SISTEMA_SEMANA8
+
+
+def analizar_archivo_semana8(
+    ruta_archivo
+):
+
+    ruta = Path(
+        ruta_archivo
+    )
+
+    if not ruta.exists():
+
+        raise FileNotFoundError(
+            f"No existe el archivo: {ruta}"
+        )
+
+    extension = (
+        ruta.suffix.lower()
+    )
+
+    sistema = (
+        obtener_sistema_semana8()
+    )
+
+    if extension == ".pdf":
+
+        resultado = (
+            sistema.procesar_pdf(
+                ruta
+            )
+        )
+
+        return {
+            "tipo":
+                "pdf",
+
+            "resultado":
+                resultado
+        }
+
+    if extension in {
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp"
+    }:
+
+        resultado = (
+            sistema.procesar_imagen(
+                ruta
+            )
+        )
+
+        return {
+            "tipo":
+                "imagen",
+
+            "resultado":
+                resultado
+        }
+
+    raise ValueError(
+        (
+            "Formato no permitido. "
+            "Use PDF, PNG, JPG, JPEG o WEBP."
+        )
+    )
+
+
+def obtener_resumen_semana8():
+
+    sistema = (
+        obtener_sistema_semana8()
+    )
+
+    return {
+        "evidencia":
+            sistema.base.resumen(),
+
+        "ontologia":
+            sistema.ontologia.resumen(),
+
+        "accuracy":
+            sistema.mlp.accuracy
+    }
+
+
+# ==========================================================
 # CONSOLA A*
 # ==========================================================
 
 def gestionar_astar():
+
     print(
         "\nORGANIZAR REVISIÓN CON A*"
     )
@@ -1824,14 +2187,17 @@ def gestionar_astar():
     elementos = []
 
     for elemento in COSTOS_REVISION:
+
         if solicitar_criterio(
             f"Incluir {elemento}"
         ):
+
             elementos.append(
                 elemento
             )
 
     if not elementos:
+
         print(
             "No se seleccionaron elementos."
         )
@@ -1852,6 +2218,7 @@ def gestionar_astar():
         ],
         start=1
     ):
+
         print(
             f"{indice}. {elemento}"
         )
@@ -1871,6 +2238,7 @@ def gestionar_astar():
 def ingresar_paciente_minimax(
     numero
 ):
+
     print(
         f"\nPACIENTE {numero}"
     )
@@ -1880,6 +2248,7 @@ def ingresar_paciente_minimax(
     ).strip()
 
     return {
+
         "motivo_consulta":
             motivo,
 
@@ -1921,6 +2290,7 @@ def ingresar_paciente_minimax(
 
 
 def gestionar_minimax():
+
     paciente1 = (
         ingresar_paciente_minimax(
             1
@@ -2007,6 +2377,7 @@ def gestionar_minimax():
 # ==========================================================
 
 def ingresar_caso_reconocimiento():
+
     print(
         "\nRECONOCIMIENTO DEL CASO"
     )
@@ -2019,8 +2390,11 @@ def ingresar_caso_reconocimiento():
         "Motivo de consulta: "
     ).strip()
 
+
     while True:
+
         try:
+
             temperatura = float(
                 input(
                     "Temperatura del paciente °C: "
@@ -2030,12 +2404,16 @@ def ingresar_caso_reconocimiento():
             break
 
         except ValueError:
+
             print(
                 "Ingrese una temperatura válida."
             )
 
+
     while True:
+
         try:
+
             latidos = int(
                 input(
                     "Latidos por minuto: "
@@ -2045,12 +2423,16 @@ def ingresar_caso_reconocimiento():
             break
 
         except ValueError:
+
             print(
                 "Ingrese una cantidad de latidos válida."
             )
 
+
     while True:
+
         try:
+
             presion = int(
                 input(
                     "Presión arterial: "
@@ -2060,9 +2442,11 @@ def ingresar_caso_reconocimiento():
             break
 
         except ValueError:
+
             print(
                 "Ingrese un valor de presión válido."
             )
+
 
     return {
         "motivo_consulta":
@@ -2080,6 +2464,7 @@ def ingresar_caso_reconocimiento():
 
 
 def gestionar_reconocimiento():
+
     caso = (
         ingresar_caso_reconocimiento()
     )
@@ -2111,21 +2496,13 @@ def gestionar_reconocimiento():
     )
 
 
-    # ======================================================
-    # 1. REPRESENTACIÓN NUMÉRICA
-    # ======================================================
+    numerica = resultado[
+        "representacion_numerica"
+    ]
 
-    numerica = (
-        resultado[
-            "representacion_numerica"
-        ]
-    )
-
-    referencias = (
-        numerica[
-            "referencias"
-        ]
-    )
+    referencias = numerica[
+        "referencias"
+    ]
 
     print(
         "\n1. REPRESENTACIÓN NUMÉRICA"
@@ -2213,15 +2590,9 @@ def gestionar_reconocimiento():
     )
 
 
-    # ======================================================
-    # 2. REPRESENTACIÓN SIMBÓLICA
-    # ======================================================
-
-    simbolica = (
-        resultado[
-            "representacion_simbolica"
-        ]
-    )
+    simbolica = resultado[
+        "representacion_simbolica"
+    ]
 
     print(
         "\n2. REPRESENTACIÓN SIMBÓLICA"
@@ -2249,15 +2620,9 @@ def gestionar_reconocimiento():
     )
 
 
-    # ======================================================
-    # 3. AUTÓMATA
-    # ======================================================
-
-    automata = (
-        resultado[
-            "automata"
-        ]
-    )
+    automata = resultado[
+        "automata"
+    ]
 
     print(
         "\n3. AUTÓMATA"
@@ -2305,15 +2670,9 @@ def gestionar_reconocimiento():
     )
 
 
-    # ======================================================
-    # 4. RESULTADO INTEGRADO
-    # ======================================================
-
-    integrado = (
-        resultado[
-            "resultado_integrado"
-        ]
-    )
+    integrado = resultado[
+        "resultado_integrado"
+    ]
 
     print(
         "\n4. RESULTADO INTEGRADO"
@@ -2347,6 +2706,7 @@ def gestionar_reconocimiento():
     for detalle in integrado[
         "detalles"
     ]:
+
         print(
             "-",
             detalle
@@ -2364,10 +2724,538 @@ def gestionar_reconocimiento():
 
 
 # ==========================================================
-# MENÚ
+# CONSOLA SEMANA 8
+# ==========================================================
+
+def gestionar_semana8():
+
+    if not SEMANA8_DISPONIBLE:
+
+        print(
+            "\nSEMANA 8 NO DISPONIBLE"
+        )
+
+        print(
+            "Detalle:",
+            SEMANA8_ERROR
+        )
+
+        return
+
+
+    try:
+
+        sistema = (
+            obtener_sistema_semana8()
+        )
+
+    except Exception as error:
+
+        print(
+            "\nNo fue posible iniciar Semana 8:"
+        )
+
+        print(
+            error
+        )
+
+        return
+
+
+    while True:
+
+        print(
+            "\n"
+            + "=" * 60
+        )
+
+        print(
+            "SEMANA 8 - RECONOCIMIENTO DOCUMENTAL"
+        )
+
+        print(
+            "=" * 60
+        )
+
+        print(
+            "1. Probar MLP con imagen del dataset"
+        )
+
+        print(
+            "2. Analizar imagen propia"
+        )
+
+        print(
+            "3. Analizar PDF médico"
+        )
+
+        print(
+            "4. Ver evidencia SQLite y ontología"
+        )
+
+        print(
+            "5. Volver al menú principal"
+        )
+
+
+        opcion = input(
+            "\nSeleccione una opción: "
+        ).strip()
+
+
+        # ==================================================
+        # 1. DATASET
+        # ==================================================
+
+        if opcion == "1":
+
+            try:
+
+                indice = int(
+                    input(
+                        (
+                            "Índice del dataset "
+                            "(ejemplo 15): "
+                        )
+                    ).strip()
+                    or "15"
+                )
+
+                resultado = (
+                    sistema.probar_dataset(
+                        indice
+                    )
+                )
+
+                print(
+                    "\nRESULTADO MLP"
+                )
+
+                print(
+                    "Índice:",
+                    resultado[
+                        "indice"
+                    ]
+                )
+
+                print(
+                    "Clase real:",
+                    resultado[
+                        "real"
+                    ]
+                )
+
+                print(
+                    "Predicción:",
+                    resultado[
+                        "prediccion"
+                    ]
+                )
+
+                print(
+                    "Coincide:",
+                    (
+                        "Sí"
+                        if resultado[
+                            "coincide"
+                        ]
+                        else "No"
+                    )
+                )
+
+                if (
+                    resultado[
+                        "accuracy_modelo"
+                    ]
+                    is not None
+                ):
+
+                    print(
+                        "Accuracy:",
+                        round(
+                            float(
+                                resultado[
+                                    "accuracy_modelo"
+                                ]
+                            ),
+                            4
+                        )
+                    )
+
+            except Exception as error:
+
+                print(
+                    "Error:",
+                    error
+                )
+
+
+        # ==================================================
+        # 2. IMAGEN
+        # ==================================================
+
+        elif opcion == "2":
+
+            ruta = input(
+                (
+                    "Ruta de la imagen "
+                    "PNG/JPG/JPEG/WEBP: "
+                )
+            ).strip()
+
+            ruta = (
+                ruta
+                .strip('"')
+                .strip("'")
+            )
+
+            try:
+
+                respuesta = (
+                    analizar_archivo_semana8(
+                        ruta
+                    )
+                )
+
+                resultado = respuesta[
+                    "resultado"
+                ]
+
+                print(
+                    "\nRESULTADO DE IMAGEN"
+                )
+
+                print(
+                    "Archivo:",
+                    resultado[
+                        "archivo"
+                    ]
+                )
+
+                print(
+                    "Predicción:",
+                    resultado[
+                        "prediccion"
+                    ]
+                )
+
+                if (
+                    resultado[
+                        "confianza"
+                    ]
+                    is not None
+                ):
+
+                    print(
+                        "Confianza:",
+                        (
+                            f"{resultado['confianza'] * 100:.2f}%"
+                        )
+                    )
+
+                if (
+                    resultado[
+                        "accuracy_modelo"
+                    ]
+                    is not None
+                ):
+
+                    print(
+                        "Accuracy del modelo:",
+                        (
+                            f"{resultado['accuracy_modelo'] * 100:.2f}%"
+                        )
+                    )
+
+                print(
+                    "SQLite ID:",
+                    resultado[
+                        "reconocimiento_id"
+                    ]
+                )
+
+                print(
+                    "Evidencia registrada:",
+                    "Sí"
+                )
+
+                print(
+                    "Ontología actualizada:",
+                    "Sí"
+                )
+
+            except Exception as error:
+
+                print(
+                    "Error:",
+                    error
+                )
+
+
+        # ==================================================
+        # 3. PDF
+        # ==================================================
+
+        elif opcion == "3":
+
+            ruta = input(
+                "Ruta del PDF médico: "
+            ).strip()
+
+            ruta = (
+                ruta
+                .strip('"')
+                .strip("'")
+            )
+
+            try:
+
+                respuesta = (
+                    analizar_archivo_semana8(
+                        ruta
+                    )
+                )
+
+                resultado = respuesta[
+                    "resultado"
+                ]
+
+                print(
+                    "\nRESULTADO DEL DOCUMENTO"
+                )
+
+                print(
+                    "Archivo:",
+                    resultado[
+                        "archivo"
+                    ]
+                )
+
+                print(
+                    "Páginas:",
+                    resultado[
+                        "numero_paginas"
+                    ]
+                )
+
+                print(
+                    "Tipo:",
+                    resultado[
+                        "tipo_documento"
+                    ]
+                )
+
+
+                if resultado[
+                    "requiere_ocr"
+                ]:
+
+                    print(
+                        (
+                            "El PDF no contiene suficiente "
+                            "texto digital."
+                        )
+                    )
+
+                    print(
+                        "Estado: requiere OCR."
+                    )
+
+                else:
+
+                    paciente = resultado[
+                        "paciente"
+                    ]
+
+                    print(
+                        "\nPaciente:",
+                        (
+                            paciente.get(
+                                "nombre"
+                            )
+                            or "No detectado"
+                        )
+                    )
+
+                    print(
+                        "Identificación:",
+                        (
+                            paciente.get(
+                                "identificacion"
+                            )
+                            or "No detectada"
+                        )
+                    )
+
+                    print(
+                        "Fecha:",
+                        (
+                            paciente.get(
+                                "fecha"
+                            )
+                            or "No detectada"
+                        )
+                    )
+
+                    print(
+                        "\nExámenes detectados:",
+                        len(
+                            resultado[
+                                "examenes"
+                            ]
+                        )
+                    )
+
+                    for examen in resultado[
+                        "examenes"
+                    ]:
+
+                        print(
+                            "-"
+                        )
+
+                        print(
+                            "  Examen:",
+                            examen[
+                                "examen"
+                            ]
+                        )
+
+                        print(
+                            "  Resultado:",
+                            examen[
+                                "resultado"
+                            ]
+                        )
+
+                        print(
+                            "  Unidad:",
+                            (
+                                examen[
+                                    "unidad"
+                                ]
+                                or "No detectada"
+                            )
+                        )
+
+                        print(
+                            "  Referencia:",
+                            (
+                                examen[
+                                    "referencia"
+                                ]
+                                or "No detectada"
+                            )
+                        )
+
+                        print(
+                            "  Página:",
+                            examen[
+                                "pagina"
+                            ]
+                        )
+
+                print(
+                    "\nSQLite ID:",
+                    resultado[
+                        "documento_id"
+                    ]
+                )
+
+                print(
+                    "Evidencia registrada:",
+                    "Sí"
+                )
+
+                print(
+                    "Ontología actualizada:",
+                    "Sí"
+                )
+
+            except Exception as error:
+
+                print(
+                    "Error:",
+                    error
+                )
+
+
+        # ==================================================
+        # 4. EVIDENCIA
+        # ==================================================
+
+        elif opcion == "4":
+
+            try:
+
+                resumen = (
+                    obtener_resumen_semana8()
+                )
+
+                print(
+                    "\nEVIDENCIA SQLITE"
+                )
+
+                print(
+                    resumen[
+                        "evidencia"
+                    ]
+                )
+
+                print(
+                    "\nONTOLOGÍA"
+                )
+
+                print(
+                    resumen[
+                        "ontologia"
+                    ]
+                )
+
+                if (
+                    resumen[
+                        "accuracy"
+                    ]
+                    is not None
+                ):
+
+                    print(
+                        "\nAccuracy MLP:",
+                        (
+                            f"{resumen['accuracy'] * 100:.2f}%"
+                        )
+                    )
+
+            except Exception as error:
+
+                print(
+                    "Error:",
+                    error
+                )
+
+
+        # ==================================================
+        # 5. VOLVER
+        # ==================================================
+
+        elif opcion == "5":
+
+            break
+
+
+        else:
+
+            print(
+                "Opción no válida."
+            )
+
+
+# ==========================================================
+# MENÚ PRINCIPAL
 # ==========================================================
 
 def mostrar_menu():
+
     print(
         "\n"
         + "=" * 60
@@ -2402,15 +3290,19 @@ def mostrar_menu():
     )
 
     print(
-        "6. Consultar asistente HIS_IA"
+        "6. Reconocimiento documental - Semana 8"
     )
 
     print(
-        "7. Validar funcionamiento Semana 5"
+        "7. Consultar asistente HIS_IA"
     )
 
     print(
-        "8. Salir"
+        "8. Validar funcionamiento Semana 5"
+    )
+
+    print(
+        "9. Salir"
     )
 
 
@@ -2419,6 +3311,7 @@ def mostrar_menu():
 # ==========================================================
 
 def main():
+
     print(
         f"\nIniciando HIS_IA v{VERSION}\n"
     )
@@ -2427,12 +3320,15 @@ def main():
         entrenar_modelo_prioridad()
     )
 
+
     try:
+
         sistema_hibrido = (
             SistemaHibridoHIS()
         )
 
     except Exception as error:
+
         print(
             "No fue posible iniciar "
             "el sistema híbrido:"
@@ -2444,7 +3340,9 @@ def main():
 
         sistema_hibrido = None
 
+
     while True:
+
         mostrar_menu()
 
         opcion = input(
@@ -2452,13 +3350,20 @@ def main():
         ).strip()
 
 
+        # ==================================================
+        # 1
+        # ==================================================
+
         if opcion == "1":
+
             texto = input(
                 "\nIngrese información clínica: "
             )
 
-            resultado = clasificar_texto(
-                texto
+            resultado = (
+                clasificar_texto(
+                    texto
+                )
             )
 
             print(
@@ -2476,8 +3381,14 @@ def main():
             )
 
 
+        # ==================================================
+        # 2
+        # ==================================================
+
         elif opcion == "2":
+
             try:
+
                 edad = int(
                     input(
                         "Edad: "
@@ -2502,12 +3413,14 @@ def main():
                     )
                 )
 
-                prioridad = evaluar_prioridad(
-                    modelo_prioridad,
-                    edad,
-                    documentos,
-                    resultados,
-                    imagenes
+                prioridad = (
+                    evaluar_prioridad(
+                        modelo_prioridad,
+                        edad,
+                        documentos,
+                        resultados,
+                        imagenes
+                    )
                 )
 
                 print(
@@ -2516,30 +3429,62 @@ def main():
                 )
 
             except ValueError:
+
                 print(
                     "Ingrese valores numéricos válidos."
                 )
 
 
+        # ==================================================
+        # 3
+        # ==================================================
+
         elif opcion == "3":
+
             gestionar_astar()
 
 
+        # ==================================================
+        # 4
+        # ==================================================
+
         elif opcion == "4":
+
             gestionar_minimax()
 
 
+        # ==================================================
+        # 5
+        # ==================================================
+
         elif opcion == "5":
+
             gestionar_reconocimiento()
 
 
+        # ==================================================
+        # 6
+        # ==================================================
+
         elif opcion == "6":
+
+            gestionar_semana8()
+
+
+        # ==================================================
+        # 7
+        # ==================================================
+
+        elif opcion == "7":
+
             if sistema_hibrido:
+
                 consulta = input(
                     "\nIngrese su consulta: "
                 ).strip()
 
                 if consulta:
+
                     resultado = (
                         sistema_hibrido
                         .analizar_consulta(
@@ -2564,10 +3509,14 @@ def main():
                                 "reglas"
                             ]
                         )
+
                         if resultado[
                             "reglas"
                         ]
-                        else "Sin regla específica"
+
+                        else (
+                            "Sin regla específica"
+                        )
                     )
 
                     print(
@@ -2593,24 +3542,37 @@ def main():
                     )
 
             else:
+
                 print(
                     "Sistema híbrido no disponible."
                 )
 
 
-        elif opcion == "7":
+        # ==================================================
+        # 8
+        # ==================================================
+
+        elif opcion == "8":
+
             if sistema_hibrido:
+
                 validar_funcionamiento_semana5(
                     sistema_hibrido
                 )
 
             else:
+
                 print(
                     "Sistema híbrido no disponible."
                 )
 
 
-        elif opcion == "8":
+        # ==================================================
+        # 9
+        # ==================================================
+
+        elif opcion == "9":
+
             print(
                 "\nHIS_IA finalizado."
             )
@@ -2619,6 +3581,7 @@ def main():
 
 
         else:
+
             print(
                 "Opción no válida."
             )
