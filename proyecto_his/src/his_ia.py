@@ -21,7 +21,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # CONFIGURACIÓN GENERAL
 # ==========================================================
 
-VERSION = "1.4"
+VERSION = "1.5"
 RANDOM_STATE = 42
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -71,6 +71,41 @@ except Exception as error:
 
 
 _SISTEMA_SEMANA8 = None
+
+
+# ==========================================================
+# SEMANA 9
+# CARGAR MÓDULO EXTERNO
+# ==========================================================
+
+SEMANA9_SRC = PROJECT_ROOT / "src"
+
+if str(SEMANA9_SRC) not in sys.path:
+    sys.path.insert(
+        0,
+        str(SEMANA9_SRC)
+    )
+
+
+try:
+    from semana09_vision import (
+        ProcesadorVisionSemana9,
+        analizar_imagen_semana9
+    )
+
+    SEMANA9_DISPONIBLE = True
+    SEMANA9_ERROR = None
+
+except Exception as error:
+
+    ProcesadorVisionSemana9 = None
+    analizar_imagen_semana9 = None
+
+    SEMANA9_DISPONIBLE = False
+
+    SEMANA9_ERROR = str(
+        error
+    )
 
 
 # ==========================================================
@@ -2175,6 +2210,113 @@ def obtener_resumen_semana8():
 
 
 # ==========================================================
+# SEMANA 9
+# INTEGRACIÓN HIS_IA
+# ==========================================================
+
+def analizar_archivo_semana9(
+    ruta_imagen,
+    sigma=2.0,
+    area_minima=20
+):
+
+    if not SEMANA9_DISPONIBLE:
+
+        raise RuntimeError(
+            (
+                "Semana 9 no está disponible. "
+                f"Detalle: {SEMANA9_ERROR}"
+            )
+        )
+
+    ruta = Path(
+        ruta_imagen
+    ).expanduser()
+
+    if not ruta.is_absolute():
+
+        ruta = ruta.resolve()
+
+    if not ruta.exists():
+
+        raise FileNotFoundError(
+            f"No existe la imagen: {ruta}"
+        )
+
+    extension = (
+        ruta.suffix.lower()
+    )
+
+    extensiones_permitidas = {
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".bmp",
+        ".tif",
+        ".tiff"
+    }
+
+    if extension not in extensiones_permitidas:
+
+        raise ValueError(
+            (
+                "Formato no permitido para Semana 9. "
+                "Use PNG, JPG, JPEG, WEBP, BMP, TIF o TIFF."
+            )
+        )
+
+    sigma = float(
+        sigma
+    )
+
+    area_minima = int(
+        area_minima
+    )
+
+    if sigma <= 0:
+
+        raise ValueError(
+            "Sigma debe ser mayor que cero."
+        )
+
+    if area_minima < 1:
+
+        raise ValueError(
+            "El área mínima debe ser mayor o igual a 1."
+        )
+
+    resultado = (
+        analizar_imagen_semana9(
+            ruta_imagen=str(
+                ruta
+            ),
+            sigma=sigma,
+            area_minima=area_minima
+        )
+    )
+
+    return {
+        "tipo":
+            "vision",
+
+        "resultado":
+            resultado
+    }
+
+
+def obtener_estado_semana9():
+
+    return {
+        "disponible":
+            SEMANA9_DISPONIBLE,
+
+        "error":
+            SEMANA9_ERROR
+    }
+
+
+# ==========================================================
 # CONSOLA A*
 # ==========================================================
 
@@ -3251,6 +3393,240 @@ def gestionar_semana8():
 
 
 # ==========================================================
+# CONSOLA SEMANA 9
+# ==========================================================
+
+def gestionar_semana9():
+
+    if not SEMANA9_DISPONIBLE:
+
+        print(
+            "\nSEMANA 9 NO DISPONIBLE"
+        )
+
+        print(
+            "Detalle:",
+            SEMANA9_ERROR
+        )
+
+        return
+
+    print(
+        "\n"
+        + "=" * 60
+    )
+
+    print(
+        "SEMANA 9 - PROCESAMIENTO VISUAL"
+    )
+
+    print(
+        "=" * 60
+    )
+
+    print(
+        "Canny + Otsu + regiones conectadas"
+    )
+
+    ruta = input(
+        "\nRuta de la imagen: "
+    ).strip()
+
+    ruta = (
+        ruta
+        .strip('"')
+        .strip("'")
+    )
+
+    if not ruta:
+
+        print(
+            "Debe indicar una ruta de imagen."
+        )
+
+        return
+
+    sigma_texto = input(
+        "Sigma Canny [2.0]: "
+    ).strip()
+
+    area_texto = input(
+        "Área mínima de región [20]: "
+    ).strip()
+
+    try:
+
+        sigma = float(
+            sigma_texto
+            or "2.0"
+        )
+
+        area_minima = int(
+            area_texto
+            or "20"
+        )
+
+        respuesta = (
+            analizar_archivo_semana9(
+                ruta_imagen=ruta,
+                sigma=sigma,
+                area_minima=area_minima
+            )
+        )
+
+        resultado = respuesta[
+            "resultado"
+        ]
+
+        print(
+            "\nRESULTADO SEMANA 9"
+        )
+
+        print(
+            "=" * 60
+        )
+
+        print(
+            "Imagen:",
+            resultado.get(
+                "archivo_original"
+            )
+        )
+
+        print(
+            "Sigma:",
+            resultado.get(
+                "sigma"
+            )
+        )
+
+        print(
+            "Umbral Otsu:",
+            round(
+                float(
+                    resultado.get(
+                        "umbral_otsu",
+                        0
+                    )
+                ),
+                6
+            )
+        )
+
+        print(
+            "Píxeles de borde:",
+            resultado.get(
+                "pixeles_borde",
+                0
+            )
+        )
+
+        print(
+            "Porcentaje de borde:",
+            (
+                f"{resultado.get('porcentaje_borde', 0):.4f}%"
+            )
+        )
+
+        print(
+            "Regiones detectadas:",
+            resultado.get(
+                "regiones_detectadas",
+                0
+            )
+        )
+
+        print(
+            "\nEvidencia visual:"
+        )
+
+        print(
+            resultado.get(
+                "evidencia_visual",
+                "No generada"
+            )
+        )
+
+        region = (
+            resultado.get(
+                "region_principal"
+            )
+            or {}
+        )
+
+        if region:
+
+            print(
+                "\nRegión principal:"
+            )
+
+            print(
+                "Archivo:",
+                region.get(
+                    "archivo"
+                )
+            )
+
+            print(
+                "Área:",
+                region.get(
+                    "area"
+                )
+            )
+
+            print(
+                "Bounding box:",
+                region.get(
+                    "bbox"
+                )
+            )
+
+        print(
+            "\nCOMPARACIÓN DE SIGMA"
+        )
+
+        for item in (
+            resultado.get(
+                "comparacion_sigma",
+                []
+            )
+        ):
+
+            print(
+                (
+                    f"Sigma {item.get('sigma')}: "
+                    f"{item.get('pixeles_borde')} píxeles "
+                    f"({item.get('porcentaje_borde', 0):.4f}%)"
+                )
+            )
+
+        print(
+            "\nReporte:"
+        )
+
+        print(
+            resultado.get(
+                "reporte",
+                "No generado"
+            )
+        )
+
+    except ValueError as error:
+
+        print(
+            "Error de parámetros:",
+            error
+        )
+
+    except Exception as error:
+
+        print(
+            "Error al procesar Semana 9:",
+            error
+        )
+
+
+# ==========================================================
 # MENÚ PRINCIPAL
 # ==========================================================
 
@@ -3294,15 +3670,19 @@ def mostrar_menu():
     )
 
     print(
-        "7. Consultar asistente HIS_IA"
+        "7. Procesamiento visual - Semana 9"
     )
 
     print(
-        "8. Validar funcionamiento Semana 5"
+        "8. Consultar asistente HIS_IA"
     )
 
     print(
-        "9. Salir"
+        "9. Validar funcionamiento Semana 5"
+    )
+
+    print(
+        "10. Salir"
     )
 
 
@@ -3477,6 +3857,15 @@ def main():
 
         elif opcion == "7":
 
+            gestionar_semana9()
+
+
+        # ==================================================
+        # 8
+        # ==================================================
+
+        elif opcion == "8":
+
             if sistema_hibrido:
 
                 consulta = input(
@@ -3549,10 +3938,10 @@ def main():
 
 
         # ==================================================
-        # 8
+        # 9
         # ==================================================
 
-        elif opcion == "8":
+        elif opcion == "9":
 
             if sistema_hibrido:
 
@@ -3568,10 +3957,10 @@ def main():
 
 
         # ==================================================
-        # 9
+        # 10
         # ==================================================
 
-        elif opcion == "9":
+        elif opcion == "10":
 
             print(
                 "\nHIS_IA finalizado."

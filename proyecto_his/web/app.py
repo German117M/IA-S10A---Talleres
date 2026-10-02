@@ -1,76 +1,63 @@
 from pathlib import Path
+from uuid import uuid4
 import sys
-import uuid
 
+import numpy as np
 from flask import (
     Flask,
     jsonify,
     render_template,
-    request
+    request,
+    send_from_directory
 )
-
 from werkzeug.utils import secure_filename
 
 
 # ==========================================================
-# RUTAS DEL PROYECTO
+# RUTAS BASE
 # ==========================================================
 
-WEB_DIR = Path(
-    __file__
-).resolve().parent
+WEB_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = WEB_DIR.parent
+PROJECT_SRC_DIR = PROJECT_DIR / "src"
+SEMESTER_ROOT = PROJECT_DIR.parent
 
-PROYECTO_HIS_DIR = (
-    WEB_DIR.parent
-)
+UPLOAD_DIR = WEB_DIR / "uploads"
+ARTIFACTS_DIR = SEMESTER_ROOT / "artifacts"
+DATA_DIR = SEMESTER_ROOT / "data"
+REPORTS_DIR = SEMESTER_ROOT / "reports"
 
-SRC_DIR = (
-    PROYECTO_HIS_DIR
-    / "src"
-)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-UPLOADS_DIR = (
-    WEB_DIR
-    / "uploads"
-)
-
-
-# ==========================================================
-# AGREGAR SRC AL PATH
-# ==========================================================
-
-if str(
-    SRC_DIR
-) not in sys.path:
-
-    sys.path.insert(
-        0,
-        str(
-            SRC_DIR
-        )
-    )
+if str(PROJECT_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(PROJECT_SRC_DIR))
 
 
 # ==========================================================
-# IMPORTAR SISTEMA HIS_IA
+# IMPORTAR HIS_IA
 # ==========================================================
 
-from his_ia import (
+from his_ia import (  # noqa: E402
     VERSION,
-    SistemaHibridoHIS,
     clasificar_texto,
     entrenar_modelo_prioridad,
     evaluar_prioridad,
     planificar_revision,
     priorizar_pacientes_minimax,
     analizar_representaciones,
+    SistemaHibridoHIS,
     analizar_archivo_semana8,
-    obtener_resumen_semana8
+    obtener_resumen_semana8,
+    analizar_archivo_semana9,
+    generar_reporte_semana5
 )
 
 
 # ==========================================================
-# CONFIGURACIÓN FLASK
+# FLASK
 # ==========================================================
 
 app = Flask(
@@ -79,27 +66,14 @@ app = Flask(
     static_folder="static"
 )
 
-
-app.config[
-    "MAX_CONTENT_LENGTH"
-] = (
-    15
-    * 1024
-    * 1024
-)
-
-
-UPLOADS_DIR.mkdir(
-    parents=True,
-    exist_ok=True
-)
+app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 
 
 # ==========================================================
-# EXTENSIONES PERMITIDAS SEMANA 8
+# CONFIGURACIÓN DE ARCHIVOS
 # ==========================================================
 
-EXTENSIONES_PERMITIDAS = {
+ALLOWED_WEEK8 = {
     ".pdf",
     ".png",
     ".jpg",
@@ -107,168 +81,304 @@ EXTENSIONES_PERMITIDAS = {
     ".webp"
 }
 
+ALLOWED_WEEK9 = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".bmp",
+    ".tif",
+    ".tiff"
+}
+
 
 # ==========================================================
-# SISTEMA HIS
+# ESTADO GLOBAL
 # ==========================================================
 
-sistema = SistemaHibridoHIS()
+MODELO_PRIORIDAD = None
+PRECISION_PRIORIDAD = None
+MATRIZ_PRIORIDAD = None
+ERROR_MODELO_PRIORIDAD = None
+
+SISTEMA_HIBRIDO = None
+ERROR_SISTEMA_HIBRIDO = None
+
+
+# ==========================================================
+# INICIALIZAR SISTEMAS
+# ==========================================================
+
+def inicializar_sistemas():
+    global MODELO_PRIORIDAD
+    global PRECISION_PRIORIDAD
+    global MATRIZ_PRIORIDAD
+    global ERROR_MODELO_PRIORIDAD
+    global SISTEMA_HIBRIDO
+    global ERROR_SISTEMA_HIBRIDO
+
+    try:
+        (
+            MODELO_PRIORIDAD,
+            PRECISION_PRIORIDAD,
+            MATRIZ_PRIORIDAD
+        ) = entrenar_modelo_prioridad()
+
+        ERROR_MODELO_PRIORIDAD = None
+
+    except Exception as error:
+        MODELO_PRIORIDAD = None
+        PRECISION_PRIORIDAD = None
+        MATRIZ_PRIORIDAD = None
+        ERROR_MODELO_PRIORIDAD = str(error)
+
+    try:
+        SISTEMA_HIBRIDO = SistemaHibridoHIS()
+        ERROR_SISTEMA_HIBRIDO = None
+
+    except Exception as error:
+        SISTEMA_HIBRIDO = None
+        ERROR_SISTEMA_HIBRIDO = str(error)
+
+
+inicializar_sistemas()
 
 
 # ==========================================================
 # UTILIDADES
 # ==========================================================
 
-def respuesta_error(
-    mensaje,
-    codigo=400,
-    detalle=None
-):
+def respuesta_ok(**kwargs):
+    data = {"ok": True}
+    data.update(kwargs)
+    return jsonify(data)
 
-    respuesta = {
-        "ok":
-            False,
 
-        "error":
-            str(
-                mensaje
-            )
+def respuesta_error(mensaje, status=400, **kwargs):
+    data = {
+        "ok": False,
+        "error": mensaje
+    }
+    data.update(kwargs)
+    return jsonify(data), status
+
+
+def extension_permitida(nombre_archivo, permitidas):
+    extension = Path(nombre_archivo).suffix.lower()
+    return extension in permitidas
+
+
+def guardar_upload(archivo, permitidas):
+    if not archivo:
+        raise ValueError("No se recibió ningún archivo.")
+
+    nombre_original = archivo.filename or ""
+
+    if not nombre_original.strip():
+        raise ValueError("El archivo no tiene nombre válido.")
+
+    if not extension_permitida(nombre_original, permitidas):
+        raise ValueError(
+            "Formato no permitido para este módulo."
+        )
+
+    extension = Path(nombre_original).suffix.lower()
+    nombre_seguro = secure_filename(
+        Path(nombre_original).stem
+    )
+
+    nombre_final = (
+        f"{nombre_seguro}_{uuid4().hex[:8]}{extension}"
+    )
+
+    ruta_destino = UPLOAD_DIR / nombre_final
+
+    archivo.save(ruta_destino)
+
+    return ruta_destino
+
+
+def convertir_booleano(valor):
+    if isinstance(valor, bool):
+        return valor
+
+    if isinstance(valor, (int, float)):
+        return valor == 1
+
+    texto = str(valor).strip().lower()
+
+    return texto in {
+        "1",
+        "true",
+        "si",
+        "sí",
+        "s",
+        "on",
+        "yes"
     }
 
 
-    if detalle is not None:
+def obtener_json_o_form(clave, default=None):
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+        return data.get(clave, default)
 
-        respuesta[
-            "detalle"
-        ] = str(
-            detalle
+    return request.form.get(clave, default)
+
+
+def serializar(obj):
+    if isinstance(obj, dict):
+        return {
+            str(clave): serializar(valor)
+            for clave, valor in obj.items()
+        }
+
+    if isinstance(obj, (list, tuple)):
+        return [serializar(item) for item in obj]
+
+    if isinstance(obj, Path):
+        return str(obj)
+
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+
+    if isinstance(obj, np.generic):
+        return obj.item()
+
+    return obj
+
+
+def ruta_publica_desde_local(ruta):
+    try:
+        ruta = Path(ruta).resolve()
+    except Exception:
+        return None
+
+    directorios = [
+        ("uploads", UPLOAD_DIR, "/uploads/"),
+        ("artifacts", ARTIFACTS_DIR, "/files/artifacts/"),
+        ("data", DATA_DIR, "/files/data/"),
+        ("reports", REPORTS_DIR, "/files/reports/")
+    ]
+
+    for _, base_dir, url_base in directorios:
+        try:
+            relativo = ruta.relative_to(base_dir.resolve())
+            return url_base + str(relativo).replace("\\", "/")
+        except Exception:
+            continue
+
+    return None
+
+
+def enriquecer_urls(data):
+    if isinstance(data, dict):
+        nuevo = {}
+
+        for clave, valor in data.items():
+            valor_procesado = enriquecer_urls(valor)
+            nuevo[clave] = valor_procesado
+
+            if isinstance(valor, (str, Path)):
+                url = ruta_publica_desde_local(valor)
+                if url:
+                    nuevo[f"{clave}_url"] = url
+
+        return nuevo
+
+    if isinstance(data, list):
+        return [enriquecer_urls(item) for item in data]
+
+    return data
+
+
+def construir_paciente(payload):
+    campos = [
+        "dolor_intenso",
+        "dificultad_respiratoria",
+        "sangrado_activo",
+        "perdida_movilidad",
+        "alteracion_conciencia",
+        "trauma",
+        "requiere_soporte"
+    ]
+
+    paciente = {
+        "motivo_consulta": payload.get(
+            "motivo_consulta",
+            "No especificado"
+        )
+    }
+
+    for campo in campos:
+        paciente[campo] = convertir_booleano(
+            payload.get(campo, False)
         )
 
-
-    return (
-        jsonify(
-            respuesta
-        ),
-        codigo
-    )
+    return paciente
 
 
-def extension_valida(
-    nombre_archivo
-):
-
-    extension = (
-        Path(
-            nombre_archivo
-        )
-        .suffix
-        .lower()
-    )
-
-
-    return (
-        extension
-        in EXTENSIONES_PERMITIDAS
-    )
-
-
-def guardar_archivo_semana8(
-    archivo
-):
-
-    nombre_original = (
-        archivo.filename
-        or ""
-    )
-
-
-    nombre_seguro = (
-        secure_filename(
-            nombre_original
-        )
-    )
-
-
-    if not nombre_seguro:
-
-        raise ValueError(
-            "El archivo no tiene un nombre válido."
+def obtener_resultados_semana5():
+    if SISTEMA_HIBRIDO is None:
+        raise RuntimeError(
+            "El sistema híbrido no está disponible."
         )
 
+    consultas = [
+        "Necesito revisar el resultado de creatinina del paciente.",
+        "Hay una resonancia pendiente de revisión.",
+        "Se requiere consultar los antecedentes y evolución de la historia clínica.",
+        "El paciente tiene medicamentos y tratamiento registrados.",
+        "¿Qué información debería revisar primero?"
+    ]
 
-    extension = (
-        Path(
-            nombre_seguro
-        )
-        .suffix
-        .lower()
-    )
+    resultados = []
 
-
-    if (
-        extension
-        not in EXTENSIONES_PERMITIDAS
-    ):
-
-        raise ValueError(
-            (
-                "Formato no permitido. "
-                "Utilice PDF, PNG, JPG, "
-                "JPEG o WEBP."
-            )
+    for consulta in consultas:
+        resultados.append(
+            SISTEMA_HIBRIDO.analizar_consulta(consulta)
         )
 
+    generar_reporte_semana5(resultados)
 
-    identificador = (
-        uuid.uuid4()
-        .hex[:12]
-    )
-
-
-    nombre_guardado = (
-        f"{identificador}_"
-        f"{nombre_seguro}"
-    )
-
-
-    ruta_archivo = (
-        UPLOADS_DIR
-        / nombre_guardado
-    )
-
-
-    archivo.save(
-        ruta_archivo
-    )
-
+    ruta_reporte = PROJECT_DIR / "reports" / "semana05.md"
 
     return {
-        "nombre_original":
-            nombre_original,
-
-        "nombre_guardado":
-            nombre_guardado,
-
-        "ruta":
-            ruta_archivo,
-
-        "extension":
-            extension
+        "consultas": resultados,
+        "reporte": str(ruta_reporte)
     }
 
 
 # ==========================================================
-# PÁGINA PRINCIPAL
+# RUTAS DE ARCHIVOS
 # ==========================================================
 
-@app.route(
-    "/",
-    methods=[
-        "GET"
-    ]
-)
-def inicio():
+@app.route("/uploads/<path:filename>")
+def servir_upload(filename):
+    return send_from_directory(UPLOAD_DIR, filename)
 
+
+@app.route("/files/artifacts/<path:filename>")
+def servir_artifacts(filename):
+    return send_from_directory(ARTIFACTS_DIR, filename)
+
+
+@app.route("/files/data/<path:filename>")
+def servir_data(filename):
+    return send_from_directory(DATA_DIR, filename)
+
+
+@app.route("/files/reports/<path:filename>")
+def servir_reports(filename):
+    return send_from_directory(REPORTS_DIR, filename)
+
+
+# ==========================================================
+# INTERFAZ PRINCIPAL
+# ==========================================================
+
+@app.route("/")
+def index():
     return render_template(
         "index.html",
         version=VERSION
@@ -276,940 +386,368 @@ def inicio():
 
 
 # ==========================================================
-# INFORMACIÓN DEL SISTEMA
+# ESTADO GENERAL
 # ==========================================================
 
-@app.route(
-    "/api/sistema",
-    methods=[
-        "GET"
-    ]
-)
-def api_sistema():
-
-    return jsonify(
-        {
-            "ok":
-                True,
-
-            "nombre":
-                "HIS_IA",
-
-            "version":
-                VERSION,
-
-            "semana8":
-                True,
-
-            "interpretacion_clinica":
-                True
+@app.route("/api/estado", methods=["GET"])
+def api_estado():
+    estado = {
+        "version": VERSION,
+        "modelo_prioridad": {
+            "disponible": MODELO_PRIORIDAD is not None,
+            "precision": PRECISION_PRIORIDAD,
+            "matriz": (
+                MATRIZ_PRIORIDAD.tolist()
+                if MATRIZ_PRIORIDAD is not None
+                else None
+            ),
+            "error": ERROR_MODELO_PRIORIDAD
+        },
+        "sistema_hibrido": {
+            "disponible": SISTEMA_HIBRIDO is not None,
+            "error": ERROR_SISTEMA_HIBRIDO
         }
+    }
+
+    try:
+        resumen8 = obtener_resumen_semana8()
+        estado["semana8"] = {
+            "disponible": True,
+            "resumen": serializar(resumen8)
+        }
+    except Exception as error:
+        estado["semana8"] = {
+            "disponible": False,
+            "error": str(error)
+        }
+
+    estado["semana9"] = {
+        "disponible": callable(analizar_archivo_semana9)
+    }
+
+    return respuesta_ok(estado=estado)
+
+
+# ==========================================================
+# SEMANA 3 - CLASIFICACIÓN DE TEXTO
+# ==========================================================
+
+@app.route("/api/clasificar", methods=["POST"])
+def api_clasificar():
+    texto = obtener_json_o_form("texto", "")
+
+    if not str(texto).strip():
+        return respuesta_error(
+            "Debe ingresar un texto para analizar."
+        )
+
+    resultado = clasificar_texto(texto)
+
+    return respuesta_ok(
+        resultado=serializar(resultado)
     )
 
 
 # ==========================================================
-# SEMANAS 2 Y 3
-# ANÁLISIS DE INFORMACIÓN CLÍNICA
+# SEMANA 2 - PRIORIDAD
 # ==========================================================
 
-@app.route(
-    "/api/analizar",
-    methods=[
-        "POST"
-    ]
-)
-def api_analizar():
-
-    try:
-
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
-        )
-
-
-        texto = str(
-            datos.get(
-                "texto",
-                ""
-            )
-        ).strip()
-
-
-        if not texto:
-
-            return respuesta_error(
-                (
-                    "Debe ingresar información "
-                    "para realizar el análisis."
-                )
-            )
-
-
-        resultado = (
-            clasificar_texto(
-                texto
-            )
-        )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "resultado":
-                    resultado
-            }
-        )
-
-
-    except Exception as error:
-
-        return respuesta_error(
-            "No se pudo realizar el análisis.",
-            500,
-            error
-        )
-
-
-# ==========================================================
-# PRIORIDAD
-# ==========================================================
-
-@app.route(
-    "/api/prioridad",
-    methods=[
-        "POST"
-    ]
-)
+@app.route("/api/prioridad", methods=["POST"])
 def api_prioridad():
-
-    try:
-
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
+    if MODELO_PRIORIDAD is None:
+        return respuesta_error(
+            "El modelo de prioridad no está disponible.",
+            status=500,
+            detalle=ERROR_MODELO_PRIORIDAD
         )
 
+    try:
+        edad = int(
+            obtener_json_o_form("edad", 0)
+        )
 
-        # ==================================================
-        # INTENTAR ENTRENAR/CARGAR MODELO
-        # ==================================================
-
-        entrenar_modelo_prioridad()
-
-
-        # ==================================================
-        # EVALUAR
-        # ==================================================
-
-        try:
-
-            resultado = (
-                evaluar_prioridad(
-                    datos
-                )
+        documentos = int(
+            obtener_json_o_form(
+                "documentos_pendientes",
+                obtener_json_o_form("documentos", 0)
             )
+        )
 
-
-        except TypeError:
-
-            resultado = (
-                evaluar_prioridad(
-                    **datos
-                )
+        resultados = int(
+            obtener_json_o_form(
+                "resultados_pendientes",
+                obtener_json_o_form("resultados", 0)
             )
+        )
 
+        imagenes = int(
+            obtener_json_o_form(
+                "imagenes_pendientes",
+                obtener_json_o_form("imagenes", 0)
+            )
+        )
 
-        return jsonify(
-            {
-                "ok":
-                    True,
+        prioridad = evaluar_prioridad(
+            MODELO_PRIORIDAD,
+            edad,
+            documentos,
+            resultados,
+            imagenes
+        )
 
-                "resultado":
-                    resultado
+        return respuesta_ok(
+            resultado={
+                "edad": edad,
+                "documentos_pendientes": documentos,
+                "resultados_pendientes": resultados,
+                "imagenes_pendientes": imagenes,
+                "prioridad": prioridad,
+                "precision_modelo": PRECISION_PRIORIDAD,
+                "matriz_modelo": (
+                    MATRIZ_PRIORIDAD.tolist()
+                    if MATRIZ_PRIORIDAD is not None
+                    else None
+                )
             }
         )
 
-
-    except Exception as error:
-
+    except ValueError:
         return respuesta_error(
-            (
-                "No se pudo evaluar "
-                "la prioridad."
-            ),
-            500,
-            error
+            "Los valores deben ser numéricos."
         )
 
 
 # ==========================================================
-# SEMANA 4
-# A*
+# SEMANA 4 - A*
 # ==========================================================
 
-@app.route(
-    "/api/revision",
-    methods=[
-        "POST"
-    ]
-)
-def api_revision():
+@app.route("/api/astar", methods=["POST"])
+def api_astar():
+    payload = request.get_json(silent=True) or {}
+
+    elementos = payload.get("elementos", [])
+
+    if not isinstance(elementos, list):
+        return respuesta_error(
+            "Los elementos deben enviarse en una lista."
+        )
 
     try:
+        resultado = planificar_revision(elementos)
 
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
+        return respuesta_ok(
+            resultado=serializar(resultado)
         )
-
-
-        origen = (
-            datos.get(
-                "origen"
-            )
-        )
-
-
-        destino = (
-            datos.get(
-                "destino"
-            )
-        )
-
-
-        if (
-            not origen
-            or not destino
-        ):
-
-            return respuesta_error(
-                (
-                    "Debe indicar origen "
-                    "y destino."
-                )
-            )
-
-
-        try:
-
-            resultado = (
-                planificar_revision(
-                    origen,
-                    destino
-                )
-            )
-
-
-        except TypeError:
-
-            resultado = (
-                planificar_revision(
-                    datos
-                )
-            )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "resultado":
-                    resultado
-            }
-        )
-
 
     except Exception as error:
-
-        return respuesta_error(
-            (
-                "No fue posible calcular "
-                "la ruta de revisión."
-            ),
-            500,
-            error
-        )
+        return respuesta_error(str(error))
 
 
 # ==========================================================
-# SEMANA 4
-# MINIMAX
+# SEMANA 4 - MINIMAX
 # ==========================================================
 
-@app.route(
-    "/api/priorizar-pacientes",
-    methods=[
-        "POST"
-    ]
-)
-def api_priorizar_pacientes():
+@app.route("/api/minimax", methods=["POST"])
+def api_minimax():
+    payload = request.get_json(silent=True) or {}
+
+    paciente1 = construir_paciente(
+        payload.get("paciente1", {})
+    )
+
+    paciente2 = construir_paciente(
+        payload.get("paciente2", {})
+    )
 
     try:
-
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
+        resultado = priorizar_pacientes_minimax(
+            paciente1,
+            paciente2
         )
 
-
-        pacientes = (
-            datos.get(
-                "pacientes"
-            )
+        return respuesta_ok(
+            resultado=serializar(resultado)
         )
-
-
-        if pacientes is None:
-
-            pacientes = datos
-
-
-        resultado = (
-            priorizar_pacientes_minimax(
-                pacientes
-            )
-        )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "resultado":
-                    resultado
-            }
-        )
-
 
     except Exception as error:
-
-        return respuesta_error(
-            (
-                "No se pudo realizar "
-                "la priorización Minimax."
-            ),
-            500,
-            error
-        )
+        return respuesta_error(str(error))
 
 
 # ==========================================================
-# SEMANA 7
-# REPRESENTACIONES
+# SEMANA 7 - REPRESENTACIONES
 # ==========================================================
 
-@app.route(
-    "/api/reconocimiento",
-    methods=[
-        "POST"
-    ]
-)
-def api_reconocimiento():
+@app.route("/api/semana7", methods=["POST"])
+def api_semana7():
+    payload = request.get_json(silent=True) or {}
 
     try:
-
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
-        )
-
-
-        resultado = (
-            analizar_representaciones(
-                datos
-            )
-        )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "resultado":
-                    resultado
-            }
-        )
-
-
-    except Exception as error:
-
-        return respuesta_error(
-            (
-                "No se pudo realizar "
-                "el análisis de Semana 7."
+        caso = {
+            "motivo_consulta": payload.get(
+                "motivo_consulta",
+                ""
             ),
-            500,
-            error
-        )
-
-
-# ==========================================================
-# SEMANA 8
-# PROCESAR PDF O IMAGEN
-# ==========================================================
-
-@app.route(
-    "/api/semana8/archivo",
-    methods=[
-        "POST"
-    ]
-)
-def api_semana8_archivo():
-
-    ruta_archivo = None
-
-
-    try:
-
-        # ==================================================
-        # VALIDAR ARCHIVO
-        # ==================================================
-
-        if (
-            "archivo"
-            not in request.files
-        ):
-
-            return respuesta_error(
-                (
-                    "No se recibió ningún archivo. "
-                    "El campo debe llamarse 'archivo'."
-                )
-            )
-
-
-        archivo = (
-            request.files[
-                "archivo"
-            ]
-        )
-
-
-        if (
-            archivo is None
-            or not archivo.filename
-        ):
-
-            return respuesta_error(
-                "Debe seleccionar un archivo."
-            )
-
-
-        if not extension_valida(
-            archivo.filename
-        ):
-
-            return respuesta_error(
-                (
-                    "Formato no permitido. "
-                    "Los formatos admitidos son "
-                    "PDF, PNG, JPG, JPEG y WEBP."
-                )
-            )
-
-
-        # ==================================================
-        # GUARDAR ARCHIVO
-        # ==================================================
-
-        informacion_archivo = (
-            guardar_archivo_semana8(
-                archivo
-            )
-        )
-
-
-        ruta_archivo = (
-            informacion_archivo[
-                "ruta"
-            ]
-        )
-
-
-        # ==================================================
-        # ANALIZAR
-        # ==================================================
-
-        analisis = (
-            analizar_archivo_semana8(
-                str(
-                    ruta_archivo
-                )
-            )
-        )
-
-
-        # ==================================================
-        # VALIDAR RESPUESTA INTERNA
-        # ==================================================
-
-        if analisis is None:
-
-            return respuesta_error(
-                (
-                    "El módulo de Semana 8 "
-                    "no devolvió resultados."
-                ),
-                500
-            )
-
-
-        # ==================================================
-        # ANALIZAR_ARCHIVO_SEMANA8 PUEDE DEVOLVER
-        #
-        # {
-        #     "tipo": "pdf",
-        #     "resultado": {...}
-        # }
-        #
-        # O UN RESULTADO DIRECTO.
-        #
-        # ESTE BLOQUE HACE EL ENDPOINT TOLERANTE
-        # A AMBOS CASOS.
-        # ==================================================
-
-        if (
-            isinstance(
-                analisis,
-                dict
-            )
-            and "resultado"
-            in analisis
-        ):
-
-            tipo = (
-                analisis.get(
-                    "tipo"
-                )
-            )
-
-            resultado = (
-                analisis.get(
-                    "resultado"
-                )
-            )
-
-
-        else:
-
-            extension = (
-                informacion_archivo[
-                    "extension"
-                ]
-            )
-
-
-            tipo = (
-                "pdf"
-                if extension == ".pdf"
-                else "imagen"
-            )
-
-
-            resultado = (
-                analisis
-            )
-
-
-        if resultado is None:
-
-            return respuesta_error(
-                (
-                    "El procesamiento terminó, "
-                    "pero no se obtuvo un resultado."
-                ),
-                500
-            )
-
-
-        # ==================================================
-        # IMPORTANTE
-        #
-        # NO SE ELIMINA interpretacion_clinica.
-        #
-        # Si el archivo es PDF, resultado puede contener:
-        #
-        # resultado[
-        #     "interpretacion_clinica"
-        # ]
-        #
-        # Ese diccionario se envía completo al frontend.
-        # ==================================================
-
-        respuesta = {
-
-            "ok":
-                True,
-
-            "nombre_original":
-                informacion_archivo[
-                    "nombre_original"
-                ],
-
-            "nombre_guardado":
-                informacion_archivo[
-                    "nombre_guardado"
-                ],
-
-            "tipo":
-                tipo,
-
-            "resultado":
-                resultado
+            "temperatura": float(payload.get("temperatura")),
+            "latidos": int(payload.get("latidos")),
+            "presion": int(payload.get("presion"))
         }
 
+        resultado = analizar_representaciones(caso)
 
-        # ==================================================
-        # INFORMACIÓN AUXILIAR
-        # ==================================================
-        #
-        # Esto facilita que app.js sepa si existe
-        # interpretación sin recorrer todo el resultado.
-        #
-        # No reemplaza resultado["interpretacion_clinica"].
-        # ==================================================
-
-        if (
-            isinstance(
-                resultado,
-                dict
-            )
-        ):
-
-            interpretacion = (
-                resultado.get(
-                    "interpretacion_clinica"
-                )
-            )
-
-
-            respuesta[
-                "tiene_interpretacion_clinica"
-            ] = bool(
-                interpretacion
-            )
-
-
-        return jsonify(
-            respuesta
+        return respuesta_ok(
+            resultado=serializar(resultado)
         )
-
-
-    except ValueError as error:
-
-        return respuesta_error(
-            error,
-            400
-        )
-
 
     except Exception as error:
-
         return respuesta_error(
-            (
-                "No fue posible procesar "
-                "el archivo de Semana 8."
-            ),
-            500,
-            error
+            f"No fue posible analizar la consulta: {error}"
         )
 
 
 # ==========================================================
-# SEMANA 8
-# RESUMEN DE EVIDENCIA
+# SEMANA 8 - ARCHIVO
 # ==========================================================
 
-@app.route(
-    "/api/semana8/resumen",
-    methods=[
-        "GET"
-    ]
-)
+@app.route("/api/semana8/archivo", methods=["POST"])
+def api_semana8_archivo():
+    try:
+        archivo = request.files.get("archivo")
+
+        ruta_archivo = guardar_upload(
+            archivo,
+            ALLOWED_WEEK8
+        )
+
+        resultado = analizar_archivo_semana8(ruta_archivo)
+        resultado = serializar(resultado)
+        resultado = enriquecer_urls(resultado)
+
+        return respuesta_ok(
+            resultado=resultado
+        )
+
+    except Exception as error:
+        return respuesta_error(str(error))
+
+
+@app.route("/api/semana8/resumen", methods=["GET"])
 def api_semana8_resumen():
-
     try:
+        resultado = obtener_resumen_semana8()
+        resultado = serializar(resultado)
+        resultado = enriquecer_urls(resultado)
 
-        resumen = (
-            obtener_resumen_semana8()
+        return respuesta_ok(
+            resultado=resultado
         )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "resultado":
-                    resumen
-            }
-        )
-
 
     except Exception as error:
+        return respuesta_error(str(error), status=500)
 
-        return respuesta_error(
-            (
-                "No se pudo obtener "
-                "el resumen de Semana 8."
-            ),
-            500,
-            error
+
+# ==========================================================
+# SEMANA 9 - VISIÓN ARTIFICIAL
+# ==========================================================
+
+@app.route("/api/semana9/imagen", methods=["POST"])
+def api_semana9_imagen():
+    try:
+        archivo = request.files.get("archivo")
+
+        ruta_archivo = guardar_upload(
+            archivo,
+            ALLOWED_WEEK9
         )
 
+        sigma = float(
+            request.form.get("sigma", 2.0)
+        )
+
+        area_minima = int(
+            request.form.get("area_minima", 20)
+        )
+
+        resultado = analizar_archivo_semana9(
+            ruta_archivo,
+            sigma=sigma,
+            area_minima=area_minima
+        )
+
+        resultado = serializar(resultado)
+        resultado = enriquecer_urls(resultado)
+
+        return respuesta_ok(
+            resultado=resultado
+        )
+
+    except Exception as error:
+        return respuesta_error(str(error))
+
 
 # ==========================================================
-# ASISTENTE IA
+# ASISTENTE HIS_IA
 # ==========================================================
 
-@app.route(
-    "/api/asistente",
-    methods=[
-        "POST"
-    ]
-)
+@app.route("/api/asistente", methods=["POST"])
 def api_asistente():
+    if SISTEMA_HIBRIDO is None:
+        return respuesta_error(
+            "El sistema híbrido no está disponible.",
+            status=500,
+            detalle=ERROR_SISTEMA_HIBRIDO
+        )
+
+    consulta = obtener_json_o_form("consulta", "")
+
+    if not str(consulta).strip():
+        return respuesta_error(
+            "Debe ingresar una consulta."
+        )
 
     try:
-
-        datos = (
-            request.get_json(
-                silent=True
-            )
-            or {}
+        resultado = SISTEMA_HIBRIDO.analizar_consulta(
+            consulta
         )
 
-
-        mensaje = str(
-            datos.get(
-                "mensaje",
-                ""
-            )
-        ).strip()
-
-
-        if not mensaje:
-
-            return respuesta_error(
-                (
-                    "Debe escribir un mensaje "
-                    "para el asistente."
-                )
-            )
-
-
-        # ==================================================
-        # USAR SISTEMA HIS
-        # ==================================================
-
-        respuesta = None
-
-
-        # Se intenta utilizar alguno de los métodos
-        # disponibles del SistemaHibridoHIS.
-
-        if hasattr(
-            sistema,
-            "responder"
-        ):
-
-            respuesta = (
-                sistema.responder(
-                    mensaje
-                )
-            )
-
-
-        elif hasattr(
-            sistema,
-            "asistente"
-        ):
-
-            respuesta = (
-                sistema.asistente(
-                    mensaje
-                )
-            )
-
-
-        elif hasattr(
-            sistema,
-            "procesar_consulta"
-        ):
-
-            respuesta = (
-                sistema.procesar_consulta(
-                    mensaje
-                )
-            )
-
-
-        else:
-
-            # ==================================================
-            # RESPUESTA DE RESPALDO
-            # ==================================================
-
-            try:
-
-                respuesta = (
-                    clasificar_texto(
-                        mensaje
-                    )
-                )
-
-            except Exception:
-
-                respuesta = (
-                    "El asistente recibió el mensaje, "
-                    "pero no existe un método de respuesta "
-                    "configurado en SistemaHibridoHIS."
-                )
-
-
-        return jsonify(
-            {
-                "ok":
-                    True,
-
-                "respuesta":
-                    respuesta
-            }
+        return respuesta_ok(
+            resultado=serializar(resultado)
         )
-
 
     except Exception as error:
+        return respuesta_error(str(error))
 
-        return respuesta_error(
-            (
-                "No fue posible procesar "
-                "la consulta del asistente."
-            ),
-            500,
-            error
+
+# ==========================================================
+# VALIDACIÓN SEMANA 5
+# ==========================================================
+
+@app.route("/api/semana5/validar", methods=["POST"])
+def api_semana5_validar():
+    try:
+        resultado = obtener_resultados_semana5()
+        resultado = serializar(resultado)
+        resultado = enriquecer_urls(resultado)
+
+        return respuesta_ok(
+            resultado=resultado
         )
 
-
-# ==========================================================
-# ERROR 404
-# ==========================================================
-
-@app.errorhandler(
-    404
-)
-def error_404(
-    error
-):
-
-    if request.path.startswith(
-        "/api/"
-    ):
-
-        return respuesta_error(
-            "Ruta API no encontrada.",
-            404
-        )
-
-
-    return (
-        "Página no encontrada",
-        404
-    )
+    except Exception as error:
+        return respuesta_error(str(error), status=500)
 
 
 # ==========================================================
-# ERROR ARCHIVO DEMASIADO GRANDE
-# ==========================================================
-
-@app.errorhandler(
-    413
-)
-def error_413(
-    error
-):
-
-    return respuesta_error(
-        (
-            "El archivo supera el tamaño máximo "
-            "permitido de 15 MB."
-        ),
-        413
-    )
-
-
-# ==========================================================
-# ERROR INTERNO
-# ==========================================================
-
-@app.errorhandler(
-    500
-)
-def error_500(
-    error
-):
-
-    return respuesta_error(
-        "Error interno del servidor.",
-        500
-    )
-
-
-# ==========================================================
-# EJECUTAR APLICACIÓN
+# MAIN
 # ==========================================================
 
 if __name__ == "__main__":
-
-    print(
-        "\n"
-        + "=" * 60
-    )
-
-    print(
-        "HIS_IA WEB"
-    )
-
-    print(
-        "=" * 60
-    )
-
-    print(
-        f"Versión: {VERSION}"
-    )
-
-    print(
-        "Servidor: http://127.0.0.1:5001"
-    )
-
-    print(
-        "Semana 8: Activa"
-    )
-
-    print(
-        "Interpretación clínica: Activa"
-    )
-
-    print(
-        "=" * 60
-        + "\n"
-    )
-
+    print("\n" + "=" * 55)
+    print(f"HIS_IA WEB v{VERSION}")
+    print("=" * 55)
+    print("Servidor iniciado correctamente.")
+    print("Dirección:")
+    print("http://127.0.0.1:5001")
+    print("=" * 55 + "\n")
 
     app.run(
         host="127.0.0.1",

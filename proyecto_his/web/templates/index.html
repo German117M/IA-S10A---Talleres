@@ -1,1934 +1,4282 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
+
+
 <head>
+
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+
 
     <meta
-        name="description"
-        content="HIS_IA - Sistema Inteligente Híbrido aplicado al dominio clínico"
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1.0"
+
     >
+
+
+
+    <meta
+
+        name="description"
+
+        content="HIS_IA - Sistema Inteligente Híbrido aplicado al dominio clínico"
+
+    >
+
+
 
     <title>
+
         HIS_IA | Sistema Inteligente Híbrido
+
     </title>
 
+
+
     <link
+
         rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}"
+
+        href="{{ url_for('static', filename='css/style.css') }}?v=15"
+
     >
+
+    <style>
+        /* Restauración segura del layout principal.
+           Se mantiene aquí para evitar problemas de caché o variables CSS. */
+        :root {
+            --green-950: #06251b;
+            --green-900: #083829;
+            --green-800: #0b4a36;
+            --green-700: #0f6549;
+            --green-600: #16835f;
+            --green-500: #1fa877;
+            --green-400: #39c997;
+            --green-300: #79dfbb;
+            --green-200: #b6efda;
+            --green-100: #dcf8ed;
+            --green-50: #f1fcf8;
+            --gray-950: #111827;
+            --gray-900: #1f2937;
+            --gray-800: #374151;
+            --gray-700: #4b5563;
+            --gray-600: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-400: #c7ccd4;
+            --gray-300: #d7dce3;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+            --red-700: #b42318;
+            --red-600: #d92d20;
+            --red-100: #fee4e2;
+            --red-50: #fff4f3;
+            --orange-700: #b54708;
+            --orange-600: #dc6803;
+            --orange-100: #ffead5;
+            --orange-50: #fff8ef;
+            --yellow-700: #a15c00;
+            --yellow-600: #ca8504;
+            --yellow-100: #fef0c7;
+            --yellow-50: #fffaeb;
+            --blue-700: #175cd3;
+            --blue-600: #1570ef;
+            --blue-100: #d1e9ff;
+            --blue-50: #eff8ff;
+            --purple-700: #6941c6;
+            --purple-100: #e9d7fe;
+            --purple-50: #f9f5ff;
+            --sidebar-width: 280px;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08);
+            --shadow-md: 0 8px 24px rgba(16, 24, 40, 0.08);
+            --shadow-lg: 0 18px 48px rgba(16, 24, 40, 0.10);
+            --transition: 0.22s ease;
+        }
+
+        @media (min-width: 761px) {
+            .sidebar {
+                position: fixed !important;
+                inset: 0 auto 0 0 !important;
+                width: 280px !important;
+                height: 100vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 28px 20px !important;
+                background: linear-gradient(180deg, #06251b 0%, #083829 100%) !important;
+                color: #ffffff !important;
+                z-index: 1000 !important;
+                overflow-y: auto !important;
+            }
+
+            .main-content {
+                min-height: 100vh !important;
+                margin-left: 280px !important;
+                padding: 0 38px 60px !important;
+            }
+
+            .sidebar-nav {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 7px !important;
+            }
+
+            .nav-item {
+                width: 100% !important;
+                color: #dcefe8 !important;
+            }
+
+            .nav-item.active {
+                background: rgba(57, 201, 151, 0.16) !important;
+                border-color: rgba(121, 223, 187, 0.20) !important;
+                color: #ffffff !important;
+            }
+
+            .hero {
+                position: relative !important;
+                min-height: 350px !important;
+                display: grid !important;
+                grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.7fr) !important;
+                align-items: center !important;
+                gap: 30px !important;
+                padding: 46px !important;
+                border-radius: 28px !important;
+                overflow: hidden !important;
+                background: linear-gradient(135deg, #06251b, #0f6549) !important;
+                color: #ffffff !important;
+                box-shadow: 0 18px 48px rgba(16, 24, 40, 0.10) !important;
+            }
+
+            .hero h2,
+            .hero-label,
+            .hero-core {
+                color: #ffffff !important;
+            }
+
+            .hero p {
+                color: #dcefe8 !important;
+            }
+        }
+
+        @media (max-width: 960px) and (min-width: 761px) {
+            :root { --sidebar-width: 230px; }
+            .sidebar { width: 230px !important; }
+            .main-content { margin-left: 230px !important; }
+        }
+    </style>
+
 </head>
+
+
+
 
 
 <body>
 
+
+
     <!-- ==================================================
+
          SIDEBAR
+
     =================================================== -->
+
+
 
     <aside class="sidebar">
 
+
+
         <div class="sidebar-header">
 
+
+
             <div class="brand-icon">
+
                 IA
+
             </div>
+
+
 
             <div class="brand-text">
 
+
+
                 <h1>
+
                     HIS_IA
+
                 </h1>
 
+
+
                 <span>
+
                     Sistema Inteligente
+
                 </span>
+
+
 
             </div>
 
+
+
         </div>
+
+
+
 
 
         <nav class="sidebar-nav">
 
+
+
             <button
+
                 class="nav-item active"
+
                 data-section="inicio"
+
             >
+
                 <span class="nav-icon">
+
                     ⌂
+
                 </span>
 
+
+
                 <span>
+
                     Inicio
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="clasificacion"
+
             >
+
                 <span class="nav-icon">
+
                     ◈
+
                 </span>
 
+
+
                 <span>
+
                     Clasificación
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="prioridad"
+
             >
+
                 <span class="nav-icon">
+
                     ▲
+
                 </span>
 
+
+
                 <span>
+
                     Prioridad
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="astar"
+
             >
+
                 <span class="nav-icon">
+
                     ⌘
+
                 </span>
 
+
+
                 <span>
+
                     A*
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="minimax"
+
             >
+
                 <span class="nav-icon">
+
                     ◫
+
                 </span>
 
+
+
                 <span>
+
                     Minimax
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="semana7"
+
             >
+
                 <span class="nav-icon">
+
                     ◉
+
                 </span>
 
+
+
                 <span>
+
                     Semana 7
+
                 </span>
+
             </button>
 
 
+
+
+
             <button
+
                 class="nav-item"
+
                 data-section="semana8"
+
             >
+
                 <span class="nav-icon">
+
                     ✦
+
                 </span>
+
+
 
                 <span>
-                    Semana 8
-                </span>
-            </button>
 
+                    Semana 8
+
+                </span>
+
+            </button>
 
             <button
                 class="nav-item"
-                data-section="asistente"
+                data-section="semana9"
             >
                 <span class="nav-icon">
-                    ✧
+                    ◌
                 </span>
 
                 <span>
-                    Asistente IA
+                    Semana 9
                 </span>
             </button>
+
+
+
+
+
+
+            <button
+
+                class="nav-item"
+
+                data-section="asistente"
+
+            >
+
+                <span class="nav-icon">
+
+                    ✧
+
+                </span>
+
+
+
+                <span>
+
+                    Asistente IA
+
+                </span>
+
+            </button>
+
+
 
         </nav>
 
 
+
+
+
         <div class="sidebar-footer">
+
+
 
             <div class="status-dot"></div>
 
+
+
             <div>
 
+
+
                 <strong>
+
                     Sistema activo
+
                 </strong>
 
+
+
                 <small>
+
                     Versión {{ version }}
+
                 </small>
+
+
 
             </div>
 
+
+
         </div>
+
+
 
     </aside>
 
 
+
+
+
     <!-- ==================================================
+
          CONTENIDO PRINCIPAL
+
     =================================================== -->
+
+
 
     <main class="main-content">
 
+
+
         <!-- ==================================================
+
              CABECERA
+
         =================================================== -->
+
+
 
         <header class="topbar">
 
+
+
             <div>
 
+
+
                 <p class="eyebrow">
+
                     Inteligencia Artificial
+
                 </p>
 
+
+
                 <h2 id="tituloSeccion">
+
                     Panel principal
+
                 </h2>
 
+
+
             </div>
+
+
+
 
 
             <div class="topbar-badge">
+
                 HIS / IA
+
             </div>
+
+
 
         </header>
 
 
+
+
+
         <!-- ==================================================
+
              INICIO
+
         =================================================== -->
 
+
+
         <section
+
             id="inicio"
+
             class="content-section active"
+
         >
+
+
 
             <div class="hero">
 
+
+
                 <div class="hero-content">
 
+
+
                     <span class="hero-label">
+
                         HIS_IA
+
                     </span>
 
+
+
                     <h2>
+
                         Sistema Inteligente Híbrido
+
                         aplicado al entorno clínico
+
                     </h2>
 
+
+
                     <p>
+
                         Plataforma académica que integra
+
                         clasificación, búsqueda heurística,
+
                         Minimax, representaciones,
+
                         reconocimiento mediante redes neuronales,
-                        procesamiento documental y representación
-                        del conocimiento.
+
+                        procesamiento documental, representación
+
+                        del conocimiento y visión artificial con
+
+                        Canny, Otsu y regiones conectadas.
+
                     </p>
+
+
+
 
 
                     <div class="hero-actions">
 
-                        <button
-                            class="btn-primary"
-                            data-go-section="semana8"
-                        >
-                            Ir a Semana 8
-                        </button>
+
 
                         <button
-                            class="btn-secondary"
-                            data-go-section="asistente"
+
+                            class="btn-primary"
+
+                            data-go-section="semana9"
+
                         >
-                            Abrir asistente
+
+                            Ir a Semana 9
+
                         </button>
+
+
+
+                        <button
+
+                            class="btn-secondary"
+
+                            data-go-section="asistente"
+
+                        >
+
+                            Abrir asistente
+
+                        </button>
+
+
 
                     </div>
 
+
+
                 </div>
+
+
+
 
 
                 <div class="hero-visual">
 
+
+
                     <div class="hero-orbit">
 
+
+
                         <div class="hero-core">
+
                             IA
+
                         </div>
+
+
 
                     </div>
 
+
+
                 </div>
 
+
+
             </div>
+
+
+
 
 
             <div class="dashboard-grid">
 
+
+
                 <article class="dashboard-card">
 
+
+
                     <span class="dashboard-number">
+
                         01
+
                     </span>
 
+
+
                     <h3>
+
                         Clasificación
+
                     </h3>
 
+
+
                     <p>
+
                         Procesamiento y clasificación
+
                         de información textual clínica.
+
                     </p>
+
+
 
                 </article>
 
 
+
+
+
                 <article class="dashboard-card">
 
+
+
                     <span class="dashboard-number">
+
                         02
+
                     </span>
 
+
+
                     <h3>
+
                         Algoritmos
+
                     </h3>
 
+
+
                     <p>
+
                         Aplicación de A* y Minimax
+
                         dentro del contexto HIS.
+
                     </p>
 
+
+
                 </article>
+
+
+
 
 
                 <article class="dashboard-card">
 
+
+
                     <span class="dashboard-number">
+
                         03
+
                     </span>
 
+
+
                     <h3>
+
                         Representaciones
+
                     </h3>
 
+
+
                     <p>
+
                         Análisis numérico, simbólico
+
                         y mediante autómatas.
+
                     </p>
 
+
+
                 </article>
+
+
+
 
 
                 <article class="dashboard-card highlight-card">
 
+
+
                     <span class="dashboard-number">
+
                         04
+
                     </span>
 
+
+
                     <h3>
+
                         Reconocimiento
+
                     </h3>
 
+
+
                     <p>
+
                         MLP, documentos médicos,
+
                         SQLite, interpretación y ontologías.
+
                     </p>
+
+
 
                 </article>
 
+
+
             </div>
+
+
 
         </section>
 
 
+
+
+
         <!-- ==================================================
+
              CLASIFICACIÓN
+
         =================================================== -->
 
+
+
         <section
+
             id="clasificacion"
+
             class="content-section"
+
         >
+
+
 
             <div class="section-header">
 
+
+
                 <div>
 
+
+
                     <span class="section-tag">
+
                         Clasificación
+
                     </span>
 
+
+
                     <h2>
+
                         Análisis de información clínica
+
                     </h2>
 
+
+
                     <p>
+
                         Ingresa un texto para realizar
+
                         su clasificación mediante HIS_IA.
+
                     </p>
 
+
+
                 </div>
+
+
 
             </div>
 
 
+
+
+
             <div class="panel">
+
+
 
                 <form id="formClasificacion">
 
+
+
                     <div class="form-group">
+
+
 
                         <label for="textoClasificacion">
+
                             Información a analizar
+
                         </label>
 
+
+
                         <textarea
+
                             id="textoClasificacion"
+
                             rows="7"
+
                             placeholder="Escribe aquí la información que deseas analizar..."
+
                             required
+
                         ></textarea>
 
+
+
                     </div>
 
 
+
+
+
                     <button
+
                         type="submit"
+
                         class="btn-primary"
+
                     >
+
                         Analizar información
+
                     </button>
+
+
 
                 </form>
 
 
+
+
+
                 <div
+
                     id="resultadoClasificacion"
+
                     class="result-box hidden"
+
                 >
+
                 </div>
 
+
+
             </div>
+
+
 
         </section>
 
 
+
+
+
         <!-- ==================================================
+
              PRIORIDAD
+
         =================================================== -->
 
-        <section
-            id="prioridad"
-            class="content-section"
-        >
+<section
+    id="prioridad"
+    class="content-section"
+>
+    <div class="section-header">
+        <div>
+            <span class="section-tag">
+                Machine Learning
+            </span>
 
-            <div class="section-header">
+            <h2>
+                Evaluación de prioridad
+            </h2>
 
-                <div>
+            <p>
+                Evalúa la prioridad académica de revisión utilizando
+                edad y cantidades de documentos, resultados e imágenes
+                pendientes.
+            </p>
+        </div>
+    </div>
 
-                    <span class="section-tag">
-                        Machine Learning
-                    </span>
+    <div class="panel">
+        <form id="formPrioridad">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="prioridadEdad">
+                        Edad
+                    </label>
 
-                    <h2>
-                        Evaluación de prioridad
-                    </h2>
-
-                    <p>
-                        Evalúa los datos ingresados
-                        mediante el modelo de prioridad
-                        integrado al proyecto.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <form id="formPrioridad">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-
-                            <label for="prioridadEdad">
-                                Edad
-                            </label>
-
-                            <input
-                                type="number"
-                                id="prioridadEdad"
-                                min="0"
-                                value="30"
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="prioridadTemperatura">
-                                Temperatura
-                            </label>
-
-                            <input
-                                type="number"
-                                step="0.1"
-                                id="prioridadTemperatura"
-                                value="36.5"
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="prioridadFrecuencia">
-                                Frecuencia cardiaca
-                            </label>
-
-                            <input
-                                type="number"
-                                id="prioridadFrecuencia"
-                                value="78"
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="prioridadPresion">
-                                Presión arterial
-                            </label>
-
-                            <input
-                                type="number"
-                                id="prioridadPresion"
-                                value="120"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn-primary"
+                    <input
+                        type="number"
+                        id="prioridadEdad"
+                        min="0"
+                        value="30"
+                        required
                     >
-                        Evaluar prioridad
-                    </button>
-
-                </form>
-
-
-                <div
-                    id="resultadoPrioridad"
-                    class="result-box hidden"
-                >
                 </div>
 
+                <div class="form-group">
+                    <label for="prioridadDocumentos">
+                        Documentos pendientes
+                    </label>
+
+                    <input
+                        type="number"
+                        id="prioridadDocumentos"
+                        min="0"
+                        value="1"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="prioridadResultados">
+                        Resultados pendientes
+                    </label>
+
+                    <input
+                        type="number"
+                        id="prioridadResultados"
+                        min="0"
+                        value="2"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="prioridadImagenes">
+                        Imágenes pendientes
+                    </label>
+
+                    <input
+                        type="number"
+                        id="prioridadImagenes"
+                        min="0"
+                        value="1"
+                        required
+                    >
+                </div>
             </div>
 
-        </section>
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                Evaluar prioridad
+            </button>
+        </form>
+
+        <div
+            id="resultadoPrioridad"
+            class="result-box hidden"
+        >
+        </div>
+    </div>
+</section>
+
+
+
+
+
 
 
         <!-- ==================================================
+
              A*
+
         =================================================== -->
 
-        <section
-            id="astar"
-            class="content-section"
-        >
+<section
+    id="astar"
+    class="content-section"
+>
+    <div class="section-header">
+        <div>
+            <span class="section-tag">
+                Semana 4
+            </span>
 
-            <div class="section-header">
+            <h2>
+                Organización de revisión con A*
+            </h2>
 
-                <div>
+            <p>
+                Selecciona los elementos pendientes y HIS_IA calculará
+                un orden de revisión utilizando costos y heurística.
+            </p>
+        </div>
+    </div>
 
-                    <span class="section-tag">
-                        Semana 4
-                    </span>
-
-                    <h2>
-                        Algoritmo A*
-                    </h2>
-
-                    <p>
-                        Planificación de una ruta
-                        óptima de revisión dentro
-                        de la red definida.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <form id="formAstar">
-
-                    <div class="form-grid">
-
-                        <div class="form-group">
-
-                            <label for="astarOrigen">
-                                Nodo origen
-                            </label>
-
-                            <input
-                                type="text"
-                                id="astarOrigen"
-                                placeholder="Ejemplo: Servidor_A"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="astarDestino">
-                                Nodo destino
-                            </label>
-
-                            <input
-                                type="text"
-                                id="astarDestino"
-                                placeholder="Ejemplo: Servidor_D"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn-primary"
+    <div class="panel">
+        <form id="formAstar">
+            <div class="option-grid">
+                <label class="select-card">
+                    <input
+                        type="checkbox"
+                        name="astarElemento"
+                        value="Historia clínica"
+                        checked
                     >
-                        Calcular ruta
-                    </button>
+                    <span>
+                        <strong>Historia clínica</strong>
+                        <small>Información del paciente</small>
+                    </span>
+                </label>
 
-                </form>
+                <label class="select-card">
+                    <input
+                        type="checkbox"
+                        name="astarElemento"
+                        value="Resultados de laboratorio"
+                        checked
+                    >
+                    <span>
+                        <strong>Resultados de laboratorio</strong>
+                        <small>Resultados pendientes</small>
+                    </span>
+                </label>
 
+                <label class="select-card">
+                    <input
+                        type="checkbox"
+                        name="astarElemento"
+                        value="Estudio de imagen"
+                        checked
+                    >
+                    <span>
+                        <strong>Estudio de imagen</strong>
+                        <small>Radiología e imágenes</small>
+                    </span>
+                </label>
 
-                <div
-                    id="resultadoAstar"
-                    class="result-box hidden"
-                >
-                </div>
-
+                <label class="select-card">
+                    <input
+                        type="checkbox"
+                        name="astarElemento"
+                        value="Medicamentos"
+                    >
+                    <span>
+                        <strong>Medicamentos</strong>
+                        <small>Información farmacológica</small>
+                    </span>
+                </label>
             </div>
 
-        </section>
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                Calcular orden
+            </button>
+        </form>
+
+        <div
+            id="resultadoAstar"
+            class="result-box hidden"
+        >
+        </div>
+    </div>
+</section>
+
+
+
+
+
 
 
         <!-- ==================================================
+
              MINIMAX
+
         =================================================== -->
 
-        <section
-            id="minimax"
-            class="content-section"
-        >
+<section
+    id="minimax"
+    class="content-section"
+>
+    <div class="section-header">
+        <div>
+            <span class="section-tag">
+                Semana 4
+            </span>
 
-            <div class="section-header">
+            <h2>
+                Priorización Minimax
+            </h2>
 
-                <div>
+            <p>
+                Compara dos casos académicos utilizando criterios
+                estructurados de gravedad e impacto.
+            </p>
+        </div>
+    </div>
 
-                    <span class="section-tag">
-                        Semana 4
+    <div class="panel">
+        <form id="formMinimax">
+            <div class="minimax-patient-grid">
+                
+                <article class="minimax-patient-card">
+                    <span class="card-label">
+                        Paciente 1
                     </span>
-
-                    <h2>
-                        Priorización Minimax
-                    </h2>
-
-                    <p>
-                        Simula una estrategia de decisión
-                        para priorizar pacientes o eventos.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <form id="formMinimax">
 
                     <div class="form-group">
-
-                        <label for="pacientesMinimax">
-                            Valores o pacientes
+                        <label for="minimaxP1_motivo">
+                            Motivo de consulta
                         </label>
 
-                        <textarea
-                            id="pacientesMinimax"
-                            rows="6"
-                            placeholder="Ingresa los datos separados por comas o según el formato configurado."
-                            required
-                        ></textarea>
-
+                        <input
+                            type="text"
+                            id="minimaxP1_motivo"
+                            placeholder="Describe brevemente el caso"
+                            value="Caso académico 1"
+                        >
                     </div>
 
+                    <div class="minimax-checks">
 
-                    <button
-                        type="submit"
-                        class="btn-primary"
-                    >
-                        Ejecutar Minimax
-                    </button>
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_dolor_intenso"
+                            >
+                            <span>Dolor intenso</span>
+                        </label>
 
-                </form>
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_dificultad_respiratoria"
+                            >
+                            <span>Dificultad respiratoria</span>
+                        </label>
 
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_sangrado_activo"
+                            >
+                            <span>Sangrado activo</span>
+                        </label>
 
-                <div
-                    id="resultadoMinimax"
-                    class="result-box hidden"
-                >
-                </div>
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_perdida_movilidad"
+                            >
+                            <span>Pérdida de movilidad</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_alteracion_conciencia"
+                            >
+                            <span>Alteración de conciencia</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_trauma"
+                            >
+                            <span>Trauma</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP1_requiere_soporte"
+                            >
+                            <span>Requiere soporte</span>
+                        </label>
+                    </div>
+                </article>
+
+                
+                <article class="minimax-patient-card">
+                    <span class="card-label">
+                        Paciente 2
+                    </span>
+
+                    <div class="form-group">
+                        <label for="minimaxP2_motivo">
+                            Motivo de consulta
+                        </label>
+
+                        <input
+                            type="text"
+                            id="minimaxP2_motivo"
+                            placeholder="Describe brevemente el caso"
+                            value="Caso académico 2"
+                        >
+                    </div>
+
+                    <div class="minimax-checks">
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_dolor_intenso"
+                            >
+                            <span>Dolor intenso</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_dificultad_respiratoria"
+                            >
+                            <span>Dificultad respiratoria</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_sangrado_activo"
+                            >
+                            <span>Sangrado activo</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_perdida_movilidad"
+                            >
+                            <span>Pérdida de movilidad</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_alteracion_conciencia"
+                            >
+                            <span>Alteración de conciencia</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_trauma"
+                            >
+                            <span>Trauma</span>
+                        </label>
+
+                        <label class="mini-check">
+                            <input
+                                type="checkbox"
+                                id="minimaxP2_requiere_soporte"
+                            >
+                            <span>Requiere soporte</span>
+                        </label>
+                    </div>
+                </article>
 
             </div>
 
-        </section>
+            <div class="clinical-warning minimax-warning">
+                Este módulo demuestra Minimax con ponderaciones académicas.
+                No constituye un sistema de triage ni sustituye valoración clínica.
+            </div>
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                Comparar casos
+            </button>
+        </form>
+
+        <div
+            id="resultadoMinimax"
+            class="result-box hidden"
+        >
+        </div>
+    </div>
+</section>
+
+
+
+
+
 
 
         <!-- ==================================================
+
              SEMANA 7
+
         =================================================== -->
 
+
+
         <section
+
             id="semana7"
+
             class="content-section"
+
         >
+
+
 
             <div class="section-header">
 
+
+
                 <div>
 
+
+
                     <span class="section-tag">
+
                         Semana 7
+
                     </span>
 
+
+
                     <h2>
+
                         Representaciones del conocimiento
+
                     </h2>
 
+
+
                     <p>
+
                         Representación numérica,
+
                         simbólica y mediante autómata
+
                         de variables clínicas.
+
                     </p>
 
+
+
                 </div>
+
+
 
             </div>
 
 
+
+
+
             <div class="panel">
+
+
 
                 <form id="formSemana7">
 
+
+
                     <div class="form-grid">
 
+
+
                         <div class="form-group">
+
+
 
                             <label for="semana7Temperatura">
+
                                 Temperatura
+
                             </label>
 
+
+
                             <input
+
                                 type="number"
+
                                 step="0.1"
+
                                 id="semana7Temperatura"
+
                                 value="36.5"
+
                                 required
+
                             >
+
+
 
                         </div>
 
 
+
+
+
                         <div class="form-group">
+
+
 
                             <label for="semana7Latidos">
+
                                 Latidos
+
                             </label>
 
+
+
                             <input
+
                                 type="number"
+
                                 id="semana7Latidos"
+
                                 value="78"
+
                                 required
+
                             >
 
+
+
                         </div>
+
+
+
 
 
                         <div class="form-group">
 
+
+
                             <label for="semana7Presion">
+
                                 Presión arterial
+
                             </label>
 
+
+
                             <input
+
                                 type="number"
+
                                 id="semana7Presion"
+
                                 value="125"
+
                                 required
+
                             >
 
+
+
                         </div>
+
+
 
                     </div>
 
 
+
+
+
                     <button
+
                         type="submit"
+
                         class="btn-primary"
+
                     >
+
                         Analizar representaciones
+
                     </button>
+
+
 
                 </form>
 
+
+
             </div>
+
+
+
 
 
             <div
+
                 id="resultadoSemana7"
+
                 class="hidden"
+
             >
+
+
 
                 <div class="week7-grid">
 
+
+
                     <article class="week7-card">
 
+
+
                         <span class="card-label">
+
                             Representación
+
                         </span>
 
+
+
                         <h3>
+
                             Numérica
+
                         </h3>
+
+
 
                         <div id="semana7Numerica">
+
                         </div>
+
+
 
                     </article>
 
 
+
+
+
                     <article class="week7-card">
 
+
+
                         <span class="card-label">
+
                             Representación
+
                         </span>
 
+
+
                         <h3>
+
                             Simbólica
+
                         </h3>
+
+
 
                         <div id="semana7Simbolica">
+
                         </div>
+
+
 
                     </article>
 
 
+
+
+
                     <article class="week7-card">
 
+
+
                         <span class="card-label">
+
                             Reconocimiento
+
                         </span>
 
+
+
                         <h3>
+
                             Autómata
+
                         </h3>
+
+
 
                         <div id="semana7Automata">
+
                         </div>
 
+
+
                     </article>
+
+
+
 
 
                     <article class="week7-card">
 
+
+
                         <span class="card-label">
+
                             Resultado
+
                         </span>
 
+
+
                         <h3>
+
                             Integración
+
                         </h3>
 
+
+
                         <div id="semana7Integrado">
+
                         </div>
 
+
+
                     </article>
+
+
 
                 </div>
 
+
+
             </div>
+
+
 
         </section>
 
 
+
+
+
         <!-- ==================================================
+
              SEMANA 8
+
         =================================================== -->
 
+
+
         <section
+
             id="semana8"
+
             class="content-section"
+
         >
+
+
 
             <div class="section-header">
 
+
+
                 <div>
 
+
+
                     <span class="section-tag">
+
                         Semana 8
+
                     </span>
 
+
+
                     <h2>
+
                         Reconocimiento y representación
+
                     </h2>
 
+
+
                     <p>
+
                         Procesa imágenes mediante MLP y documentos
+
                         de laboratorio mediante extracción,
+
                         evidencia SQLite, ontología e interpretación
+
                         clínica orientativa.
+
                     </p>
 
+
+
                 </div>
+
+
 
             </div>
 
 
+
+
+
             <!-- ==============================================
+
                  ESTADÍSTICAS
+
             =============================================== -->
+
+
 
             <div class="week8-stats">
 
+
+
                 <article class="stat-card">
 
+
+
                     <span>
+
                         Accuracy MLP
+
                     </span>
+
+
 
                     <strong id="semana8Accuracy">
+
                         --
+
                     </strong>
+
+
 
                 </article>
 
 
+
+
+
                 <article class="stat-card">
 
+
+
                     <span>
+
                         Documentos
+
                     </span>
+
+
 
                     <strong id="semana8Documentos">
+
                         0
+
                     </strong>
+
+
 
                 </article>
 
 
+
+
+
                 <article class="stat-card">
 
+
+
                     <span>
+
                         Resultados
+
                     </span>
+
+
 
                     <strong id="semana8Resultados">
+
                         0
+
                     </strong>
 
+
+
                 </article>
+
+
+
 
 
                 <article class="stat-card">
 
+
+
                     <span>
+
                         Imágenes
+
                     </span>
 
+
+
                     <strong id="semana8Imagenes">
+
                         0
+
                     </strong>
 
+
+
                 </article>
+
+
 
             </div>
 
 
+
+
+
             <!-- ==============================================
+
                  CARGA DE ARCHIVOS
+
             =============================================== -->
+
+
 
             <div class="panel">
 
+
+
                 <div class="panel-header">
+
+
 
                     <div>
 
+
+
                         <span class="card-label">
+
                             Entrada
+
                         </span>
 
+
+
                         <h3>
+
                             Analizar archivo
+
                         </h3>
 
+
+
                     </div>
+
+
+
 
 
                     <button
+
                         id="btnActualizarSemana8"
+
                         class="btn-secondary"
+
                         type="button"
+
                     >
+
                         Actualizar evidencia
+
                     </button>
 
+
+
                 </div>
+
+
+
 
 
                 <div
+
                     id="semana8DropZone"
+
                     class="upload-zone"
+
                 >
 
+
+
                     <div class="upload-icon">
+
                         ↑
+
                     </div>
 
+
+
                     <h3>
+
                         Arrastra un archivo aquí
+
                     </h3>
 
+
+
                     <p>
+
                         o haz clic para seleccionarlo
+
                     </p>
 
+
+
                     <small>
+
                         PDF, PNG, JPG, JPEG o WEBP · Máximo 15 MB
+
                     </small>
 
+
+
                 </div>
+
+
+
 
 
                 <input
+
                     type="file"
+
                     id="semana8Archivo"
+
                     accept=".pdf,.png,.jpg,.jpeg,.webp"
+
                     hidden
+
                 >
+
+
+
 
 
                 <div
+
                     id="semana8ArchivoSeleccionado"
+
                     class="selected-file hidden"
+
                 >
+
+
 
                     <div>
 
+
+
                         <strong id="semana8NombreArchivo">
+
                             archivo.pdf
+
                         </strong>
 
+
+
                         <span id="semana8TamanoArchivo">
+
                             0 KB
+
                         </span>
 
+
+
                     </div>
+
+
+
 
 
                     <button
+
                         id="btnQuitarArchivoSemana8"
+
                         type="button"
+
                         class="btn-icon"
+
                         aria-label="Quitar archivo"
+
                     >
+
                         ×
+
                     </button>
 
+
+
                 </div>
+
+
+
 
 
                 <button
+
                     id="btnAnalizarSemana8"
+
                     type="button"
+
                     class="btn-primary"
+
                 >
+
                     Analizar archivo
+
                 </button>
 
 
+
+
+
                 <div
+
                     id="semana8Procesando"
+
                     class="processing-box hidden"
+
                 >
 
+
+
                     <div class="spinner">
+
                     </div>
+
+
 
                     <div>
 
+
+
                         <strong>
+
                             Procesando archivo
+
                         </strong>
 
+
+
                         <p>
+
                             HIS_IA está analizando la información.
+
                         </p>
+
+
 
                     </div>
 
+
+
                 </div>
+
+
 
             </div>
 
 
+
+
+
             <!-- ==============================================
+
                  RESULTADO SEMANA 8
+
             =============================================== -->
 
+
+
             <div
+
                 id="resultadoSemana8"
+
                 class="hidden"
+
             >
+
+
 
                 <div class="result-header">
 
+
+
                     <div>
 
+
+
                         <span class="section-tag">
+
                             Resultado
+
                         </span>
 
+
+
                         <h3 id="semana8ResultadoTitulo">
+
                             Análisis completado
+
                         </h3>
+
+
 
                     </div>
 
 
+
+
+
                     <span
+
                         id="semana8ResultadoTipo"
+
                         class="result-type"
+
                     >
+
                         --
+
                     </span>
+
+
 
                 </div>
 
 
+
+
+
                 <!-- ==========================================
+
                      RESULTADO PDF
+
                 =========================================== -->
 
+
+
                 <div
+
                     id="resultadoSemana8PDF"
+
                     class="hidden"
+
                 >
 
+
+
                     <!-- ======================================
+
                          DATOS DEL DOCUMENTO
+
                     ======================================= -->
+
+
 
                     <div class="panel">
 
+
+
                         <div class="panel-header">
+
+
 
                             <div>
 
+
+
                                 <span class="card-label">
+
                                     Documento
+
                                 </span>
 
+
+
                                 <h3>
+
                                     Datos identificados
+
                                 </h3>
+
+
 
                             </div>
 
+
+
                         </div>
+
+
+
 
 
                         <div class="document-data-grid">
 
+
+
                             <div class="data-field">
 
+
+
                                 <span>
+
                                     Paciente
+
                                 </span>
+
+
 
                                 <strong id="semana8Paciente">
+
                                     --
+
                                 </strong>
+
+
 
                             </div>
 
 
+
+
+
                             <div class="data-field">
 
+
+
                                 <span>
+
                                     Identificación
+
                                 </span>
+
+
 
                                 <strong id="semana8Identificacion">
+
                                     --
+
                                 </strong>
+
+
 
                             </div>
 
 
+
+
+
                             <div class="data-field">
 
+
+
                                 <span>
+
                                     Fecha
+
                                 </span>
+
+
 
                                 <strong id="semana8Fecha">
+
                                     --
+
                                 </strong>
 
+
+
                             </div>
+
+
+
 
 
                             <div class="data-field">
 
+
+
                                 <span>
+
                                     Tipo de documento
+
                                 </span>
 
+
+
                                 <strong id="semana8TipoDocumento">
+
                                     --
+
                                 </strong>
+
+
 
                             </div>
 
+
+
                         </div>
+
+
 
                     </div>
 
 
+
+
+
                     <!-- ======================================
+
                          RESULTADOS DE LABORATORIO
+
                     ======================================= -->
+
+
 
                     <div class="panel">
 
+
+
                         <div class="panel-header">
+
+
 
                             <div>
 
+
+
                                 <span class="card-label">
+
                                     Extracción
+
                                 </span>
 
+
+
                                 <h3>
+
                                     Resultados de laboratorio
+
                                 </h3>
 
+
+
                             </div>
+
+
+
 
 
                             <span class="counter-badge">
 
+
+
                                 <strong id="semana8CantidadExamenes">
+
                                     0
+
                                 </strong>
+
+
 
                                 exámenes
 
+
+
                             </span>
 
+
+
                         </div>
+
+
+
 
 
                         <div class="table-container">
 
+
+
                             <table class="clinical-table">
+
+
 
                                 <thead>
 
+
+
                                     <tr>
 
+
+
                                         <th>
+
                                             Examen
+
                                         </th>
 
+
+
                                         <th>
+
                                             Resultado
+
                                         </th>
 
+
+
                                         <th>
+
                                             Unidad
+
                                         </th>
 
+
+
                                         <th>
+
                                             Referencia
+
                                         </th>
 
+
+
                                         <th>
+
                                             Estado
+
                                         </th>
 
+
+
                                         <th>
+
                                             Página
+
                                         </th>
+
+
 
                                     </tr>
+
+
 
                                 </thead>
 
 
+
+
+
                                 <tbody id="semana8TablaExamenes">
+
+
 
                                     <tr>
 
+
+
                                         <td
+
                                             colspan="6"
+
                                             class="empty-cell"
+
                                         >
+
                                             Sin resultados
+
                                         </td>
+
+
 
                                     </tr>
 
+
+
                                 </tbody>
+
+
 
                             </table>
 
+
+
                         </div>
+
+
+
 
 
                         <div
+
                             id="semana8OCR"
+
                             class="ocr-alert hidden"
+
                         >
 
+
+
                             <strong>
+
                                 Documento sin texto digital
+
                             </strong>
 
+
+
                             <p>
+
                                 Este archivo requiere OCR
+
                                 para poder extraer información.
+
                             </p>
 
+
+
                         </div>
+
+
 
                     </div>
 
 
+
+
+
                     <!-- ======================================
+
                          NUEVO
+
                          INTERPRETACIÓN CLÍNICA
+
                     ======================================= -->
 
+
+
                     <div
+
                         id="semana8InterpretacionClinica"
+
                         class="clinical-analysis hidden"
+
                     >
+
+
 
                         <div class="panel">
 
+
+
                             <div class="panel-header">
+
+
 
                                 <div>
 
+
+
                                     <span class="card-label">
+
                                         Sistema de apoyo
+
                                     </span>
 
+
+
                                     <h3>
+
                                         Análisis clínico orientativo
+
                                     </h3>
 
+
+
                                     <p>
+
                                         Comparación automática de los
+
                                         resultados con los rangos de
+
                                         referencia incluidos en el documento.
+
                                     </p>
 
+
+
                                 </div>
+
+
 
                             </div>
 
 
+
+
+
                             <!-- ==============================
+
                                  RESUMEN DE INTERPRETACIÓN
+
                             =============================== -->
+
+
 
                             <div class="clinical-summary">
 
+
+
                                 <article class="clinical-stat">
 
+
+
                                     <span>
+
                                         Evaluados
+
                                     </span>
 
+
+
                                     <strong id="clinicaEvaluados">
+
                                         0
+
                                     </strong>
 
+
+
                                 </article>
+
+
+
 
 
                                 <article class="clinical-stat status-normal">
 
+
+
                                     <span>
+
                                         En referencia
+
                                     </span>
 
+
+
                                     <strong id="clinicaNormales">
+
                                         0
+
                                     </strong>
 
+
+
                                 </article>
+
+
+
 
 
                                 <article class="clinical-stat status-high">
 
+
+
                                     <span>
+
                                         Altos
+
                                     </span>
 
+
+
                                     <strong id="clinicaAltos">
+
                                         0
+
                                     </strong>
 
+
+
                                 </article>
+
+
+
 
 
                                 <article class="clinical-stat status-low">
 
+
+
                                     <span>
+
                                         Bajos
+
                                     </span>
 
+
+
                                     <strong id="clinicaBajos">
+
                                         0
+
                                     </strong>
 
+
+
                                 </article>
+
+
+
 
 
                                 <article class="clinical-stat">
 
+
+
                                     <span>
+
                                         No evaluables
+
                                     </span>
 
+
+
                                     <strong id="clinicaNoEvaluables">
+
                                         0
+
                                     </strong>
+
+
 
                                 </article>
 
+
+
                             </div>
 
 
+
+
+
                             <!-- ==============================
+
                                  HALLAZGOS
+
                             =============================== -->
+
+
 
                             <div class="clinical-block">
 
+
+
                                 <div class="clinical-block-title">
 
+
+
                                     <div class="clinical-block-icon">
+
                                         !
+
                                     </div>
+
+
 
                                     <div>
 
+
+
                                         <h4>
+
                                             Hallazgos
+
                                         </h4>
 
+
+
                                         <p>
+
                                             Resultados fuera del rango
+
                                             de referencia.
+
                                         </p>
 
+
+
                                     </div>
+
+
 
                                 </div>
 
 
+
+
+
                                 <div
+
                                     id="clinicaHallazgos"
+
                                     class="clinical-findings"
+
                                 >
+
+
 
                                     <p class="empty-message">
+
                                         No se identificaron hallazgos.
+
                                     </p>
 
+
+
                                 </div>
+
+
 
                             </div>
 
 
+
+
+
                             <!-- ==============================
+
                                  POSIBLES CONDICIONES
+
                             =============================== -->
+
+
 
                             <div class="clinical-block">
 
+
+
                                 <div class="clinical-block-title">
 
+
+
                                     <div class="clinical-block-icon">
+
                                         +
+
                                     </div>
+
+
 
                                     <div>
 
+
+
                                         <h4>
+
                                             Posibles condiciones asociadas
+
                                         </h4>
 
+
+
                                         <p>
+
                                             Hipótesis generadas mediante
+
                                             reglas del sistema.
+
                                         </p>
 
+
+
                                     </div>
+
+
 
                                 </div>
 
 
+
+
+
                                 <div
+
                                     id="clinicaCondiciones"
+
                                     class="clinical-conditions"
+
                                 >
+
+
 
                                     <div class="clinical-empty">
 
+
+
                                         <strong>
+
                                             Sin patrones alterados
+
                                         </strong>
 
+
+
                                         <p>
+
                                             No se identificaron condiciones
+
                                             específicas asociadas.
+
                                         </p>
+
+
 
                                     </div>
 
+
+
                                 </div>
+
+
 
                             </div>
 
 
+
+
+
                             <!-- ==============================
+
                                  CONCLUSIÓN
+
                             =============================== -->
+
+
 
                             <div class="clinical-block">
 
+
+
                                 <div class="clinical-block-title">
 
+
+
                                     <div class="clinical-block-icon">
+
                                         ✓
+
                                     </div>
+
+
 
                                     <div>
 
+
+
                                         <h4>
+
                                             Conclusión
+
                                         </h4>
 
+
+
                                         <p>
+
                                             Resultado integrado del
+
                                             motor de interpretación.
+
                                         </p>
+
+
 
                                     </div>
 
+
+
                                 </div>
+
+
+
 
 
                                 <div
+
                                     id="clinicaConclusion"
+
                                     class="clinical-conclusion"
+
                                 >
+
                                     Sin conclusión disponible.
+
                                 </div>
+
+
 
                             </div>
 
 
+
+
+
                             <!-- ==============================
+
                                  ADVERTENCIA
+
                             =============================== -->
+
+
 
                             <div class="clinical-warning">
 
+
+
                                 <div class="clinical-warning-icon">
+
                                     ⚠
+
                                 </div>
+
+
+
 
 
                                 <div>
 
+
+
                                     <strong>
+
                                         Interpretación orientativa
+
                                     </strong>
 
+
+
                                     <p id="clinicaAdvertencia">
+
                                         Esta información no constituye
+
                                         un diagnóstico médico.
+
                                     </p>
+
+
 
                                 </div>
 
+
+
                             </div>
+
+
 
                         </div>
 
+
+
                     </div>
+
+
 
                 </div>
 
 
+
+
+
                 <!-- ==========================================
+
                      RESULTADO DE IMAGEN
+
                 =========================================== -->
 
+
+
                 <div
+
                     id="resultadoSemana8Imagen"
+
                     class="hidden"
+
                 >
+
+
 
                     <div class="panel">
 
+
+
                         <div class="panel-header">
+
+
 
                             <div>
 
+
+
                                 <span class="card-label">
+
                                     MLP
+
                                 </span>
 
+
+
                                 <h3>
+
                                     Reconocimiento de imagen
+
                                 </h3>
+
+
 
                             </div>
 
+
+
                         </div>
+
+
+
 
 
                         <div class="image-result-grid">
 
+
+
                             <article class="prediction-card">
 
+
+
                                 <span>
+
                                     Dígito reconocido
+
                                 </span>
+
+
 
                                 <strong id="semana8Prediccion">
+
                                     --
+
                                 </strong>
+
+
 
                             </article>
 
 
+
+
+
                             <article class="data-field">
 
+
+
                                 <span>
+
                                     Confianza
+
                                 </span>
+
+
 
                                 <strong id="semana8Confianza">
+
                                     --
+
                                 </strong>
+
+
 
                             </article>
 
 
+
+
+
                             <article class="data-field">
 
+
+
                                 <span>
+
                                     Accuracy del modelo
+
                                 </span>
+
+
 
                                 <strong id="semana8AccuracyResultado">
+
                                     --
+
                                 </strong>
 
+
+
                             </article>
+
+
+
 
 
                             <article class="data-field">
 
+
+
                                 <span>
+
                                     ID SQLite
+
                                 </span>
 
+
+
                                 <strong id="semana8SQLiteImagen">
+
                                     --
+
                                 </strong>
+
+
 
                             </article>
 
+
+
                         </div>
+
+
 
                     </div>
 
+
+
                 </div>
+
+
+
 
 
                 <!-- ==========================================
+
                      EVIDENCIA
+
                 =========================================== -->
+
+
 
                 <div class="evidence-grid">
 
+
+
                     <article class="evidence-card">
 
+
+
                         <span class="evidence-icon">
+
                             DB
+
                         </span>
+
+
 
                         <div>
 
+
+
                             <small>
+
                                 SQLite
+
                             </small>
+
+
 
                             <strong id="semana8EstadoSQLite">
+
                                 Pendiente
+
                             </strong>
 
+
+
                         </div>
+
+
 
                     </article>
 
 
+
+
+
                     <article class="evidence-card">
 
+
+
                         <span class="evidence-icon">
+
                             KG
+
                         </span>
+
+
 
                         <div>
 
+
+
                             <small>
+
                                 Ontología
+
                             </small>
+
+
 
                             <strong id="semana8EstadoOntologia">
+
                                 Pendiente
+
                             </strong>
 
+
+
                         </div>
+
+
 
                     </article>
 
 
+
+
+
                     <article class="evidence-card">
 
+
+
                         <span class="evidence-icon">
+
                             N
+
                         </span>
+
+
 
                         <div>
 
+
+
                             <small>
+
                                 Nodos
+
                             </small>
+
+
 
                             <strong id="semana8Nodos">
+
                                 0
+
                             </strong>
+
+
 
                         </div>
 
+
+
                     </article>
+
+
+
 
 
                     <article class="evidence-card">
 
+
+
                         <span class="evidence-icon">
+
                             R
+
                         </span>
+
+
 
                         <div>
 
+
+
                             <small>
+
                                 Relaciones
+
                             </small>
 
+
+
                             <strong id="semana8Relaciones">
+
                                 0
+
                             </strong>
+
+
 
                         </div>
 
+
+
                     </article>
+
+
 
                 </div>
 
+
+
             </div>
+
+
 
         </section>
 
 
+
+
+
         <!-- ==================================================
+
              ASISTENTE IA
+
         =================================================== -->
 
+<section
+    id="semana9"
+    class="content-section"
+>
+    <div class="section-header">
+        <div>
+            <span class="section-tag">
+                Semana 9
+            </span>
+
+            <h2>
+                Procesamiento visual
+            </h2>
+
+            <p>
+                Analiza una imagen mediante Canny, umbral automático
+                de Otsu y regiones conectadas para preparar información
+                visual antes de reconocimiento u OCR.
+            </p>
+        </div>
+    </div>
+
+    <div class="week9-flow">
+        <article>
+            <span>01</span>
+            <div>
+                <strong>Imagen</strong>
+                <small>Entrada visual</small>
+            </div>
+        </article>
+
+        <i>→</i>
+
+        <article>
+            <span>02</span>
+            <div>
+                <strong>Canny</strong>
+                <small>Contornos</small>
+            </div>
+        </article>
+
+        <i>→</i>
+
+        <article>
+            <span>03</span>
+            <div>
+                <strong>Otsu</strong>
+                <small>Segmentación</small>
+            </div>
+        </article>
+
+        <i>→</i>
+
+        <article>
+            <span>04</span>
+            <div>
+                <strong>Regiones</strong>
+                <small>Objetos conectados</small>
+            </div>
+        </article>
+    </div>
+
+    <div class="week9-main-grid">
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <span class="card-label">
+                        Entrada
+                    </span>
+
+                    <h3>
+                        Imagen a procesar
+                    </h3>
+                </div>
+            </div>
+
+            <div
+                id="semana9DropZone"
+                class="upload-zone week9-upload-zone"
+            >
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+                <h3>
+                    Arrastra una imagen aquí
+                </h3>
+
+                <p>
+                    o haz clic para seleccionarla
+                </p>
+
+                <small>
+                    PNG, JPG, JPEG, WEBP, BMP, TIF o TIFF · Máximo 20 MB
+                </small>
+            </div>
+
+            <input
+                type="file"
+                id="semana9Archivo"
+                accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff"
+                hidden
+            >
+
+            <div
+                id="semana9ArchivoSeleccionado"
+                class="selected-file hidden"
+            >
+                <div>
+                    <strong id="semana9NombreArchivo">
+                        imagen.png
+                    </strong>
+
+                    <span id="semana9TamanoArchivo">
+                        0 KB
+                    </span>
+                </div>
+
+                <button
+                    id="btnQuitarArchivoSemana9"
+                    type="button"
+                    class="btn-icon"
+                    aria-label="Quitar imagen"
+                >
+                    ×
+                </button>
+            </div>
+
+            <div
+                id="semana9VistaPrevia"
+                class="week9-preview-wrap hidden"
+            >
+                <img
+                    id="semana9Preview"
+                    alt="Vista previa de la imagen seleccionada"
+                >
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <span class="card-label">
+                        Parámetros
+                    </span>
+
+                    <h3>
+                        Configuración
+                    </h3>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="semana9Sigma">
+                    Sigma de Canny
+                </label>
+
+                <input
+                    type="number"
+                    id="semana9Sigma"
+                    min="0.1"
+                    step="0.1"
+                    value="2.0"
+                >
+
+                <small>
+                    Valores bajos conservan más detalle; valores altos
+                    aplican mayor suavizado.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="semana9AreaMinima">
+                    Área mínima de región
+                </label>
+
+                <input
+                    type="number"
+                    id="semana9AreaMinima"
+                    min="1"
+                    step="1"
+                    value="20"
+                >
+
+                <small>
+                    Permite descartar regiones pequeñas producidas por ruido.
+                </small>
+            </div>
+
+            <button
+                id="btnAnalizarSemana9"
+                type="button"
+                class="btn-primary"
+            >
+                Analizar imagen
+            </button>
+
+            <div
+                id="semana9Procesando"
+                class="processing-box hidden"
+            >
+                <div class="spinner">
+                </div>
+
+                <div>
+                    <strong>
+                        Procesando imagen
+                    </strong>
+
+                    <p>
+                        Canny → Otsu → Regiones conectadas
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        id="resultadoSemana9"
+        class="hidden"
+    >
+        <div class="week9-stats">
+            <article class="stat-card">
+                <span>Sigma</span>
+                <strong id="semana9ResultadoSigma">--</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Umbral Otsu</span>
+                <strong id="semana9Umbral">--</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Píxeles de borde</span>
+                <strong id="semana9Bordes">0</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Porcentaje de borde</span>
+                <strong id="semana9PorcentajeBorde">0%</strong>
+            </article>
+
+            <article class="stat-card">
+                <span>Regiones</span>
+                <strong id="semana9Regiones">0</strong>
+            </article>
+        </div>
+
+        <div class="week9-results-grid">
+            <div class="panel week9-evidence-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="card-label">
+                            Evidencia
+                        </span>
+
+                        <h3>
+                            Original · Canny · Otsu · Regiones
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="week9-evidence-image">
+                    <img
+                        id="semana9Evidencia"
+                        alt="Evidencia visual de Semana 9"
+                    >
+                </div>
+
+                <p class="week9-caption">
+                    Esta evidencia es generada automáticamente por
+                    <code>src/semana09_vision.py</code>.
+                </p>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="card-label">
+                            Región principal
+                        </span>
+
+                        <h3>
+                            Región de mayor área
+                        </h3>
+                    </div>
+                </div>
+
+                <div
+                    id="semana9RegionPrincipalVacia"
+                    class="empty-state"
+                >
+                    No hay una región principal disponible.
+                </div>
+
+                <div
+                    id="semana9RegionPrincipal"
+                    class="hidden"
+                >
+                    <div class="week9-region-image">
+                        <img
+                            id="semana9RegionImagen"
+                            alt="Región principal detectada"
+                        >
+                    </div>
+
+                    <div class="week9-region-meta">
+                        <span>
+                            Área
+                            <strong id="semana9RegionArea">--</strong>
+                        </span>
+
+                        <span>
+                            Bounding box
+                            <strong id="semana9RegionBBox">--</strong>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="week9-results-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="card-label">
+                            Comparación
+                        </span>
+
+                        <h3>
+                            Efecto de sigma
+                        </h3>
+                    </div>
+                </div>
+
+                <div
+                    id="semana9ComparacionSigma"
+                    class="week9-sigma-list"
+                >
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="card-label">
+                            Regiones
+                        </span>
+
+                        <h3>
+                            Regiones conectadas detectadas
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Área</th>
+                                <th>Centroide</th>
+                                <th>Solidez</th>
+                                <th>Excentricidad</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="semana9TablaRegiones">
+                            <tr>
+                                <td colspan="5" class="empty-cell">
+                                    Aún no se ha procesado una imagen.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel week9-integration">
+            <div class="panel-header">
+                <div>
+                    <span class="card-label">
+                        Integración HIS_IA
+                    </span>
+
+                    <h3>
+                        De la imagen al reconocimiento
+                    </h3>
+                </div>
+            </div>
+
+            <div class="week9-pipeline">
+                <span>Imagen</span>
+                <i>→</i>
+                <span>Canny</span>
+                <i>→</i>
+                <span>Otsu</span>
+                <i>→</i>
+                <span>Regiones</span>
+                <i>→</i>
+                <span>Región de interés</span>
+                <i>→</i>
+                <span>Reconocimiento / OCR</span>
+            </div>
+
+            <div class="clinical-warning">
+                El procesamiento visual es una etapa técnica de apoyo.
+                No interpreta imágenes médicas ni constituye un diagnóstico.
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
         <section
+
             id="asistente"
+
             class="content-section"
+
         >
+
+
 
             <div class="section-header">
 
+
+
                 <div>
 
+
+
                     <span class="section-tag">
+
                         Asistente
+
                     </span>
 
+
+
                     <h2>
+
                         Asistente HIS_IA
+
                     </h2>
 
+
+
                     <p>
+
                         Interactúa con el sistema utilizando
+
                         lenguaje natural.
+
                     </p>
+
+
 
                 </div>
 
+
+
             </div>
+
+
+
 
 
             <div class="assistant-panel">
 
+
+
                 <div
+
                     id="assistantMessages"
+
                     class="assistant-messages"
+
                 >
+
+
 
                     <div class="assistant-message bot">
 
+
+
                         <div class="message-avatar">
+
                             IA
+
                         </div>
+
+
 
                         <div class="message-content">
 
+
+
                             <strong>
+
                                 HIS_IA
+
                             </strong>
 
+
+
                             <p>
+
                                 Hola. Puedes realizar una consulta
+
                                 relacionada con el sistema.
+
                             </p>
+
+
 
                         </div>
 
+
+
                     </div>
+
+
 
                 </div>
 
 
+
+
+
                 <form
+
                     id="formAsistente"
+
                     class="assistant-form"
+
                 >
 
+
+
                     <input
+
                         id="mensajeAsistente"
+
                         type="text"
+
                         placeholder="Escribe tu consulta..."
+
                         autocomplete="off"
+
                         required
+
                     >
+
+
+
 
 
                     <button
+
                         type="submit"
+
                         class="btn-primary"
+
                     >
+
                         Enviar
+
                     </button>
+
+
 
                 </form>
 
+
+
             </div>
 
+
+
         </section>
+
+
 
     </main>
 
 
+
+
+
     <!-- ==================================================
+
          TOASTS
+
     =================================================== -->
 
+
+
     <div
+
         id="toastContainer"
+
         class="toast-container"
+
     >
+
     </div>
 
 
+
+
+
     <!-- ==================================================
+
          JAVASCRIPT
+
     =================================================== -->
 
+
+
     <script
-        src="{{ url_for('static', filename='js/app.js') }}"
+
+        src="{{ url_for('static', filename='js/app.js') }}?v=15"
+
     ></script>
 
+
+
 </body>
+
+
 
 </html>
