@@ -513,6 +513,11 @@ const titulosSeccion = {
 
         "Procesamiento visual",
 
+    semana10:
+        "Extracción de características",
+
+
+
 
 
     asistente:
@@ -1441,398 +1446,533 @@ if (formMinimax) {
 
 
 // ==========================================================
-
 // SEMANA 7
-
 // ==========================================================
 
-
-
 const formSemana7 =
-
     obtenerElemento(
-
         "formSemana7"
-
     );
 
 
+function estadoSemana7Clase(valor) {
 
+    const texto =
+        String(
+            valor || ""
+        ).toLowerCase();
+
+    const esperados = [
+        "normal",
+        "óptima",
+        "optima",
+        "bueno",
+        "excelente"
+    ];
+
+    return esperados.some(
+        item => texto.includes(item)
+    )
+        ? "week7-status-ok"
+        : "week7-status-alerta";
+}
+
+
+function tarjetaMetricaSemana7(
+    etiqueta,
+    valor,
+    unidad,
+    estado
+) {
+
+    return `
+        <div class="week7-metric">
+            <span class="week7-metric-label">
+                ${escaparHTML(etiqueta)}
+            </span>
+
+            <strong class="week7-metric-value">
+                ${escaparHTML(valor)}
+                <small>
+                    ${escaparHTML(unidad || "")}
+                </small>
+            </strong>
+
+            ${
+                estado
+                    ? `
+                        <span class="week7-status ${estadoSemana7Clase(estado)}">
+                            ${escaparHTML(estado)}
+                        </span>
+                    `
+                    : ""
+            }
+        </div>
+    `;
+}
 
 
 if (formSemana7) {
 
-
-
     formSemana7.addEventListener(
-
         "submit",
-
         async evento => {
-
-
 
             evento.preventDefault();
 
 
-
-
-
             const temperatura =
-
                 Number(
-
                     obtenerElemento(
-
                         "semana7Temperatura"
-
                     )?.value
-
                 );
-
-
-
 
 
             const latidos =
-
                 Number(
-
                     obtenerElemento(
-
                         "semana7Latidos"
-
                     )?.value
-
                 );
-
-
-
 
 
             const presion =
-
                 Number(
-
                     obtenerElemento(
-
                         "semana7Presion"
-
                     )?.value
-
                 );
-
-
-
 
 
             try {
 
-
-
                 const datos = await apiJSON(
-
                     "/api/semana7",
-
                     {
-
-                        method:
-
-                            "POST",
-
-
+                        method: "POST",
 
                         headers: {
-
                             "Content-Type":
-
                                 "application/json"
-
                         },
 
-
-
                         body:
-
                             JSON.stringify({
-
                                 temperatura,
-
                                 latidos,
-
                                 presion
-
                             })
-
                     }
-
                 );
-
-
-
 
 
                 const resultado =
-
                     datos.resultado || {};
 
 
-
-
-
                 const contenedor =
-
                     obtenerElemento(
-
                         "resultadoSemana7"
-
                     );
-
-
-
 
 
                 mostrarElemento(
-
                     contenedor
-
                 );
 
 
-
-
-
                 const numerica =
-
                     resultado.numerica ||
-
                     resultado.representacion_numerica ||
-
                     {};
-
-
-
 
 
                 const simbolica =
-
                     resultado.simbolica ||
-
                     resultado.representacion_simbolica ||
-
                     {};
-
-
-
 
 
                 const automata =
-
                     resultado.automata ||
-
                     {};
-
-
-
 
 
                 const integrado =
-
                     resultado.integrado ||
-
                     resultado.resultado_integrado ||
-
                     resultado.conclusion ||
-
                     {};
 
 
+                const hechos =
+                    simbolica.hechos ||
+                    {};
 
 
+                // ==================================================
+                // REPRESENTACIÓN NUMÉRICA
+                // ==================================================
 
                 const elementoNumerica =
-
                     obtenerElemento(
-
                         "semana7Numerica"
-
                     );
-
-
-
 
 
                 if (elementoNumerica) {
 
+                    const vector =
+                        Array.isArray(
+                            numerica.vector
+                        )
+                            ? numerica.vector.join("  ·  ")
+                            : "--";
 
 
                     elementoNumerica.innerHTML = `
 
-                        <pre>${escaparHTML(
+                        <div class="week7-vector-box">
+                            <span>
+                                Vector del paciente
+                            </span>
 
-                            JSON.stringify(
+                            <strong>
+                                [ ${escaparHTML(vector)} ]
+                            </strong>
+                        </div>
 
-                                numerica,
+                        <div class="week7-metrics-grid">
 
-                                null,
+                            ${tarjetaMetricaSemana7(
+                                "Temperatura",
+                                numerica.temperatura ?? temperatura,
+                                "°C",
+                                hechos.temperatura
+                            )}
 
-                                2
+                            ${tarjetaMetricaSemana7(
+                                "Frecuencia cardíaca",
+                                numerica.latidos ?? latidos,
+                                "lpm",
+                                hechos.latidos
+                            )}
 
-                            )
+                            ${tarjetaMetricaSemana7(
+                                "Presión arterial",
+                                numerica.presion ?? presion,
+                                "mmHg",
+                                hechos.presion
+                            )}
 
-                        )}</pre>
+                        </div>
 
+                        <div class="week7-reference-box">
+
+                            <strong>
+                                Rangos de referencia del ejercicio
+                            </strong>
+
+                            <div>
+                                Temperatura:
+                                ${
+                                    numerica.referencias?.temperatura?.min ?? "--"
+                                }
+                                -
+                                ${
+                                    numerica.referencias?.temperatura?.max ?? "--"
+                                }
+                                °C
+                            </div>
+
+                            <div>
+                                Frecuencia cardíaca:
+                                ${
+                                    numerica.referencias?.latidos?.min ?? "--"
+                                }
+                                -
+                                ${
+                                    numerica.referencias?.latidos?.max ?? "--"
+                                }
+                                lpm
+                            </div>
+
+                            <div>
+                                Presión:
+                                ${
+                                    numerica.referencias?.presion?.min ?? "--"
+                                }
+                                -
+                                ${
+                                    numerica.referencias?.presion?.max ?? "--"
+                                }
+                                mmHg
+                            </div>
+
+                        </div>
                     `;
-
                 }
 
 
-
-
+                // ==================================================
+                // REPRESENTACIÓN SIMBÓLICA
+                // ==================================================
 
                 const elementoSimbolica =
-
                     obtenerElemento(
-
                         "semana7Simbolica"
-
                     );
-
-
-
 
 
                 if (elementoSimbolica) {
 
-
-
                     elementoSimbolica.innerHTML = `
 
-                        <pre>${escaparHTML(
+                        <div class="week7-symbol-list">
 
-                            JSON.stringify(
+                            ${tarjetaMetricaSemana7(
+                                "Temperatura",
+                                hechos.temperatura || "--",
+                                "",
+                                hechos.temperatura
+                            )}
 
-                                simbolica,
+                            ${tarjetaMetricaSemana7(
+                                "Frecuencia cardíaca",
+                                hechos.latidos || "--",
+                                "",
+                                hechos.latidos
+                            )}
 
-                                null,
+                            ${tarjetaMetricaSemana7(
+                                "Presión arterial",
+                                hechos.presion || "--",
+                                "",
+                                hechos.presion
+                            )}
 
-                                2
+                        </div>
 
-                            )
+                        <div class="week7-explanation">
+                            <strong>
+                                ¿Qué representa?
+                            </strong>
 
-                        )}</pre>
-
+                            <p>
+                                Los valores numéricos son convertidos
+                                en categorías simbólicas para que el
+                                resultado sea más fácil de interpretar.
+                            </p>
+                        </div>
                     `;
-
                 }
 
 
-
-
+                // ==================================================
+                // AUTÓMATA
+                // ==================================================
 
                 const elementoAutomata =
-
                     obtenerElemento(
-
                         "semana7Automata"
-
                     );
-
-
-
 
 
                 if (elementoAutomata) {
 
+                    const recorrido =
+                        Array.isArray(
+                            automata.recorrido
+                        )
+                            ? automata.recorrido
+                            : [];
+
+
+                    const pasos =
+                        recorrido.length
+                            ? recorrido
+                                .map(
+                                    estado => `
+                                        <span class="week7-state">
+                                            ${escaparHTML(estado)}
+                                        </span>
+                                    `
+                                )
+                                .join(
+                                    '<span class="week7-arrow">→</span>'
+                                )
+                            : "--";
 
 
                     elementoAutomata.innerHTML = `
 
-                        <pre>${escaparHTML(
+                        <div class="week7-automata-sequence">
+                            <span>
+                                Secuencia recibida
+                            </span>
 
-                            JSON.stringify(
+                            <strong>
+                                ${escaparHTML(
+                                    automata.secuencia || "--"
+                                )}
+                            </strong>
+                        </div>
 
-                                automata,
+                        <div class="week7-automata-flow">
+                            ${pasos}
+                        </div>
 
-                                null,
+                        <div class="week7-automata-result">
+                            <span class="week7-status ${
+                                automata.aceptada
+                                    ? "week7-status-ok"
+                                    : "week7-status-alerta"
+                            }">
+                                ${
+                                    automata.aceptada
+                                        ? "Secuencia completa"
+                                        : "Secuencia incompleta"
+                                }
+                            </span>
 
-                                2
-
-                            )
-
-                        )}</pre>
-
+                            <p>
+                                ${escaparHTML(
+                                    automata.mensaje ||
+                                    "Sin mensaje."
+                                )}
+                            </p>
+                        </div>
                     `;
-
                 }
 
 
-
-
+                // ==================================================
+                // RESULTADO INTEGRADO
+                // ==================================================
 
                 const elementoIntegrado =
-
                     obtenerElemento(
-
                         "semana7Integrado"
-
                     );
-
-
-
 
 
                 if (elementoIntegrado) {
 
+                    const hallazgos =
+                        Array.isArray(
+                            integrado.hallazgos
+                        )
+                            ? integrado.hallazgos
+                            : [];
 
 
                     elementoIntegrado.innerHTML = `
 
-                        <pre>${escaparHTML(
+                        <div class="week7-summary-grid">
 
-                            JSON.stringify(
+                            <div>
+                                <span>
+                                    Variables evaluadas
+                                </span>
 
-                                integrado,
+                                <strong>
+                                    ${
+                                        integrado.variables_evaluadas
+                                        ?? 3
+                                    }
+                                </strong>
+                            </div>
 
-                                null,
+                            <div>
+                                <span>
+                                    En categoría esperada
+                                </span>
 
-                                2
+                                <strong>
+                                    ${
+                                        integrado.variables_en_categoria_esperada
+                                        ?? "--"
+                                    }
+                                </strong>
+                            </div>
 
-                            )
+                            <div>
+                                <span>
+                                    Hallazgos
+                                </span>
 
-                        )}</pre>
+                                <strong>
+                                    ${
+                                        integrado.variables_con_hallazgos
+                                        ?? hallazgos.length
+                                    }
+                                </strong>
+                            </div>
 
+                        </div>
+
+                        <div class="week7-conclusion">
+
+                            <strong>
+                                Conclusión del ejercicio
+                            </strong>
+
+                            <p>
+                                ${escaparHTML(
+                                    integrado.conclusion ||
+                                    "Sin conclusión disponible."
+                                )}
+                            </p>
+
+                        </div>
+
+                        ${
+                            hallazgos.length
+                                ? `
+                                    <div class="week7-findings">
+                                        <strong>
+                                            Clasificaciones diferentes
+                                            de las categorías esperadas
+                                        </strong>
+
+                                        <ul>
+                                            ${
+                                                hallazgos.map(
+                                                    item => `
+                                                        <li>
+                                                            ${escaparHTML(item)}
+                                                        </li>
+                                                    `
+                                                ).join("")
+                                            }
+                                        </ul>
+                                    </div>
+                                `
+                                : `
+                                    <div class="week7-no-findings">
+                                        Las variables evaluadas se
+                                        encuentran dentro de las
+                                        categorías esperadas definidas
+                                        para este ejercicio académico.
+                                    </div>
+                                `
+                        }
                     `;
-
                 }
-
-
-
 
 
             } catch (error) {
 
-
-
                 mostrarToast(
-
                     error.message,
-
                     "error"
-
                 );
 
             }
-
         }
-
     );
-
 }
-
-
-
-
 
 // ==========================================================
 
@@ -6506,6 +6646,1497 @@ if (
     );
 
 }
+
+
+
+
+// ==========================================================
+// SEMANA 10
+// EXTRACCIÓN DE CARACTERÍSTICAS DE IMAGEN
+// ==========================================================
+
+let archivoActualSemana10 =
+    null;
+
+let previewURLSemana10 =
+    null;
+
+
+// ==========================================================
+// REFERENCIAS SEMANA 10
+// ==========================================================
+
+const semana10Input =
+    obtenerElemento(
+        "semana10ImageInput"
+    );
+
+
+const semana10UploadArea =
+    obtenerElemento(
+        "semana10UploadArea"
+    );
+
+
+const semana10UploadEmpty =
+    obtenerElemento(
+        "semana10UploadEmpty"
+    );
+
+
+const semana10PreviewContainer =
+    obtenerElemento(
+        "semana10PreviewContainer"
+    );
+
+
+const semana10Preview =
+    obtenerElemento(
+        "semana10Preview"
+    );
+
+
+const semana10FileName =
+    obtenerElemento(
+        "semana10FileName"
+    );
+
+
+const btnSeleccionarSemana10 =
+    obtenerElemento(
+        "btnSeleccionarSemana10"
+    );
+
+
+const btnLimpiarSemana10 =
+    obtenerElemento(
+        "btnLimpiarSemana10"
+    );
+
+
+const btnAnalizarSemana10 =
+    obtenerElemento(
+        "btnAnalizarSemana10"
+    );
+
+
+const semana10Procesando =
+    obtenerElemento(
+        "semana10Procesando"
+    );
+
+
+// ==========================================================
+// VALIDAR ARCHIVO SEMANA 10
+// ==========================================================
+
+function validarArchivoSemana10(
+    archivo
+) {
+
+    if (!archivo) {
+
+        return {
+            valido: false,
+            mensaje:
+                "Debe seleccionar una imagen."
+        };
+
+    }
+
+
+    const nombre =
+        String(
+            archivo.name || ""
+        );
+
+
+    const extension =
+        nombre
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+
+    const extensionesPermitidas = [
+        "png",
+        "jpg",
+        "jpeg",
+        "webp",
+        "bmp",
+        "tif",
+        "tiff"
+    ];
+
+
+    if (
+        !extensionesPermitidas.includes(
+            extension
+        )
+    ) {
+
+        return {
+            valido: false,
+            mensaje:
+                (
+                    "Formato no permitido. " +
+                    "Use PNG, JPG, JPEG, WEBP, " +
+                    "BMP, TIF o TIFF."
+                )
+        };
+
+    }
+
+
+    const maximoBytes =
+        10 * 1024 * 1024;
+
+
+    if (
+        archivo.size
+        >
+        maximoBytes
+    ) {
+
+        return {
+            valido: false,
+            mensaje:
+                "La imagen supera el tamaño máximo de 10 MB."
+        };
+
+    }
+
+
+    return {
+        valido: true,
+        mensaje: ""
+    };
+
+}
+
+
+// ==========================================================
+// LIMPIAR PREVIEW ANTERIOR
+// ==========================================================
+
+function liberarPreviewSemana10() {
+
+    if (
+        previewURLSemana10
+    ) {
+
+        URL.revokeObjectURL(
+            previewURLSemana10
+        );
+
+        previewURLSemana10 =
+            null;
+
+    }
+
+}
+
+
+// ==========================================================
+// MOSTRAR ARCHIVO SELECCIONADO
+// ==========================================================
+
+function cargarArchivoSemana10(
+    archivo
+) {
+
+    const validacion =
+        validarArchivoSemana10(
+            archivo
+        );
+
+
+    if (
+        !validacion.valido
+    ) {
+
+        mostrarToast(
+            validacion.mensaje,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    archivoActualSemana10 =
+        archivo;
+
+
+    liberarPreviewSemana10();
+
+
+    previewURLSemana10 =
+        URL.createObjectURL(
+            archivo
+        );
+
+
+    if (
+        semana10Preview
+    ) {
+
+        semana10Preview.src =
+            previewURLSemana10;
+
+    }
+
+
+    if (
+        semana10FileName
+    ) {
+
+        semana10FileName.textContent =
+            archivo.name;
+
+    }
+
+
+    ocultarElemento(
+        semana10UploadEmpty
+    );
+
+
+    mostrarElemento(
+        semana10PreviewContainer
+    );
+
+
+    if (
+        btnAnalizarSemana10
+    ) {
+
+        btnAnalizarSemana10.disabled =
+            false;
+
+    }
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana10"
+        )
+    );
+
+}
+
+
+// ==========================================================
+// LIMPIAR SEMANA 10
+// ==========================================================
+
+function limpiarArchivoSemana10() {
+
+    archivoActualSemana10 =
+        null;
+
+
+    liberarPreviewSemana10();
+
+
+    if (
+        semana10Input
+    ) {
+
+        semana10Input.value =
+            "";
+
+    }
+
+
+    if (
+        semana10Preview
+    ) {
+
+        semana10Preview.removeAttribute(
+            "src"
+        );
+
+    }
+
+
+    if (
+        semana10FileName
+    ) {
+
+        semana10FileName.textContent =
+            "";
+
+    }
+
+
+    mostrarElemento(
+        semana10UploadEmpty
+    );
+
+
+    ocultarElemento(
+        semana10PreviewContainer
+    );
+
+
+    ocultarElemento(
+        obtenerElemento(
+            "resultadoSemana10"
+        )
+    );
+
+
+    if (
+        btnAnalizarSemana10
+    ) {
+
+        btnAnalizarSemana10.disabled =
+            true;
+
+    }
+
+}
+
+
+// ==========================================================
+// BOTÓN SELECCIONAR
+// ==========================================================
+
+if (
+    btnSeleccionarSemana10
+    &&
+    semana10Input
+) {
+
+    btnSeleccionarSemana10.addEventListener(
+        "click",
+        evento => {
+
+            evento.stopPropagation();
+
+            semana10Input.click();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// ÁREA DE CARGA
+// ==========================================================
+
+if (
+    semana10UploadArea
+    &&
+    semana10Input
+) {
+
+    semana10UploadArea.addEventListener(
+        "click",
+        evento => {
+
+            if (
+                evento.target
+                === btnSeleccionarSemana10
+                ||
+                evento.target
+                === btnLimpiarSemana10
+            ) {
+
+                return;
+
+            }
+
+
+            semana10Input.click();
+
+        }
+    );
+
+
+    semana10UploadArea.addEventListener(
+        "keydown",
+        evento => {
+
+            if (
+                evento.key === "Enter"
+                ||
+                evento.key === " "
+            ) {
+
+                evento.preventDefault();
+
+                semana10Input.click();
+
+            }
+
+        }
+    );
+
+
+    semana10UploadArea.addEventListener(
+        "dragover",
+        evento => {
+
+            evento.preventDefault();
+
+            semana10UploadArea.classList.add(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    semana10UploadArea.addEventListener(
+        "dragleave",
+        () => {
+
+            semana10UploadArea.classList.remove(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    semana10UploadArea.addEventListener(
+        "drop",
+        evento => {
+
+            evento.preventDefault();
+
+            semana10UploadArea.classList.remove(
+                "dragging"
+            );
+
+
+            const archivo =
+                evento.dataTransfer
+                    ?.files
+                    ?.[0];
+
+
+            if (
+                archivo
+            ) {
+
+                cargarArchivoSemana10(
+                    archivo
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// INPUT DE ARCHIVO
+// ==========================================================
+
+if (
+    semana10Input
+) {
+
+    semana10Input.addEventListener(
+        "change",
+        () => {
+
+            const archivo =
+                semana10Input
+                    .files
+                    ?.[0];
+
+
+            if (
+                archivo
+            ) {
+
+                cargarArchivoSemana10(
+                    archivo
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// BOTÓN QUITAR
+// ==========================================================
+
+if (
+    btnLimpiarSemana10
+) {
+
+    btnLimpiarSemana10.addEventListener(
+        "click",
+        evento => {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            limpiarArchivoSemana10();
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// FORMATO DE NÚMEROS
+// ==========================================================
+
+function formatoNumeroSemana10(
+    valor,
+    decimales = 2
+) {
+
+    const numero =
+        Number(
+            valor
+        );
+
+
+    if (
+        !Number.isFinite(
+            numero
+        )
+    ) {
+
+        return "--";
+
+    }
+
+
+    return numero.toLocaleString(
+        "es-CO",
+        {
+            minimumFractionDigits:
+                decimales,
+
+            maximumFractionDigits:
+                decimales
+        }
+    );
+
+}
+
+
+// ==========================================================
+// ACTUALIZAR TEXTO
+// ==========================================================
+
+function actualizarTextoSemana10(
+    id,
+    valor
+) {
+
+    const elemento =
+        obtenerElemento(
+            id
+        );
+
+
+    if (
+        elemento
+    ) {
+
+        elemento.textContent =
+            valor;
+
+    }
+
+}
+
+
+// ==========================================================
+// MOSTRAR RESULTADOS SEMANA 10
+// ==========================================================
+
+
+
+// ==========================================================
+// SEMANA 10
+// CONCLUSIÓN AUTOMÁTICA
+// ==========================================================
+
+function generarConclusionSemana10(
+    resultado
+) {
+
+    if (
+        !resultado
+    ) {
+
+        return (
+            "No hay información suficiente " +
+            "para generar una interpretación."
+        );
+
+    }
+
+
+    const regiones =
+        Number(
+            resultado.regiones || 0
+        );
+
+
+    const regionesTotales =
+        Number(
+            resultado.regiones_totales || 0
+        );
+
+
+    const areaMedia =
+        Number(
+            resultado.area_media || 0
+        );
+
+
+    const desviacion =
+        Number(
+            resultado.desviacion_area || 0
+        );
+
+
+    const umbral =
+        Number(
+            resultado.umbral_otsu || 0
+        );
+
+
+    const dimension =
+        Number(
+            resultado.dimension_vector || 0
+        );
+
+
+    // ======================================================
+    // CANTIDAD DE REGIONES
+    // ======================================================
+
+    let descripcionRegiones;
+
+
+    if (
+        regiones <= 3
+    ) {
+
+        descripcionRegiones =
+            (
+                "La imagen analizada presenta pocas " +
+                "zonas visualmente diferenciadas."
+            );
+
+    }
+
+    else if (
+        regiones <= 10
+    ) {
+
+        descripcionRegiones =
+            (
+                "La imagen analizada presenta varias " +
+                "estructuras y zonas visualmente diferenciadas."
+            );
+
+    }
+
+    else {
+
+        descripcionRegiones =
+            (
+                "La imagen analizada presenta múltiples " +
+                "estructuras y zonas visualmente diferenciadas."
+            );
+
+    }
+
+
+    // ======================================================
+    // VARIACIÓN ENTRE REGIONES
+    // ======================================================
+
+    let descripcionVariacion;
+
+
+    if (
+        areaMedia > 0
+    ) {
+
+        const relacion =
+            desviacion
+            /
+            areaMedia;
+
+
+        if (
+            relacion < 0.25
+        ) {
+
+            descripcionVariacion =
+                (
+                    "Las regiones identificadas presentan " +
+                    "tamaños relativamente uniformes."
+                );
+
+        }
+
+        else if (
+            relacion < 0.75
+        ) {
+
+            descripcionVariacion =
+                (
+                    "Se observa una variación moderada " +
+                    "entre los tamaños de las estructuras detectadas."
+                );
+
+        }
+
+        else {
+
+            descripcionVariacion =
+                (
+                    "Existe una variación considerable " +
+                    "entre los tamaños de las estructuras detectadas."
+                );
+
+        }
+
+    }
+
+    else {
+
+        descripcionVariacion =
+            (
+                "No fue posible establecer una comparación " +
+                "significativa entre los tamaños de las regiones."
+            );
+
+    }
+
+
+    // ======================================================
+    // REGIONES TOTALES VS RELEVANTES
+    // ======================================================
+
+    let descripcionConteo = "";
+
+
+    if (
+        regionesTotales > 0
+    ) {
+
+        descripcionConteo =
+            (
+                `Durante el procesamiento se identificaron ${
+                    regionesTotales
+                } regiones en total, de las cuales ${
+                    regiones
+                } cumplieron el criterio de tamaño establecido ` +
+                "para ser consideradas relevantes en el análisis."
+            );
+
+    }
+
+
+    // ======================================================
+    // INTENSIDAD
+    // ======================================================
+
+    let descripcionIntensidad;
+
+
+    if (
+        umbral < 0.33
+    ) {
+
+        descripcionIntensidad =
+            (
+                "La segmentación automática evidenció una " +
+                "presencia importante de zonas de baja intensidad, " +
+                "correspondientes a las áreas más oscuras de la imagen."
+            );
+
+    }
+
+    else if (
+        umbral < 0.66
+    ) {
+
+        descripcionIntensidad =
+            (
+                "La segmentación automática permitió diferenciar " +
+                "zonas de baja, media y alta intensidad dentro " +
+                "de la imagen."
+            );
+
+    }
+
+    else {
+
+        descripcionIntensidad =
+            (
+                "La segmentación automática evidenció una " +
+                "presencia importante de zonas de alta intensidad, " +
+                "correspondientes a las áreas más claras de la imagen."
+            );
+
+    }
+
+
+    // ======================================================
+    // REPRESENTACIÓN NUMÉRICA
+    // ======================================================
+
+    const descripcionVector =
+        (
+            `A partir de estas características visuales, ` +
+            `el sistema generó una representación numérica de ${
+                dimension
+            } características que resume información relacionada ` +
+            "con las regiones, la distribución de intensidades " +
+            "y los patrones de textura presentes."
+        );
+
+
+    // ======================================================
+    // USO POSTERIOR
+    // ======================================================
+
+    const descripcionUso =
+        (
+            "Esta información puede utilizarse como base para " +
+            "comparar imágenes médicas o alimentar posteriormente " +
+            "modelos de clasificación y reconocimiento."
+        );
+
+
+    // ======================================================
+    // ADVERTENCIA
+    // ======================================================
+
+    const advertencia =
+        (
+            "El análisis realizado es de carácter académico " +
+            "y no constituye una interpretación diagnóstica."
+        );
+
+
+    return (
+        descripcionRegiones
+        + " "
+        + descripcionVariacion
+        + " "
+        + descripcionConteo
+        + " "
+        + descripcionIntensidad
+        + " "
+        + descripcionVector
+        + " "
+        + descripcionUso
+        + " "
+        + advertencia
+    );
+
+}
+
+
+
+
+// ==========================================================
+// SEMANA 10
+// DISTRIBUCIÓN INTUITIVA DE INTENSIDAD
+// ==========================================================
+
+function mostrarDistribucionIntensidadSemana10(
+    resultado
+) {
+
+    const distribucion =
+        resultado?.distribucion_intensidad
+        ||
+        {};
+
+
+    const oscuras =
+        Number(
+            distribucion
+                ?.oscuras
+                ?.porcentaje
+            ||
+            0
+        );
+
+
+    const intermedias =
+        Number(
+            distribucion
+                ?.intermedias
+                ?.porcentaje
+            ||
+            0
+        );
+
+
+    const claras =
+        Number(
+            distribucion
+                ?.claras
+                ?.porcentaje
+            ||
+            0
+        );
+
+
+    const barraOscuras =
+        obtenerElemento(
+            "semana10BarraOscuras"
+        );
+
+
+    const barraIntermedias =
+        obtenerElemento(
+            "semana10BarraIntermedias"
+        );
+
+
+    const barraClaras =
+        obtenerElemento(
+            "semana10BarraClaras"
+        );
+
+
+    if (
+        barraOscuras
+    ) {
+
+        barraOscuras.style.width =
+            `${Math.min(oscuras, 100)}%`;
+
+    }
+
+
+    if (
+        barraIntermedias
+    ) {
+
+        barraIntermedias.style.width =
+            `${Math.min(intermedias, 100)}%`;
+
+    }
+
+
+    if (
+        barraClaras
+    ) {
+
+        barraClaras.style.width =
+            `${Math.min(claras, 100)}%`;
+
+    }
+
+
+    actualizarTextoSemana10(
+        "semana10PorcentajeOscuras",
+        `${oscuras.toFixed(1)}%`
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10PorcentajeIntermedias",
+        `${intermedias.toFixed(1)}%`
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10PorcentajeClaras",
+        `${claras.toFixed(1)}%`
+    );
+
+
+    let interpretacion;
+
+
+    if (
+        oscuras >= intermedias
+        &&
+        oscuras >= claras
+    ) {
+
+        interpretacion =
+            (
+                "Predominan las zonas de baja intensidad. " +
+                "La imagen contiene una mayor proporción " +
+                "de áreas oscuras frente a los tonos " +
+                "intermedios y claros."
+            );
+
+    }
+
+    else if (
+        intermedias >= oscuras
+        &&
+        intermedias >= claras
+    ) {
+
+        interpretacion =
+            (
+                "Predominan las intensidades intermedias. " +
+                "La mayor parte de la imagen está compuesta " +
+                "por diferentes tonalidades de gris."
+            );
+
+    }
+
+    else {
+
+        interpretacion =
+            (
+                "Predominan las zonas de alta intensidad. " +
+                "La imagen contiene una mayor proporción " +
+                "de áreas claras."
+            );
+
+    }
+
+
+    interpretacion +=
+        (
+            ` Distribución: ${oscuras.toFixed(1)}% oscuras, ` +
+            `${intermedias.toFixed(1)}% intermedias y ` +
+            `${claras.toFixed(1)}% claras.`
+        );
+
+
+    actualizarTextoSemana10(
+        "semana10InterpretacionIntensidad",
+        interpretacion
+    );
+
+}
+
+
+function mostrarResultadoSemana10(
+    resultado
+) {
+
+    if (
+        !resultado
+    ) {
+
+        return;
+
+    }
+
+
+    actualizarTextoSemana10(
+        "semana10Umbral",
+        formatoNumeroSemana10(
+            resultado.umbral_otsu,
+            4
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10Regiones",
+        Number(
+            resultado.regiones || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10AreaMedia",
+        formatoNumeroSemana10(
+            resultado.area_media,
+            2
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10Desviacion",
+        formatoNumeroSemana10(
+            resultado.desviacion_area,
+            2
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10Dimension",
+        Number(
+            resultado.dimension_vector || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10AreaMinimaResultado",
+        Number(
+            resultado.area_minima || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10RadioResultado",
+        Number(
+            resultado.radio_lbp || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10PuntosLBP",
+        Number(
+            resultado.puntos_lbp || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10RegionesTotales",
+        Number(
+            resultado.regiones_totales || 0
+        ).toLocaleString(
+            "es-CO"
+        )
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10RutaFeatures",
+        "artifacts/semana10_features.npy"
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10RutaHistograma",
+        "artifacts/semana10_histograma.png"
+    );
+
+
+    const imagenHistograma =
+        obtenerElemento(
+            "semana10Histograma"
+        );
+
+
+    if (
+        imagenHistograma
+    ) {
+
+        /*
+         * El backend generará siempre el mismo artefacto.
+         * Se agrega timestamp para evitar que el navegador
+         * muestre una versión anterior desde caché.
+         */
+
+        imagenHistograma.src =
+            (
+                "/api/semana10/histograma"
+                +
+                "?t="
+                +
+                Date.now()
+            );
+
+    }
+
+
+    
+
+    mostrarDistribucionIntensidadSemana10(
+        resultado
+    );
+
+
+    actualizarTextoSemana10(
+        "semana10Conclusion",
+        generarConclusionSemana10(
+            resultado
+        )
+    );
+
+
+mostrarElemento(
+        obtenerElemento(
+            "resultadoSemana10"
+        )
+    );
+
+}
+
+
+// ==========================================================
+// EJECUTAR ANÁLISIS SEMANA 10
+// ==========================================================
+
+if (
+    btnAnalizarSemana10
+) {
+
+    btnAnalizarSemana10.addEventListener(
+        "click",
+        async () => {
+
+            const validacion =
+                validarArchivoSemana10(
+                    archivoActualSemana10
+                );
+
+
+            if (
+                !validacion.valido
+            ) {
+
+                mostrarToast(
+                    validacion.mensaje,
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const areaMinima =
+                Number(
+                    obtenerElemento(
+                        "semana10AreaMinima"
+                    )?.value
+                );
+
+
+            const radioLBP =
+                Number(
+                    obtenerElemento(
+                        "semana10RadioLBP"
+                    )?.value
+                );
+
+
+            if (
+                !Number.isInteger(
+                    areaMinima
+                )
+                ||
+                areaMinima < 1
+            ) {
+
+                mostrarToast(
+                    (
+                        "El área mínima debe ser "
+                        +
+                        "un entero mayor o igual a 1."
+                    ),
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isInteger(
+                    radioLBP
+                )
+                ||
+                radioLBP < 1
+            ) {
+
+                mostrarToast(
+                    (
+                        "El radio LBP debe ser "
+                        +
+                        "un entero mayor o igual a 1."
+                    ),
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "archivo",
+                archivoActualSemana10
+            );
+
+
+            formData.append(
+                "area_minima",
+                String(
+                    areaMinima
+                )
+            );
+
+
+            formData.append(
+                "radio_lbp",
+                String(
+                    radioLBP
+                )
+            );
+
+
+            ocultarElemento(
+                obtenerElemento(
+                    "resultadoSemana10"
+                )
+            );
+
+
+            mostrarElemento(
+                semana10Procesando
+            );
+
+
+            btnAnalizarSemana10.disabled =
+                true;
+
+
+            try {
+
+                const datos =
+                    await apiJSON(
+                        "/api/semana10/imagen",
+                        {
+                            method:
+                                "POST",
+
+                            body:
+                                formData
+                        }
+                    );
+
+
+                const paquete =
+                    datos.resultado
+                    ||
+                    datos;
+
+
+                const resultado =
+                    paquete.resultado
+                    ||
+                    paquete;
+
+
+                mostrarResultadoSemana10(
+                    resultado
+                );
+
+
+                mostrarToast(
+                    (
+                        "Características extraídas "
+                        +
+                        "correctamente."
+                    ),
+                    "success"
+                );
+
+
+                const salida =
+                    obtenerElemento(
+                        "resultadoSemana10"
+                    );
+
+
+                if (
+                    salida
+                ) {
+
+                    salida.scrollIntoView(
+                        {
+                            behavior:
+                                "smooth",
+
+                            block:
+                                "start"
+                        }
+                    );
+
+                }
+
+            }
+
+            catch (
+                error
+            ) {
+
+                mostrarToast(
+                    error.message,
+                    "error"
+                );
+
+
+                console.error(
+                    "Error Semana 10:",
+                    error
+                );
+
+            }
+
+            finally {
+
+                ocultarElemento(
+                    semana10Procesando
+                );
+
+
+                btnAnalizarSemana10.disabled =
+                    (
+                        archivoActualSemana10
+                        === null
+                    );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// FIN SEMANA 10
+// ==========================================================
+
 
 
 // ==========================================================

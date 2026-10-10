@@ -452,7 +452,22 @@
 
 
 
+            
             <button
+                class="nav-item"
+                data-section="semana10"
+            >
+                <span class="nav-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Semana 10
+                </span>
+            </button>
+
+
+<button
 
                 class="nav-item"
 
@@ -4061,7 +4076,1193 @@
 
 
 
+        
+
+        <!-- ==================================================
+             SEMANA 10
+        =================================================== -->
+
         <section
+            id="semana10"
+            class="content-section"
+        >
+
+            <!-- ==============================================
+                 CABECERA
+            =============================================== -->
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 10
+                    </span>
+
+                    <h2>
+                        Extracción de características de imágenes
+                    </h2>
+
+                    <p>
+                        Conversión de información visual en características
+                        numéricas mediante segmentación Otsu, regiones
+                        conectadas, histograma de intensidad y textura LBP.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================================
+                 FLUJO
+            =============================================== -->
+
+            <div class="week9-flow">
+
+                <article>
+                    <span>01</span>
+
+                    <div>
+                        <strong>Imagen</strong>
+                        <small>Entrada visual</small>
+                    </div>
+                </article>
+
+                <i>→</i>
+
+                <article>
+                    <span>02</span>
+
+                    <div>
+                        <strong>Otsu</strong>
+                        <small>Segmentación automática</small>
+                    </div>
+                </article>
+
+                <i>→</i>
+
+                <article>
+                    <span>03</span>
+
+                    <div>
+                        <strong>Regiones</strong>
+                        <small>Medición de estructuras</small>
+                    </div>
+                </article>
+
+                <i>→</i>
+
+                <article>
+                    <span>04</span>
+
+                    <div>
+                        <strong>Características</strong>
+                        <small>Intensidad + LBP</small>
+                    </div>
+                </article>
+
+            </div>
+
+
+            <!-- ==============================================
+                 ENTRADA Y CONFIGURACIÓN
+            =============================================== -->
+
+            <div class="week9-main-grid">
+
+                <!-- IMAGEN -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="card-label">
+                                Entrada
+                            </span>
+
+                            <h3>
+                                Imágenes a comparar
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    
+<div class="semana10-comparison-heading">
+    <span class="card-label">
+        Imagen 1
+    </span>
+
+    <h3>
+        Imagen de referencia
+    </h3>
+
+    <p>
+        Seleccione la imagen que se utilizará
+        como referencia para la comparación.
+    </p>
+</div>
+
+<div
+                        id="semana10UploadArea"
+                        class="upload-area week9-upload-zone"
+                        role="button"
+                        tabindex="0"
+                    >
+
+
+                        <input
+                            id="semana10ImageInput"
+                            type="file"
+                            accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,image/*"
+                            hidden
+                        >
+
+
+                        <div
+                            id="semana10UploadEmpty"
+                        >
+
+                            <strong>
+                                Selecciona una imagen
+                            </strong>
+
+                            <p>
+                                PNG, JPG, JPEG, WEBP, BMP, TIF o TIFF
+                            </p>
+
+                            <button
+                                id="btnSeleccionarSemana10"
+                                type="button"
+                                class="btn-secondary"
+                            >
+                                Seleccionar archivo
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="semana10PreviewContainer"
+                            class="week9-preview-wrap hidden"
+                        >
+
+                            <img
+                                id="semana10Preview"
+                                alt="Vista previa de la imagen"
+                            >
+
+                            <p id="semana10FileName">
+                            </p>
+
+                            <button
+                                id="btnLimpiarSemana10"
+                                type="button"
+                                class="btn-secondary"
+                            >
+                                Quitar imagen
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIGURACIÓN -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="card-label">
+                                Configuración
+                            </span>
+
+                            <h3>
+                                Parámetros del análisis
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="semana10AreaMinima">
+                            Área mínima
+                        </label>
+
+                        <input
+                            id="semana10AreaMinima"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value="50"
+                        >
+
+                        <small>
+                            Descarta regiones pequeñas que pueden corresponder a ruido.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="semana10RadioLBP">
+                            Radio LBP
+                        </label>
+
+                        <input
+                            id="semana10RadioLBP"
+                            type="number"
+                            min="1"
+                            step="1"
+                            value="2"
+                        >
+
+                        <small>
+                            Define el tamaño de la vecindad utilizada para analizar textura.
+                        </small>
+
+                    </div>
+
+
+                    <button
+                        id="btnAnalizarSemana10"
+                        type="button"
+                        class="btn-primary"
+                        disabled
+                    >
+                        Extraer características
+                    </button>
+
+
+                    <div
+                        id="semana10Procesando"
+                        class="processing-box hidden"
+                    >
+
+                        <div class="spinner">
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Analizando imagen
+                            </strong>
+
+                            <p>
+                                Otsu → Regiones → Intensidad → LBP → Vector
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==============================================
+                 RESULTADOS
+            =============================================== -->
+
+            
+
+<!-- ======================================================
+     SEMANA 10 - SEGUNDA IMAGEN
+======================================================= -->
+
+<div class="panel semana10-second-image-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <span class="card-label">
+                Imagen 2
+            </span>
+
+            <h3>
+                Imagen a comparar
+            </h3>
+
+            <p>
+                Seleccione una segunda imagen del mismo
+                tipo de estudio para compararla con
+                la referencia.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="semana10ComparacionUploadArea"
+        class="week9-upload-zone"
+    >
+
+        <input
+            id="semana10ComparacionInput"
+            type="file"
+            accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff"
+            hidden
+        >
+
+
+        <div id="semana10ComparacionEmpty">
+
+            <div class="week9-upload-icon">
+                +
+            </div>
+
+            <strong>
+                Seleccionar imagen a comparar
+            </strong>
+
+            <p>
+                PNG, JPG, JPEG, WEBP, BMP, TIF o TIFF
+            </p>
+
+            <button
+                id="btnSeleccionarComparacionSemana10"
+                type="button"
+                class="btn-primary"
+            >
+                Seleccionar imagen
+            </button>
+
+        </div>
+
+
+        <div
+            id="semana10ComparacionPreviewContainer"
+            class="week9-preview-wrap"
+            hidden
+        >
+
+            <img
+                id="semana10ComparacionPreview"
+                alt="Imagen a comparar"
+            >
+
+            <div class="semana10-comparison-file">
+
+                <strong
+                    id="semana10ComparacionFileName"
+                >
+                </strong>
+
+                <button
+                    id="btnLimpiarComparacionSemana10"
+                    type="button"
+                    class="btn-secondary"
+                >
+                    Cambiar imagen
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="semana10-compare-action">
+
+        
+
+<div class="semana10-study-selector">
+
+    <label for="semana10TipoEstudio">
+        Tipo de imagen médica
+    </label>
+
+    <select id="semana10TipoEstudio">
+
+        <option value="general">
+            Análisis general
+        </option>
+
+        <option value="hueso">
+            Hueso
+        </option>
+
+        <option value="rinon">
+            Riñón
+        </option>
+
+        <option value="pulmon">
+            Pulmón
+        </option>
+
+    </select>
+
+    <small>
+        Permite adaptar la interpretación al tipo
+        de estructura analizada.
+    </small>
+
+</div>
+
+<button
+            id="btnCompararSemana10"
+            type="button"
+            class="btn-primary"
+            disabled
+        >
+            Comparar imágenes
+        </button>
+
+        <div
+            id="semana10ComparacionProcesando"
+            class="semana10-processing"
+            hidden
+        >
+            Analizando y comparando las dos imágenes...
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     RESULTADO DE COMPARACIÓN
+======================================================= -->
+
+<div
+    id="resultadoComparacionSemana10"
+    class="panel semana10-comparison-results"
+    hidden
+>
+
+    <div class="panel-header">
+
+        <div>
+
+            <span class="card-label">
+                Comparación
+            </span>
+
+            <h3>
+                Resultado entre las dos imágenes
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <div class="semana10-global-result">
+
+        <span>
+            Similitud visual global
+        </span>
+
+        <strong id="semana10SimilitudGlobal">
+            0%
+        </strong>
+
+        <div class="semana10-global-track">
+
+            <div
+                id="semana10SimilitudGlobalBarra"
+                class="semana10-global-fill"
+            >
+            </div>
+
+        </div>
+
+        <small id="semana10NivelComparacion">
+        </small>
+
+    </div>
+
+
+    <div class="semana10-comparison-metrics">
+
+        <div class="semana10-comparison-card">
+
+            <span>
+                Intensidad
+            </span>
+
+            <strong id="semana10SimilitudIntensidad">
+                0%
+            </strong>
+
+            <small>
+                Similitud en tonos claros,
+                medios y oscuros
+            </small>
+
+        </div>
+
+
+        <div class="semana10-comparison-card">
+
+            <span>
+                Textura
+            </span>
+
+            <strong id="semana10SimilitudTextura">
+                0%
+            </strong>
+
+            <small>
+                Similitud en patrones visuales LBP
+            </small>
+
+        </div>
+
+
+        <div class="semana10-comparison-card">
+
+            <span>
+                Regiones
+            </span>
+
+            <strong id="semana10SimilitudRegiones">
+                0%
+            </strong>
+
+            <small>
+                Similitud entre estructuras detectadas
+            </small>
+
+        </div>
+
+
+        <div class="semana10-comparison-card">
+
+            <span>
+                Diferencia global
+            </span>
+
+            <strong id="semana10DiferenciaGlobal">
+                0%
+            </strong>
+
+            <small>
+                Diferencia visual calculada
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="semana10-two-results">
+
+        <div>
+
+            <h4>
+                Imagen de referencia
+            </h4>
+
+            <p>
+                Umbral Otsu:
+                <strong id="semana10RefOtsu">
+                    -
+                </strong>
+            </p>
+
+            <p>
+                Regiones relevantes:
+                <strong id="semana10RefRegiones">
+                    -
+                </strong>
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Imagen comparada
+            </h4>
+
+            <p>
+                Umbral Otsu:
+                <strong id="semana10CompOtsu">
+                    -
+                </strong>
+            </p>
+
+            <p>
+                Regiones relevantes:
+                <strong id="semana10CompRegiones">
+                    -
+                </strong>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="semana10-comparison-conclusion">
+
+        <strong>
+            Conclusión de la comparación
+        </strong>
+
+        <p id="semana10ConclusionComparacion">
+        </p>
+
+    </div>
+
+</div>
+
+<div
+                id="resultadoSemana10"
+                class="hidden"
+            >
+
+                <div class="week9-stats">
+
+                    <article class="stat-card">
+
+                        <span>
+                            Umbral Otsu
+                        </span>
+
+                        <strong id="semana10Umbral">
+                            --
+                        </strong>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            Regiones válidas
+                        </span>
+
+                        <strong id="semana10Regiones">
+                            0
+                        </strong>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            Área media
+                        </span>
+
+                        <strong id="semana10AreaMedia">
+                            0
+                        </strong>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            Desviación
+                        </span>
+
+                        <strong id="semana10Desviacion">
+                            0
+                        </strong>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            Vector
+                        </span>
+
+                        <strong id="semana10Dimension">
+                            0
+                        </strong>
+
+                    </article>
+
+                </div>
+
+
+                <!-- ==========================================
+                     EXPLICACIÓN DEL VECTOR
+                =========================================== -->
+
+                <div class="week9-results-grid">
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="card-label">
+                                    Vector de características
+                                </span>
+
+                                <h3>
+                                    Representación numérica
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="week9-pipeline">
+
+                            <span>
+                                Regiones
+                            </span>
+
+                            <i>+</i>
+
+                            <span>
+                                Intensidad
+                            </span>
+
+                            <i>+</i>
+
+                            <span>
+                                Textura LBP
+                            </span>
+
+                            <i>→</i>
+
+                            <span>
+                                Vector numérico
+                            </span>
+
+                        </div>
+
+
+                        <div class="result-summary-grid">
+
+                            <div>
+
+                                <span>
+                                    Área mínima utilizada
+                                </span>
+
+                                <strong id="semana10AreaMinimaResultado">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Radio LBP
+                                </span>
+
+                                <strong id="semana10RadioResultado">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Puntos LBP
+                                </span>
+
+                                <strong id="semana10PuntosLBP">
+                                    --
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Total regiones detectadas
+                                </span>
+
+                                <strong id="semana10RegionesTotales">
+                                    --
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DISTRIBUCIÓN DE INTENSIDAD -->
+
+                    <div class="panel semana10-intensity-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <span class="card-label">
+                                    Intensidad
+                                </span>
+
+                                <h3>
+                                    Distribución visual de la imagen
+                                </h3>
+
+                                <p>
+                                    Porcentaje de píxeles agrupados según
+                                    su nivel de intensidad.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="semana10-intensity-bars">
+
+
+                            <!-- OSCURAS -->
+
+                            <div class="semana10-intensity-row">
+
+                                <div class="semana10-intensity-label">
+
+                                    <strong>
+                                        Zonas oscuras
+                                    </strong>
+
+                                    <small>
+                                        Intensidad 0 - 84
+                                    </small>
+
+                                </div>
+
+
+                                <div class="semana10-intensity-track">
+
+                                    <div
+                                        id="semana10BarraOscuras"
+                                        class="semana10-intensity-fill intensidad-oscura"
+                                    >
+                                    </div>
+
+                                </div>
+
+
+                                <strong
+                                    id="semana10PorcentajeOscuras"
+                                    class="semana10-intensity-value"
+                                >
+                                    0%
+                                </strong>
+
+                            </div>
+
+
+                            <!-- INTERMEDIAS -->
+
+                            <div class="semana10-intensity-row">
+
+                                <div class="semana10-intensity-label">
+
+                                    <strong>
+                                        Zonas intermedias
+                                    </strong>
+
+                                    <small>
+                                        Intensidad 85 - 169
+                                    </small>
+
+                                </div>
+
+
+                                <div class="semana10-intensity-track">
+
+                                    <div
+                                        id="semana10BarraIntermedias"
+                                        class="semana10-intensity-fill intensidad-media"
+                                    >
+                                    </div>
+
+                                </div>
+
+
+                                <strong
+                                    id="semana10PorcentajeIntermedias"
+                                    class="semana10-intensity-value"
+                                >
+                                    0%
+                                </strong>
+
+                            </div>
+
+
+                            <!-- CLARAS -->
+
+                            <div class="semana10-intensity-row">
+
+                                <div class="semana10-intensity-label">
+
+                                    <strong>
+                                        Zonas claras
+                                    </strong>
+
+                                    <small>
+                                        Intensidad 170 - 255
+                                    </small>
+
+                                </div>
+
+
+                                <div class="semana10-intensity-track">
+
+                                    <div
+                                        id="semana10BarraClaras"
+                                        class="semana10-intensity-fill intensidad-clara"
+                                    >
+                                    </div>
+
+                                </div>
+
+
+                                <strong
+                                    id="semana10PorcentajeClaras"
+                                    class="semana10-intensity-value"
+                                >
+                                    0%
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="semana10InterpretacionIntensidad"
+                            class="semana10-intensity-interpretation"
+                        >
+                            Analice una imagen para visualizar
+                            la distribución de intensidades.
+                        </div>
+
+
+                        <!-- DETALLE TÉCNICO -->
+
+                        <details
+                            class="semana10-technical-details"
+                        >
+
+                            <summary>
+                                Ver histograma técnico
+                            </summary>
+
+
+                            <div class="week9-evidence-image">
+
+                                <img
+                                    id="semana10Histograma"
+                                    alt="Histograma técnico de intensidad Semana 10"
+                                >
+
+                            </div>
+
+
+                            <p class="week9-caption">
+
+                                El histograma representa la distribución
+                                completa de intensidades entre 0 y 255.
+
+                            </p>
+
+                        </details>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ==========================================
+                     ARCHIVOS GENERADOS
+                =========================================== -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="card-label">
+                                Artefactos
+                            </span>
+
+                            <h3>
+                                Archivos generados
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="result-summary-grid">
+
+                        <div>
+
+                            <span>
+                                Vector NumPy
+                            </span>
+
+                            <strong id="semana10RutaFeatures">
+                                artifacts/semana10_features.npy
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Histograma
+                            </span>
+
+                            <strong id="semana10RutaHistograma">
+                                artifacts/semana10_histograma.png
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================================
+                     INTEGRACIÓN
+                =========================================== -->
+
+                
+                <div class="panel semana10-conclusion">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="card-label">
+                                Conclusión del análisis
+                            </span>
+
+                            <h3>
+                                Interpretación de los resultados
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="semana10-conclusion-box">
+
+                        <div class="semana10-conclusion-icon">
+                            IA
+                        </div>
+
+                        <div>
+
+                            <p
+                                id="semana10Conclusion"
+                                class="semana10-conclusion-text"
+                            >
+                                Realice un análisis para generar
+                                una interpretación automática.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+                    <div class="week9-pipeline">
+
+                        <span>
+                            Imagen
+                        </span>
+
+                        <i>→</i>
+
+                        <span>
+                            Segmentación
+                        </span>
+
+                        <i>→</i>
+
+                        <span>
+                            Regiones
+                        </span>
+
+                        <i>→</i>
+
+                        <span>
+                            Intensidad
+                        </span>
+
+                        <i>→</i>
+
+                        <span>
+                            LBP
+                        </span>
+
+                        <i>→</i>
+
+                        <span>
+                            53 características
+                        </span>
+
+                    </div>
+
+
+                    <div class="clinical-warning">
+
+                        Semana 10 describe características visuales
+                        mediante valores numéricos. El módulo es académico
+                        y no realiza diagnósticos médicos.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+<section
 
             id="asistente"
 
@@ -4275,6 +5476,8 @@
 
 
 
+
+<script src="{{ url_for('static', filename='js/semana10.js') }}"></script>
 </body>
 
 

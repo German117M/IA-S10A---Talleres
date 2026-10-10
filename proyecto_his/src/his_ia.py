@@ -108,6 +108,45 @@ except Exception as error:
     )
 
 
+
+# ==========================================================
+# SEMANA 10
+# CARGAR MÓDULO EXTERNO
+# ==========================================================
+
+SEMANA10_SRC = PROJECT_ROOT / "src"
+
+if str(SEMANA10_SRC) not in sys.path:
+
+    sys.path.insert(
+        0,
+        str(SEMANA10_SRC)
+    )
+
+
+try:
+
+    from semana10_texturas import (
+        ProcesadorCaracteristicasSemana10,
+        analizar_imagen_semana10
+    )
+
+    SEMANA10_DISPONIBLE = True
+    SEMANA10_ERROR = None
+
+
+except Exception as error:
+
+    ProcesadorCaracteristicasSemana10 = None
+    analizar_imagen_semana10 = None
+
+    SEMANA10_DISPONIBLE = False
+
+    SEMANA10_ERROR = str(
+        error
+    )
+
+
 # ==========================================================
 # UTILIDADES
 # ==========================================================
@@ -1932,13 +1971,13 @@ def automata_consulta_paciente(
         "temperatura"
     ) is not None:
 
-        secuencia += "T"
+        secuencia += "L"
 
     if caso.get(
         "latidos"
     ) is not None:
 
-        secuencia += "L"
+        secuencia += "T"
 
     if caso.get(
         "presion"
@@ -2313,6 +2352,118 @@ def obtener_estado_semana9():
 
         "error":
             SEMANA9_ERROR
+    }
+
+
+
+# ==========================================================
+# SEMANA 10
+# INTEGRACIÓN HIS_IA
+# ==========================================================
+
+def analizar_archivo_semana10(
+    ruta_imagen,
+    area_minima=50,
+    radio_lbp=2
+):
+
+    if not SEMANA10_DISPONIBLE:
+
+        raise RuntimeError(
+            (
+                "Semana 10 no está disponible. "
+                f"Detalle: {SEMANA10_ERROR}"
+            )
+        )
+
+
+    ruta = Path(
+        ruta_imagen
+    ).expanduser()
+
+
+    if not ruta.is_absolute():
+
+        ruta = (
+            PROJECT_ROOT
+            /
+            ruta
+        ).resolve()
+
+
+    if not ruta.exists():
+
+        raise FileNotFoundError(
+            f"No existe la imagen: {ruta}"
+        )
+
+
+    extension = (
+        ruta.suffix.lower()
+    )
+
+
+    extensiones_permitidas = {
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".bmp",
+        ".tif",
+        ".tiff"
+    }
+
+
+    if extension not in extensiones_permitidas:
+
+        raise ValueError(
+            (
+                "Formato no permitido para Semana 10. "
+                "Use PNG, JPG, JPEG, WEBP, "
+                "BMP, TIF o TIFF."
+            )
+        )
+
+
+    area_minima = int(
+        area_minima
+    )
+
+
+    radio_lbp = int(
+        radio_lbp
+    )
+
+
+    if area_minima < 1:
+
+        raise ValueError(
+            "El área mínima debe ser mayor o igual a 1."
+        )
+
+
+    if radio_lbp < 1:
+
+        raise ValueError(
+            "El radio LBP debe ser mayor o igual a 1."
+        )
+
+
+    resultado = (
+        analizar_imagen_semana10(
+            ruta_imagen=ruta,
+            area_minima=area_minima,
+            radio_lbp=radio_lbp
+        )
+    )
+
+
+    return {
+        "tipo":
+            "caracteristicas_imagen",
+
+        "resultado":
+            resultado
     }
 
 

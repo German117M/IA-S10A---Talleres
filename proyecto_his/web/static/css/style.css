@@ -6256,163 +6256,1158 @@ pre {
 }
 
 /* ==========================================================
-   CORRECCIÓN VISUAL HIS_IA
-   Restaura el layout original en escritorio sin afectar
-   los estilos específicos de Semana 8 y Semana 9.
+   SEMANA 7 - VISUALIZACIÓN MEJORADA
 ========================================================== */
 
-@media (min-width: 761px) {
+#resultadoSemana7 {
+    width: 100%;
+    max-width: 100%;
+}
 
-    .sidebar {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        bottom: 0 !important;
-        width: var(--sidebar-width) !important;
-        height: 100vh !important;
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 28px 20px !important;
-        background:
-            linear-gradient(
-                180deg,
-                var(--green-950) 0%,
-                var(--green-900) 100%
-            ) !important;
-        color: var(--white) !important;
-        z-index: 1000 !important;
-        overflow-y: auto !important;
-    }
+.week7-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
 
-    .sidebar-header {
-        display: flex !important;
-        align-items: center !important;
-        gap: 14px !important;
-        margin-bottom: 34px !important;
-    }
+.week7-card {
+    min-width: 0;
+    overflow: hidden;
+}
 
-    .sidebar-nav {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 7px !important;
-    }
+.week7-vector-box,
+.week7-automata-sequence {
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background: var(--green-50);
+    border: 1px solid var(--green-200);
+}
 
-    .nav-item {
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 13px !important;
-        padding: 13px 14px !important;
-        border: 1px solid transparent !important;
-        border-radius: 12px !important;
-        background: transparent !important;
-        color: #dcefe8 !important;
-        text-align: left !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
-    }
+.week7-vector-box span,
+.week7-automata-sequence span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
 
-    .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: var(--white) !important;
-    }
+.week7-vector-box strong,
+.week7-automata-sequence strong {
+    color: var(--green-900);
+    font-size: 18px;
+}
 
-    .nav-item.active {
-        background: rgba(57, 201, 151, 0.16) !important;
-        border-color: rgba(121, 223, 187, 0.20) !important;
-        color: var(--white) !important;
-    }
+.week7-metrics-grid,
+.week7-symbol-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
 
-    .nav-item.active .nav-icon {
-        background: var(--green-500) !important;
-        color: var(--white) !important;
-    }
+.week7-metric {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5px 12px;
+    align-items: center;
+    padding: 13px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 11px;
+    background: #fff;
+}
 
-    .sidebar-footer {
-        margin-top: auto !important;
-    }
+.week7-metric-label {
+    color: var(--gray-600);
+    font-size: 13px;
+    font-weight: 700;
+}
 
-    .main-content {
-        min-height: 100vh !important;
-        margin-left: var(--sidebar-width) !important;
-        padding: 0 38px 60px !important;
-    }
+.week7-metric-value {
+    color: var(--gray-900);
+    font-size: 17px;
+    text-align: right;
+}
 
-    .topbar {
-        min-height: 112px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 20px !important;
-        border-bottom: 1px solid rgba(31, 41, 55, 0.08) !important;
-    }
+.week7-metric-value small {
+    color: var(--gray-500);
+    font-size: 12px;
+}
 
-    .hero {
-        position: relative !important;
-        min-height: 350px !important;
-        display: grid !important;
-        grid-template-columns:
-            minmax(0, 1.5fr)
-            minmax(260px, 0.7fr) !important;
-        align-items: center !important;
-        gap: 30px !important;
-        padding: 46px !important;
-        border-radius: var(--radius-xl) !important;
-        overflow: hidden !important;
-        background:
-            linear-gradient(
-                135deg,
-                var(--green-950),
-                var(--green-700)
-            ) !important;
-        color: var(--white) !important;
-        box-shadow: var(--shadow-lg) !important;
-    }
+.week7-status {
+    grid-column: 1 / -1;
+    width: fit-content;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
 
-    .hero h2 {
-        color: var(--white) !important;
-    }
+.week7-status-ok {
+    background: var(--green-100);
+    color: var(--green-800);
+}
 
-    .hero p {
-        color: #dcefe8 !important;
-    }
+.week7-status-alerta {
+    background: #fff2e8;
+    color: #a14912;
+}
 
-    .hero-label {
-        color: var(--white) !important;
-    }
+.week7-reference-box,
+.week7-explanation,
+.week7-conclusion,
+.week7-findings,
+.week7-no-findings {
+    margin-top: 16px;
+    padding: 15px;
+    border-radius: 11px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    font-size: 13px;
+    line-height: 1.6;
+}
 
-    .hero .btn-primary {
-        background: var(--white) !important;
-        color: var(--green-900) !important;
-    }
+.week7-reference-box strong,
+.week7-explanation strong,
+.week7-conclusion strong,
+.week7-findings strong {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--gray-900);
+}
 
-    .hero .btn-secondary {
-        border-color: rgba(255, 255, 255, 0.22) !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: var(--white) !important;
-    }
+.week7-automata-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 0;
+}
 
-    .hero-core {
-        color: var(--white) !important;
+.week7-state {
+    min-width: 48px;
+    padding: 10px 13px;
+    border-radius: 10px;
+    background: var(--green-700);
+    color: white;
+    font-weight: 800;
+    text-align: center;
+}
+
+.week7-arrow {
+    color: var(--green-600);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.week7-automata-result p {
+    margin-top: 10px;
+    color: var(--gray-700);
+}
+
+.week7-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.week7-summary-grid > div {
+    padding: 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 11px;
+    text-align: center;
+}
+
+.week7-summary-grid span {
+    display: block;
+    color: var(--gray-600);
+    font-size: 12px;
+}
+
+.week7-summary-grid strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--green-800);
+    font-size: 25px;
+}
+
+.week7-findings ul {
+    margin: 8px 0 0 18px;
+}
+
+.week7-no-findings {
+    background: var(--green-50);
+    border-color: var(--green-200);
+    color: var(--green-800);
+    font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+    .week7-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-/* Ajuste de Semana 9 para mantener coherencia con el diseño existente */
+@media (max-width: 700px) {
+    .week7-summary-grid {
+        grid-template-columns: 1fr;
+    }
 
-#semana9 .panel,
-#semana9 .week9-flow article,
-#semana9 .week9-sigma-item {
-    box-shadow: var(--shadow-sm);
+    .week7-card {
+        padding: 18px;
+    }
 }
 
-#semana9 .section-header {
+
+/* ==========================================================
+   SEMANA 10 - EXTRACCIÓN DE CARACTERÍSTICAS
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   SECCIÓN GENERAL
+---------------------------------------------------------- */
+
+#semana10 {
+    width: 100%;
+}
+
+
+#semana10 .section-header {
     margin-bottom: 24px;
 }
 
-#semana9 .week9-main-grid {
-    align-items: start;
+
+/* ----------------------------------------------------------
+   ZONA DE CARGA
+---------------------------------------------------------- */
+
+#semana10UploadArea {
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border: 2px dashed var(--green-200);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(
+            145deg,
+            var(--green-50),
+            var(--white)
+        );
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-#semana9 .btn-primary {
+
+#semana10UploadArea:hover {
+    border-color: var(--green-500);
+    box-shadow: var(--shadow-sm);
+}
+
+
+#semana10UploadArea.dragging {
+    border-color: var(--green-600);
+    background: var(--green-100);
+    transform: translateY(-2px);
+}
+
+
+#semana10UploadEmpty {
+    width: 100%;
+    text-align: center;
+}
+
+
+#semana10UploadEmpty strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--green-900);
+    font-size: 18px;
+}
+
+
+#semana10UploadEmpty p {
+    margin-bottom: 18px;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+
+/* ----------------------------------------------------------
+   VISTA PREVIA
+---------------------------------------------------------- */
+
+#semana10PreviewContainer {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+
+
+#semana10Preview {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    max-height: 360px;
+    margin: 0 auto 14px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: var(--gray-50);
+}
+
+
+#semana10FileName {
+    max-width: 100%;
+    margin: 0 0 14px;
+    overflow: hidden;
+    color: var(--gray-700);
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ----------------------------------------------------------
+   CONFIGURACIÓN
+---------------------------------------------------------- */
+
+#semana10 .form-group {
+    margin-bottom: 18px;
+}
+
+
+#semana10 .form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--gray-800);
+    font-weight: 700;
+}
+
+
+#semana10 .form-group input {
+    width: 100%;
+}
+
+
+#semana10 .form-group small {
+    display: block;
+    margin-top: 7px;
+    color: var(--gray-600);
+    line-height: 1.5;
+}
+
+
+#btnAnalizarSemana10 {
+    width: 100%;
     margin-top: 4px;
 }
+
+
+#btnAnalizarSemana10:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+
+/* ----------------------------------------------------------
+   PROCESANDO
+---------------------------------------------------------- */
+
+#semana10Procesando {
+    margin-top: 18px;
+}
+
+
+/* ----------------------------------------------------------
+   RESULTADOS
+---------------------------------------------------------- */
+
+#resultadoSemana10 {
+    width: 100%;
+}
+
+
+#resultadoSemana10 .stat-card {
+    min-width: 0;
+}
+
+
+#resultadoSemana10 .stat-card strong {
+    overflow-wrap: anywhere;
+}
+
+
+/* ----------------------------------------------------------
+   HISTOGRAMA
+---------------------------------------------------------- */
+
+#semana10Histograma {
+    width: 100%;
+    max-width: 760px;
+    max-height: 420px;
+    object-fit: contain;
+}
+
+
+/* ----------------------------------------------------------
+   ARTEFACTOS
+---------------------------------------------------------- */
+
+#semana10RutaFeatures,
+#semana10RutaHistograma {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+
+/* ----------------------------------------------------------
+   VECTOR DE CARACTERÍSTICAS
+---------------------------------------------------------- */
+
+#semana10 .result-summary-grid strong {
+    overflow-wrap: anywhere;
+}
+
+
+#semana10 .week9-pipeline {
+    margin-top: 6px;
+}
+
+
+/* ----------------------------------------------------------
+   ADVERTENCIA ACADÉMICA
+---------------------------------------------------------- */
+
+#semana10 .clinical-warning {
+    margin-top: 18px;
+}
+
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+
+    #semana10UploadArea {
+        min-height: 240px;
+    }
+
+
+    #semana10Preview {
+        max-height: 300px;
+    }
+
+}
+
+
+@media (max-width: 560px) {
+
+    #semana10UploadArea {
+        min-height: 210px;
+        padding: 16px;
+    }
+
+
+    #semana10Preview {
+        max-height: 240px;
+    }
+
+
+    #semana10UploadEmpty strong {
+        font-size: 16px;
+    }
+
+
+    #semana10RutaFeatures,
+    #semana10RutaHistograma {
+        font-size: 12px;
+    }
+
+}
+
+
+/* ==========================================================
+   FIN SEMANA 10
+========================================================== */
+
+
+
+/* ==========================================================
+   SEMANA 10 - CONCLUSIÓN AUTOMÁTICA
+========================================================== */
+
+.semana10-conclusion {
+    margin-top: 22px;
+}
+
+
+.semana10-conclusion-box {
+    display: grid;
+    grid-template-columns:
+        auto 1fr;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 22px;
+    border: 1px solid var(--green-200);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(
+            145deg,
+            var(--green-50),
+            var(--white)
+        );
+}
+
+
+.semana10-conclusion-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--green-600);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+
+.semana10-conclusion-text {
+    margin: 0;
+    color: var(--gray-800);
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+
+@media (max-width: 560px) {
+
+    .semana10-conclusion-box {
+        grid-template-columns: 1fr;
+    }
+
+
+    .semana10-conclusion-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .semana10-conclusion-text {
+        font-size: 15px;
+    }
+
+}
+
+
+
+/* ==========================================================
+   SEMANA 10 - DISTRIBUCIÓN DE INTENSIDAD
+========================================================== */
+
+.semana10-intensity-panel {
+    min-width: 0;
+}
+
+
+.semana10-intensity-bars {
+    display: grid;
+    gap: 22px;
+    margin-top: 20px;
+}
+
+
+.semana10-intensity-row {
+    display: grid;
+    grid-template-columns:
+        180px
+        minmax(180px, 1fr)
+        70px;
+    gap: 16px;
+    align-items: center;
+}
+
+
+.semana10-intensity-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.semana10-intensity-label strong {
+    color: var(--gray-900);
+    font-size: 15px;
+}
+
+
+.semana10-intensity-label small {
+    color: var(--gray-600);
+    font-size: 12px;
+}
+
+
+.semana10-intensity-track {
+    width: 100%;
+    height: 18px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+}
+
+
+.semana10-intensity-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    transition:
+        width 0.7s ease;
+}
+
+
+/* Oscura */
+
+.intensidad-oscura {
+    background:
+        linear-gradient(
+            90deg,
+            #263238,
+            #455a64
+        );
+}
+
+
+/* Intermedia */
+
+.intensidad-media {
+    background:
+        linear-gradient(
+            90deg,
+            #78909c,
+            #90a4ae
+        );
+}
+
+
+/* Clara */
+
+.intensidad-clara {
+    background:
+        linear-gradient(
+            90deg,
+            #b0bec5,
+            #eceff1
+        );
+}
+
+
+.semana10-intensity-value {
+    color: var(--green-900);
+    font-size: 17px;
+    text-align: right;
+}
+
+
+.semana10-intensity-interpretation {
+    margin-top: 26px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--green-600);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    background: var(--green-50);
+    color: var(--gray-800);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+.semana10-technical-details {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gray-200);
+}
+
+
+.semana10-technical-details summary {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 14px;
+    border: 1px solid var(--green-200);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--green-800);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+
+.semana10-technical-details[open] summary {
+    margin-bottom: 18px;
+}
+
+
+@media (max-width: 760px) {
+
+    .semana10-intensity-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+
+    .semana10-intensity-value {
+        text-align: left;
+    }
+
+}
+
+
+
+/* ==========================================================
+   SEMANA 10 - COMPARACIÓN DE DOS IMÁGENES
+========================================================== */
+
+.semana10-comparison-heading {
+    margin:
+        10px
+        0
+        18px;
+}
+
+
+.semana10-comparison-heading h3 {
+    margin:
+        4px
+        0
+        6px;
+}
+
+
+.semana10-second-image-panel {
+    margin-top: 24px;
+}
+
+
+#semana10ComparacionUploadArea {
+    margin-top: 18px;
+}
+
+
+#semana10ComparacionPreview {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+}
+
+
+.semana10-comparison-file {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-top: 14px;
+}
+
+
+.semana10-compare-action {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+}
+
+
+.semana10-comparison-results {
+    margin-top: 24px;
+}
+
+
+.semana10-global-result {
+    padding: 22px;
+    margin-top: 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--green-200);
+    background: var(--green-50);
+}
+
+
+.semana10-global-result > span {
+    display: block;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+
+.semana10-global-result > strong {
+    display: block;
+    margin: 4px 0 14px;
+    color: var(--green-900);
+    font-size: 34px;
+}
+
+
+.semana10-global-track {
+    width: 100%;
+    height: 16px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--white);
+}
+
+
+.semana10-global-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background:
+        linear-gradient(
+            90deg,
+            var(--green-500),
+            var(--green-700)
+        );
+    transition:
+        width .7s ease;
+}
+
+
+.semana10-global-result small {
+    display: block;
+    margin-top: 12px;
+    color: var(--gray-700);
+    text-transform: capitalize;
+}
+
+
+.semana10-comparison-metrics {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+    gap: 16px;
+    margin-top: 20px;
+}
+
+
+.semana10-comparison-card {
+    padding: 18px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    background: var(--white);
+}
+
+
+.semana10-comparison-card span,
+.semana10-comparison-card small {
+    display: block;
+}
+
+
+.semana10-comparison-card span {
+    color: var(--gray-600);
+    font-size: 13px;
+}
+
+
+.semana10-comparison-card strong {
+    display: block;
+    margin: 7px 0;
+    color: var(--green-800);
+    font-size: 26px;
+}
+
+
+.semana10-comparison-card small {
+    color: var(--gray-600);
+    line-height: 1.5;
+}
+
+
+.semana10-two-results {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 18px;
+    margin-top: 22px;
+}
+
+
+.semana10-two-results > div {
+    padding: 20px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    background: var(--gray-50);
+}
+
+
+.semana10-two-results h4 {
+    margin-top: 0;
+    color: var(--gray-900);
+}
+
+
+.semana10-comparison-conclusion {
+    margin-top: 22px;
+    padding: 20px;
+    border-left: 4px solid var(--green-600);
+    border-radius:
+        0
+        var(--radius-md)
+        var(--radius-md)
+        0;
+    background: var(--green-50);
+}
+
+
+.semana10-comparison-conclusion strong {
+    color: var(--green-900);
+}
+
+
+.semana10-comparison-conclusion p {
+    margin:
+        8px
+        0
+        0;
+    color: var(--gray-800);
+    line-height: 1.75;
+}
+
+
+@media (
+    max-width: 900px
+) {
+
+    .semana10-comparison-metrics {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+@media (
+    max-width: 600px
+) {
+
+    .semana10-comparison-metrics,
+    .semana10-two-results {
+        grid-template-columns: 1fr;
+    }
+
+
+    .semana10-comparison-file {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+
+
+/* ==========================================================
+   SEMANA 10
+   SEGUNDA IMAGEN INTEGRADA EN EL PANEL DE ENTRADA
+========================================================== */
+
+#semana10UploadArea
++
+.semana10-second-image-panel {
+
+    margin-top: 32px;
+
+    padding:
+        28px
+        0
+        0;
+
+    border: 0;
+
+    border-top:
+        1px solid
+        var(--gray-200);
+
+    border-radius: 0;
+
+    box-shadow: none;
+
+    background: transparent;
+
+}
+
+
+#semana10UploadArea
++
+.semana10-second-image-panel
+.panel-header {
+
+    margin-bottom: 18px;
+
+}
+
+
+#semana10ComparacionUploadArea {
+
+    min-height: 260px;
+
+}
+
+
+#semana10ComparacionPreview {
+
+    display: block;
+
+    width: 100%;
+
+    max-height: 390px;
+
+    object-fit: contain;
+
+    border-radius:
+        var(--radius-md);
+
+}
+
+
+.semana10-compare-action {
+
+    margin-top: 20px;
+
+}
+
+
+#btnCompararSemana10 {
+
+    width: 100%;
+
+}
+
+
+#btnCompararSemana10:disabled {
+
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+}
+
+
+#btnCompararSemana10:not(:disabled) {
+
+    opacity: 1;
+
+}
+
+
+
+
+.semana10-second-image-panel.integrated {
+    display: block;
+}
+
+
+
+/* ==========================================================
+   SEMANA 10 - TIPO DE ESTUDIO
+========================================================== */
+
+.semana10-study-selector {
+
+    width: 100%;
+
+    display: grid;
+
+    gap: 8px;
+
+    margin-bottom: 18px;
+
+    padding: 18px;
+
+    border:
+        1px solid
+        var(--green-200);
+
+    border-radius:
+        var(--radius-md);
+
+    background:
+        var(--green-50);
+
+}
+
+
+.semana10-study-selector label {
+
+    color:
+        var(--gray-900);
+
+    font-weight: 800;
+
+}
+
+
+.semana10-study-selector select {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        1px solid
+        var(--gray-300);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--white);
+
+    color:
+        var(--gray-900);
+
+    font-size:
+        15px;
+
+}
+
+
+.semana10-study-selector small {
+
+    color:
+        var(--gray-600);
+
+    line-height:
+        1.5;
+
+}
+

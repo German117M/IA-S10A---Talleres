@@ -740,6 +740,371 @@ def api_semana5_validar():
 # MAIN
 # ==========================================================
 
+
+
+# ==========================================================
+# SEMANA 10
+# API - CARACTERÍSTICAS DE IMAGEN
+# ==========================================================
+
+@app.route(
+    "/api/semana10/imagen",
+    methods=["POST"]
+)
+def api_semana10_imagen():
+
+    try:
+
+        # ==================================================
+        # VALIDAR ARCHIVO
+        # ==================================================
+
+        if "archivo" not in request.files:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        "No se recibió ninguna imagen."
+                }
+            ), 400
+
+
+        archivo = request.files[
+            "archivo"
+        ]
+
+
+        if not archivo.filename:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        "La imagen no tiene nombre."
+                }
+            ), 400
+
+
+        # ==================================================
+        # VALIDAR EXTENSIÓN
+        # ==================================================
+
+        extension = (
+            Path(
+                archivo.filename
+            )
+            .suffix
+            .lower()
+        )
+
+
+        extensiones_permitidas = {
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+            ".bmp",
+            ".tif",
+            ".tiff"
+        }
+
+
+        if extension not in extensiones_permitidas:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        (
+                            "Formato no permitido. "
+                            "Use PNG, JPG, JPEG, WEBP, "
+                            "BMP, TIF o TIFF."
+                        )
+                }
+            ), 400
+
+
+        # ==================================================
+        # PARÁMETROS
+        # ==================================================
+
+        try:
+
+            area_minima = int(
+                request.form.get(
+                    "area_minima",
+                    50
+                )
+            )
+
+        except ValueError:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        "El área mínima no es válida."
+                }
+            ), 400
+
+
+        try:
+
+            radio_lbp = int(
+                request.form.get(
+                    "radio_lbp",
+                    2
+                )
+            )
+
+        except ValueError:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        "El radio LBP no es válido."
+                }
+            ), 400
+
+
+        if area_minima < 1:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        (
+                            "El área mínima debe ser "
+                            "mayor o igual a 1."
+                        )
+                }
+            ), 400
+
+
+        if radio_lbp < 1:
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        (
+                            "El radio LBP debe ser "
+                            "mayor o igual a 1."
+                        )
+                }
+            ), 400
+
+
+        # ==================================================
+        # IMPORTAR MOTOR HIS_IA
+        # ==================================================
+
+        from his_ia import (
+            analizar_archivo_semana10
+        )
+
+
+        # ==================================================
+        # PREPARAR CARPETA
+        # ==================================================
+
+        carpeta_cargas = (
+            Path(__file__)
+            .resolve()
+            .parent
+            / "uploads"
+            / "semana10"
+        )
+
+
+        carpeta_cargas.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+
+        # ==================================================
+        # NOMBRE SEGURO
+        # ==================================================
+
+        from werkzeug.utils import (
+            secure_filename
+        )
+
+        from uuid import uuid4
+
+
+        nombre_original = (
+            secure_filename(
+                archivo.filename
+            )
+        )
+
+
+        nombre_guardado = (
+            f"{uuid4().hex[:12]}_"
+            f"{nombre_original}"
+        )
+
+
+        ruta_imagen = (
+            carpeta_cargas
+            /
+            nombre_guardado
+        )
+
+
+        archivo.save(
+            ruta_imagen
+        )
+
+
+        # ==================================================
+        # EJECUTAR SEMANA 10
+        # ==================================================
+
+        respuesta = (
+            analizar_archivo_semana10(
+                ruta_imagen=ruta_imagen,
+                area_minima=area_minima,
+                radio_lbp=radio_lbp
+            )
+        )
+
+
+        # ==================================================
+        # RESPUESTA
+        # ==================================================
+
+        return jsonify(
+            {
+                "success":
+                    True,
+
+                "resultado":
+                    respuesta,
+
+                "upload":
+                    {
+                        "original_name":
+                            archivo.filename,
+
+                        "stored_name":
+                            nombre_guardado
+                    }
+            }
+        )
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    str(
+                        error
+                    )
+            }
+        ), 500
+
+
+
+
+
+# ==========================================================
+# SEMANA 10
+# SERVIR HISTOGRAMA GENERADO
+# ==========================================================
+
+@app.route(
+    "/api/semana10/histograma",
+    methods=["GET"]
+)
+def api_semana10_histograma():
+
+    try:
+
+        from flask import send_file
+
+
+        # app.py se encuentra en:
+        # ia_semestre/proyecto_his/web/app.py
+        #
+        # Los artefactos de Semana 10 se generan en:
+        # ia_semestre/artifacts/
+
+        project_root = (
+            Path(__file__)
+            .resolve()
+            .parents[2]
+        )
+
+
+        ruta_histograma = (
+            project_root
+            / "artifacts"
+            / "semana10_histograma.png"
+        )
+
+
+        if not ruta_histograma.exists():
+
+            return jsonify(
+                {
+                    "success":
+                        False,
+
+                    "error":
+                        (
+                            "El histograma de Semana 10 "
+                            "todavía no ha sido generado."
+                        )
+                }
+            ), 404
+
+
+        return send_file(
+            ruta_histograma,
+            mimetype="image/png",
+            max_age=0
+        )
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    str(
+                        error
+                    )
+            }
+        ), 500
+
+
+
 if __name__ == "__main__":
     print("\n" + "=" * 55)
     print(f"HIS_IA WEB v{VERSION}")
