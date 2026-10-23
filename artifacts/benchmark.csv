@@ -1,0 +1,4 @@
+modelo,accuracy,fit_seconds
+MLP,0.96,0.053935958000238315
+Random Forest,0.96,0.13405633399997896
+Logistic Regression,0.92,0.011733542000001762

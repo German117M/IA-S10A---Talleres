@@ -1105,6 +1105,358 @@ def api_semana10_histograma():
 
 
 
+
+
+# ==========================================================
+# SEMANA 11
+# BENCHMARK DE MODELOS
+# ==========================================================
+
+@app.route(
+    "/api/semana11/benchmark",
+    methods=["GET"]
+)
+def api_semana11_benchmark():
+
+    try:
+
+        from flask import jsonify
+
+        from his_ia import (
+            ejecutar_semana11
+        )
+
+
+        resultado = (
+            ejecutar_semana11()
+        )
+
+
+        return jsonify(
+            {
+                "success":
+                    True,
+
+                "resultado":
+                    resultado
+            }
+        )
+
+
+    except Exception as error:
+
+        print(
+            "ERROR SEMANA 11:",
+            repr(
+                error
+            )
+        )
+
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    str(
+                        error
+                    )
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# MODELO ACTIVO DE PRIORIDAD
+# SEMANA 11
+# ==========================================================
+
+@app.route(
+    "/api/prioridad/modelo-activo",
+    methods=["GET"]
+)
+def api_modelo_prioridad_activo():
+
+    try:
+
+        import json
+        from pathlib import Path
+        from flask import jsonify
+
+
+        raiz_proyecto = (
+            Path(__file__)
+            .resolve()
+            .parents[2]
+        )
+
+
+        metadata_file = (
+            raiz_proyecto
+            / "artifacts"
+            / "modelo_prioridad_metadata.json"
+        )
+
+
+        if not metadata_file.exists():
+
+            return jsonify(
+                {
+                    "success": True,
+                    "modelo": "Logistic Regression",
+                    "accuracy": None,
+                    "origen": "Modelo base de HIS_IA",
+                    "semana11": False
+                }
+            )
+
+
+        metadata = json.loads(
+            metadata_file.read_text(
+                encoding="utf-8"
+            )
+        )
+
+
+        return jsonify(
+            {
+                "success": True,
+
+                "modelo":
+                    metadata.get(
+                        "modelo",
+                        "No identificado"
+                    ),
+
+                "accuracy":
+                    metadata.get(
+                        "accuracy_validacion"
+                    ),
+
+                "registros":
+                    metadata.get(
+                        "registros"
+                    ),
+
+                "variables":
+                    metadata.get(
+                        "variables",
+                        []
+                    ),
+
+                "origen":
+                    "Benchmark de Semana 11",
+
+                "semana11":
+                    True
+            }
+        )
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# SEMANA 11
+# ANÁLISIS DE PRIORIDAD CON MÚLTIPLES MÉTODOS
+# ==========================================================
+
+@app.route(
+    "/api/prioridad/consenso",
+    methods=["POST"]
+)
+def api_prioridad_consenso():
+
+    try:
+
+        from flask import (
+            request,
+            jsonify
+        )
+
+        from his_ia import (
+            evaluar_prioridad_consenso
+        )
+
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+
+        campos = [
+            "edad",
+            "documentos_pendientes",
+            "resultados_pendientes",
+            "imagenes_pendientes"
+        ]
+
+
+        faltantes = [
+            campo
+            for campo in campos
+            if campo not in datos
+        ]
+
+
+        if faltantes:
+
+            return jsonify(
+                {
+                    "success": False,
+                    "error":
+                        "Faltan datos requeridos: "
+                        +
+                        ", ".join(faltantes)
+                }
+            ), 400
+
+
+        resultado = evaluar_prioridad_consenso(
+            edad=int(
+                datos["edad"]
+            ),
+
+            documentos=int(
+                datos[
+                    "documentos_pendientes"
+                ]
+            ),
+
+            resultados=int(
+                datos[
+                    "resultados_pendientes"
+                ]
+            ),
+
+            imagenes=int(
+                datos[
+                    "imagenes_pendientes"
+                ]
+            )
+        )
+
+
+        return jsonify(
+            {
+                "success": True,
+                "resultado": resultado
+            }
+        )
+
+
+    except Exception as error:
+
+        print(
+            "ERROR PRIORIDAD SEMANA 11:",
+            repr(error)
+        )
+
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# SEMANA 11
+# CONTROL DE CALIDAD DE DECISIONES
+# ==========================================================
+
+@app.route(
+    "/api/semana11/auditoria",
+    methods=["GET"]
+)
+def api_semana11_auditoria():
+
+    try:
+
+        import sys
+        from pathlib import Path
+        from flask import jsonify
+
+
+        raiz = (
+            Path(__file__)
+            .resolve()
+            .parents[2]
+        )
+
+
+        src = (
+            raiz
+            / "src"
+        )
+
+
+        if str(src) not in sys.path:
+
+            sys.path.insert(
+                0,
+                str(src)
+            )
+
+
+        from semana11_consenso import (
+            auditar_decisiones_semana11
+        )
+
+
+        resultado = (
+            auditar_decisiones_semana11()
+        )
+
+
+        return jsonify(
+            {
+                "success":
+                    True,
+
+                "resultado":
+                    resultado
+            }
+        )
+
+
+    except Exception as error:
+
+        print(
+            "ERROR AUDITORÍA SEMANA 11:",
+            repr(
+                error
+            )
+        )
+
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    str(
+                        error
+                    )
+            }
+        ), 500
+
+
 if __name__ == "__main__":
     print("\n" + "=" * 55)
     print(f"HIS_IA WEB v{VERSION}")

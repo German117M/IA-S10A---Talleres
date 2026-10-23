@@ -1,0 +1,149 @@
+.resultado-consenso {
+    display: grid;
+    gap: 20px;
+}
+
+.resultado-principal {
+    padding: 24px;
+    border-radius: 18px;
+    background: rgba(20, 110, 80, 0.06);
+    border: 1px solid rgba(20, 110, 80, 0.16);
+}
+
+.resultado-etiqueta {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    opacity: 0.65;
+}
+
+.resultado-valor {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.resultado-principal p {
+    margin-bottom: 0;
+}
+
+.consenso-resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.consenso-resumen {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(20, 90, 70, 0.12);
+    background: #ffffff;
+}
+
+.consenso-resumen > span {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.65;
+}
+
+.consenso-resumen strong {
+    font-size: 1.2rem;
+}
+
+.consenso-resumen small {
+    opacity: 0.72;
+}
+
+.acuerdo-alto,
+.revision-no {
+    color: #18725a;
+}
+
+.acuerdo-medio,
+.revision-si {
+    color: #9a6b18;
+}
+
+.consenso-explicacion {
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(176, 133, 34, 0.07);
+    border: 1px solid rgba(176, 133, 34, 0.18);
+}
+
+.consenso-explicacion h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.consenso-explicacion p {
+    margin-bottom: 0;
+}
+
+.consenso-detalles {
+    padding: 18px 20px;
+    border: 1px solid rgba(20, 90, 70, 0.12);
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.consenso-detalles summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.detalle-ayuda {
+    margin-top: 16px;
+    opacity: 0.72;
+}
+
+.metodo-verificacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.metodo-verificacion:last-child {
+    border-bottom: 0;
+}
+
+.metodo-verificacion div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.metodo-verificacion small {
+    opacity: 0.58;
+}
+
+.metodo-verificacion > span {
+    font-weight: 600;
+}
+
+.consenso-cargando,
+.consenso-error {
+    padding: 20px;
+}
+
+@media (max-width: 750px) {
+
+    .consenso-resumen-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metodo-verificacion {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+}

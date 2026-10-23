@@ -174,6 +174,17 @@
         }
     </style>
 
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/semana11.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/prioridad_consenso.css') }}"
+    >
+
 </head>
 
 
@@ -465,6 +476,21 @@
                     Semana 10
                 </span>
             </button>
+            <button
+                class="nav-item"
+                data-section="semana11"
+            >
+                <span class="nav-icon">
+                    ◉
+                </span>
+
+                <span>
+                    Semana 11
+                </span>
+            </button>
+
+
+
 
 
 <button
@@ -5260,6 +5286,239 @@
             </div>
 
         </section>
+        <!-- ==================================================
+             SEMANA 11
+             BENCHMARK DE MODELOS
+        =================================================== -->
+
+        <section
+            id="semana11"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 11
+                    </span>
+
+                    <h2>
+                        Benchmark de modelos
+                    </h2>
+
+                    <p>
+                        Comparación técnica de Logistic Regression,
+                        Random Forest y MLP utilizando los datos de
+                        prioridad de HIS_IA.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="semana11-summary-grid">
+
+                    <div class="semana11-summary-card">
+                        <span>Registros</span>
+                        <strong id="semana11Registros">
+                            100
+                        </strong>
+                    </div>
+
+                    <div class="semana11-summary-card">
+                        <span>Entrenamiento</span>
+                        <strong id="semana11Entrenamiento">
+                            75
+                        </strong>
+                    </div>
+
+                    <div class="semana11-summary-card">
+                        <span>Prueba</span>
+                        <strong id="semana11Prueba">
+                            25
+                        </strong>
+                    </div>
+
+                    <div class="semana11-summary-card">
+                        <span>Semilla</span>
+                        <strong id="semana11Semilla">
+                            42
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="btnEjecutarSemana11"
+                    type="button"
+                    class="btn-primary"
+                >
+                    Ejecutar benchmark
+                </button>
+
+
+                <div
+                    id="semana11Procesando"
+                    class="hidden"
+                >
+                    <p>
+                        Entrenando y evaluando modelos...
+                    </p>
+                </div>
+
+
+                <div
+                    id="resultadoSemana11"
+                    class="hidden"
+                >
+
+                    <div class="semana11-model-grid">
+
+
+                        <article class="semana11-model-card">
+
+                            <h3>
+                                Logistic Regression
+                            </h3>
+
+                            <div class="semana11-metric">
+                                <span>Accuracy</span>
+                                <strong id="semana11LogisticAccuracy">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-metric">
+                                <span>Entrenamiento</span>
+                                <strong id="semana11LogisticTiempo">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-progress">
+                                <div id="semana11LogisticBarra"></div>
+                            </div>
+
+                        </article>
+
+
+                        <article class="semana11-model-card">
+
+                            <h3>
+                                Random Forest
+                            </h3>
+
+                            <div class="semana11-metric">
+                                <span>Accuracy</span>
+                                <strong id="semana11ForestAccuracy">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-metric">
+                                <span>Entrenamiento</span>
+                                <strong id="semana11ForestTiempo">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-progress">
+                                <div id="semana11ForestBarra"></div>
+                            </div>
+
+                        </article>
+
+
+                        <article class="semana11-model-card">
+
+                            <h3>
+                                MLP
+                            </h3>
+
+                            <div class="semana11-metric">
+                                <span>Accuracy</span>
+                                <strong id="semana11MlpAccuracy">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-metric">
+                                <span>Entrenamiento</span>
+                                <strong id="semana11MlpTiempo">
+                                    -
+                                </strong>
+                            </div>
+
+                            <div class="semana11-progress">
+                                <div id="semana11MlpBarra"></div>
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+                    <div class="semana11-decision">
+
+                        <span class="semana11-decision-label">
+                            Modelo recomendado
+                        </span>
+
+                        <h3 id="semana11ModeloRecomendado">
+                            -
+                        </h3>
+
+                        <p>
+                            Accuracy seleccionado:
+                            <strong id="semana11AccuracyRecomendado">
+                                -
+                            </strong>
+                        </p>
+
+                        <p id="semana11Justificacion">
+                        </p>
+
+                    </div>
+
+
+                    <div class="semana11-evidence">
+
+                        <div>
+                            <strong>
+                                Evidencia del benchmark:
+                            </strong>
+
+                            <code id="semana11RutaBenchmark">
+                                artifacts/benchmark.csv
+                            </code>
+                        </div>
+
+                        <div>
+                            <strong>
+                                Decisión técnica:
+                            </strong>
+
+                            <code id="semana11RutaAdr">
+                                reports/semana11_adr.md
+                            </code>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
 
 
 <section
@@ -5478,6 +5737,15 @@
 
 
 <script src="{{ url_for('static', filename='js/semana10.js') }}"></script>
+
+    <script
+        src="{{ url_for('static', filename='js/semana11.js') }}"
+    ></script>
+
+    <script
+        src="{{ url_for('static', filename='js/prioridad_consenso.js') }}"
+    ></script>
+
 </body>
 
 

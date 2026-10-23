@@ -288,15 +288,122 @@ def cargar_datos_prioridad():
 
 
 def entrenar_modelo_prioridad():
+
+    import json
+    import joblib
+
+
+    modelo_guardado = (
+        PROJECT_ROOT
+        / "artifacts"
+        / "modelo_prioridad.joblib"
+    )
+
+
+    metadata_guardada = (
+        PROJECT_ROOT
+        / "artifacts"
+        / "modelo_prioridad_metadata.json"
+    )
+
+
+    # ======================================================
+    # SEMANA 11
+    # CARGAR MODELO SELECCIONADO
+    # ======================================================
+
+    if (
+        modelo_guardado.exists()
+        and
+        metadata_guardada.exists()
+    ):
+
+        modelo = joblib.load(
+            modelo_guardado
+        )
+
+
+        metadata = json.loads(
+            metadata_guardada.read_text(
+                encoding="utf-8"
+            )
+        )
+
+
+        precision = float(
+            metadata.get(
+                "accuracy_validacion",
+                0
+            )
+        )
+
+
+        matriz = np.array(
+            metadata.get(
+                "matriz_confusion",
+                []
+            )
+        )
+
+
+        print(
+            "Modelo activo de prioridad cargado:"
+        )
+
+        print(
+            metadata.get(
+                "modelo",
+                "Modelo Semana 11"
+            )
+        )
+
+        print(
+            (
+                "Precisión de validación: "
+                f"{precision:.3f}"
+            )
+        )
+
+        print(
+            "Seleccionado mediante benchmark de Semana 11."
+        )
+
+
+        if matriz.size:
+
+            print(
+                "Matriz de validación:"
+            )
+
+            print(
+                matriz
+            )
+
+
+        return (
+            modelo,
+            precision,
+            matriz
+        )
+
+
+    # ======================================================
+    # FALLBACK
+    # MODELO ORIGINAL DE SEMANA 2
+    # ======================================================
+
     datos = cargar_datos_prioridad()
+
 
     X = datos[
         VARIABLES_PRIORIDAD
     ]
 
+
     y = datos[
         "prioridad"
     ]
+
 
     (
         X_train,
@@ -310,6 +417,7 @@ def entrenar_modelo_prioridad():
         random_state=RANDOM_STATE,
         stratify=y
     )
+
 
     modelo = Pipeline(
         [
@@ -327,27 +435,36 @@ def entrenar_modelo_prioridad():
         ]
     )
 
+
     modelo.fit(
         X_train,
         y_train
     )
 
+
     predicciones = modelo.predict(
         X_test
     )
+
 
     precision = accuracy_score(
         y_test,
         predicciones
     )
 
+
     matriz = confusion_matrix(
         y_test,
         predicciones
     )
 
+
     print(
-        "Modelo de prioridad cargado."
+        "Modelo base de prioridad cargado:"
+    )
+
+    print(
+        "Logistic Regression"
     )
 
     print(
@@ -355,12 +472,10 @@ def entrenar_modelo_prioridad():
     )
 
     print(
-        "Matriz de validación:"
+        "Ejecute Semana 11 para seleccionar "
+        "y activar un modelo mediante benchmark."
     )
 
-    print(
-        matriz
-    )
 
     return (
         modelo,
@@ -399,6 +514,47 @@ def evaluar_prioridad(
         return "Prioritaria"
 
     return "Normal"
+
+
+
+
+# ==========================================================
+# SEMANA 11
+# VALIDACIÓN DE PRIORIDAD CON MÚLTIPLES MÉTODOS
+# ==========================================================
+
+def evaluar_prioridad_consenso(
+    edad,
+    documentos,
+    resultados,
+    imagenes
+):
+
+    semana11_src = (
+        PROJECT_ROOT
+        / "src"
+    )
+
+
+    if str(semana11_src) not in sys.path:
+
+        sys.path.insert(
+            0,
+            str(semana11_src)
+        )
+
+
+    from semana11_consenso import (
+        evaluar_caso_semana11
+    )
+
+
+    return evaluar_caso_semana11(
+        edad=edad,
+        documentos=documentos,
+        resultados=resultados,
+        imagenes=imagenes
+    )
 
 
 # ==========================================================
@@ -4130,6 +4286,240 @@ def main():
 # ==========================================================
 # EJECUCIÓN
 # ==========================================================
+
+
+
+# ==========================================================
+# SEMANA 11
+# BENCHMARK DE MODELOS
+# ==========================================================
+
+def ejecutar_semana11():
+
+    semana11_src = (
+        PROJECT_ROOT
+        / "src"
+    )
+
+    if str(semana11_src) not in sys.path:
+
+        sys.path.insert(
+            0,
+            str(semana11_src)
+        )
+
+
+    from semana11_benchmark import (
+        ejecutar_benchmark
+    )
+
+
+    (
+        datos,
+        X_train,
+        X_test,
+        tabla
+    ) = ejecutar_benchmark()
+
+
+    resultados = []
+
+
+    for registro in tabla.to_dict(
+        orient="records"
+    ):
+
+        resultados.append(
+            {
+                "modelo":
+                    str(
+                        registro[
+                            "modelo"
+                        ]
+                    ),
+
+                "accuracy":
+                    float(
+                        registro[
+                            "accuracy"
+                        ]
+                    ),
+
+                "accuracy_porcentaje":
+                    round(
+                        float(
+                            registro[
+                                "accuracy"
+                            ]
+                        )
+                        * 100,
+                        2
+                    ),
+
+                "fit_seconds":
+                    round(
+                        float(
+                            registro[
+                                "fit_seconds"
+                            ]
+                        ),
+                        6
+                    )
+            }
+        )
+
+
+    mejor_accuracy = max(
+        resultado[
+            "accuracy"
+        ]
+        for resultado in resultados
+    )
+
+
+    modelos_mejor_accuracy = [
+        resultado
+        for resultado in resultados
+        if resultado[
+            "accuracy"
+        ] == mejor_accuracy
+    ]
+
+
+    nombres_mejores = {
+        resultado[
+            "modelo"
+        ]
+        for resultado in modelos_mejor_accuracy
+    }
+
+
+    # ------------------------------------------------------
+    # DECISIÓN TÉCNICA
+    # ------------------------------------------------------
+    #
+    # Para HIS_IA priorizamos:
+    # accuracy + explicabilidad + mantenimiento.
+    #
+    # Si Random Forest empata en accuracy con MLP,
+    # se recomienda Random Forest.
+    # ------------------------------------------------------
+
+    if (
+        "Random Forest"
+        in nombres_mejores
+    ):
+
+        recomendado = next(
+            resultado
+            for resultado in modelos_mejor_accuracy
+            if resultado[
+                "modelo"
+            ] == "Random Forest"
+        )
+
+        justificacion = (
+            "Random Forest alcanza la máxima precisión "
+            "del benchmark y ofrece un equilibrio favorable "
+            "entre desempeño, capacidad para relaciones "
+            "no lineales, explicabilidad y mantenibilidad "
+            "dentro de HIS_IA."
+        )
+
+    else:
+
+        recomendado = min(
+            modelos_mejor_accuracy,
+            key=lambda resultado:
+                resultado[
+                    "fit_seconds"
+                ]
+        )
+
+        justificacion = (
+            f"{recomendado['modelo']} obtiene la mayor "
+            "precisión del benchmark y presenta un tiempo "
+            "de entrenamiento competitivo."
+        )
+
+
+    return {
+
+        "semana":
+            11,
+
+        "componente":
+            "Clasificación de prioridad HIS_IA",
+
+        "dataset":
+            "proyecto_his/data/datos_his.csv",
+
+        "registros":
+            int(
+                len(
+                    datos
+                )
+            ),
+
+        "entrenamiento":
+            int(
+                len(
+                    X_train
+                )
+            ),
+
+        "prueba":
+            int(
+                len(
+                    X_test
+                )
+            ),
+
+        "random_state":
+            42,
+
+        "variables":
+            [
+                "edad",
+                "documentos_pendientes",
+                "resultados_pendientes",
+                "imagenes_pendientes"
+            ],
+
+        "objetivo":
+            "prioridad",
+
+        "resultados":
+            resultados,
+
+        "modelo_recomendado":
+            recomendado[
+                "modelo"
+            ],
+
+        "accuracy_recomendado":
+            recomendado[
+                "accuracy_porcentaje"
+            ],
+
+        "tiempo_recomendado":
+            recomendado[
+                "fit_seconds"
+            ],
+
+        "justificacion":
+            justificacion,
+
+        "evidencias":
+            {
+                "benchmark":
+                    "artifacts/benchmark.csv",
+
+                "adr":
+                    "reports/semana11_adr.md"
+            }
+    }
+
 
 if __name__ == "__main__":
     main()
