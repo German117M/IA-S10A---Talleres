@@ -35,6 +35,11 @@ REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 if str(PROJECT_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_SRC_DIR))
 
+SEMESTER_SRC_DIR = SEMESTER_ROOT / "src"
+
+if str(SEMESTER_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SEMESTER_SRC_DIR))
+
 
 # ==========================================================
 # IMPORTAR HIS_IA
@@ -54,6 +59,18 @@ from his_ia import (  # noqa: E402
     analizar_archivo_semana9,
     generar_reporte_semana5
 )
+
+
+# ==========================================================
+# SEMANA 11 Y SEMANA 13
+# ==========================================================
+
+from semana11_consenso import evaluar_caso_semana11  # noqa: E402
+
+from semana13_motor_inferencia import (  # noqa: E402
+    analizar_caso_integrado,
+)
+
 
 
 # ==========================================================
@@ -1455,6 +1472,250 @@ def api_semana11_auditoria():
                     )
             }
         ), 500
+
+
+
+# ==========================================================
+# SEMANA 13
+# ANÁLISIS INTEGRADO
+# SEMANA 7 + SEMANA 11 + MOTOR DE CONOCIMIENTO
+# ==========================================================
+
+@app.post("/api/semana13/analizar")
+def api_semana13_analizar():
+
+    try:
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+
+        # ==================================================
+        # DATOS CLÍNICOS
+        # ==================================================
+
+        edad = int(
+            datos.get(
+                "edad"
+            )
+        )
+
+        temperatura = float(
+            datos.get(
+                "temperatura"
+            )
+        )
+
+        latidos = int(
+            datos.get(
+                "latidos"
+            )
+        )
+
+        presion = int(
+            datos.get(
+                "presion"
+            )
+        )
+
+
+        # ==================================================
+        # PENDIENTES DEL CASO
+        # ==================================================
+
+        documentos = int(
+            datos.get(
+                "documentos_pendientes",
+                0
+            )
+        )
+
+        resultados = int(
+            datos.get(
+                "resultados_pendientes",
+                0
+            )
+        )
+
+        imagenes = int(
+            datos.get(
+                "imagenes_pendientes",
+                0
+            )
+        )
+
+
+        motivo = datos.get(
+            "motivo_consulta",
+            "No especificado"
+        )
+
+
+        # ==================================================
+        # SEMANA 7
+        # ==================================================
+
+        caso_semana7 = {
+
+            "motivo_consulta":
+                motivo,
+
+            "temperatura":
+                temperatura,
+
+            "latidos":
+                latidos,
+
+            "presion":
+                presion,
+        }
+
+
+        resultado_semana7 = (
+            analizar_representaciones(
+                caso_semana7
+            )
+        )
+
+
+        # ==================================================
+        # SEMANA 11
+        # ==================================================
+
+        resultado_semana11 = (
+            evaluar_caso_semana11(
+                edad=edad,
+                documentos=documentos,
+                resultados=resultados,
+                imagenes=imagenes,
+            )
+        )
+
+
+        # ==================================================
+        # SEMANA 13
+        # ==================================================
+
+        resultado_integrado = (
+            analizar_caso_integrado(
+
+                resultado_semana7=
+                    resultado_semana7,
+
+                resultado_semana11=
+                    resultado_semana11,
+
+                documentos_pendientes=
+                    documentos,
+
+                resultados_pendientes=
+                    resultados,
+
+                imagenes_pendientes=
+                    imagenes,
+            )
+        )
+
+
+        # ==================================================
+        # RESPUESTA
+        # ==================================================
+
+        return jsonify(
+            {
+                "success":
+                    True,
+
+                "resultado": {
+
+                    "prioridad":
+                        resultado_integrado[
+                            "prioridad"
+                        ],
+
+                    "nivel_acuerdo":
+                        resultado_semana11[
+                            "nivel_acuerdo"
+                        ],
+
+                    "coincidencia":
+                        resultado_semana11[
+                            "texto_coincidencia"
+                        ],
+
+                    "revision_recomendada":
+                        resultado_integrado[
+                            "revision_recomendada"
+                        ],
+
+                    "estado_caso":
+                        resultado_integrado[
+                            "estado_caso"
+                        ],
+
+                    "hallazgos":
+                        resultado_integrado[
+                            "hallazgos"
+                        ],
+
+                    "interpretacion":
+                        resultado_integrado[
+                            "interpretacion"
+                        ],
+
+                    "acciones_recomendadas":
+                        resultado_integrado[
+                            "acciones_recomendadas"
+                        ],
+
+                    "reglas_activadas":
+                        resultado_integrado[
+                            "reglas_activadas"
+                        ],
+
+                    "detalle_semana11":
+                        resultado_semana11[
+                            "detalle"
+                        ],
+                }
+            }
+        )
+
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    (
+                        "Los valores enviados no son "
+                        "válidos o están incompletos."
+                    )
+            }
+        ), 400
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success":
+                    False,
+
+                "error":
+                    str(
+                        error
+                    )
+            }
+        ), 500
+
 
 
 if __name__ == "__main__":

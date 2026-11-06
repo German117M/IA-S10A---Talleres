@@ -519,6 +519,22 @@
 
 
 
+        
+
+            <button
+                class="nav-item"
+                data-section="semana13"
+            >
+                <span class="nav-icon">
+                    ◆
+                </span>
+
+                <span>
+                    Semana 13
+                </span>
+            </button>
+
+
         </nav>
 
 
@@ -5691,6 +5707,200 @@
 
 
 
+    
+
+        <!-- ==================================================
+             SEMANA 13 - INGENIERÍA DEL CONOCIMIENTO
+        =================================================== -->
+
+        <section
+            id="semana13"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 13
+                    </span>
+
+                    <h2>
+                        Ingeniería del conocimiento
+                    </h2>
+
+                    <p>
+                        Integra los hallazgos de Semana 7 con la
+                        evaluación de prioridad de Semana 11 y utiliza
+                        un motor de reglas para generar conclusiones
+                        y acciones explicables.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <form id="formSemana13">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="semana13Edad">
+                                Edad
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Edad"
+                                min="0"
+                                value="76"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Temperatura">
+                                Temperatura
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Temperatura"
+                                step="0.1"
+                                value="38.5"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Latidos">
+                                Frecuencia cardíaca
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Latidos"
+                                value="90"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Presion">
+                                Presión arterial
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Presion"
+                                value="150"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Documentos">
+                                Documentos pendientes
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Documentos"
+                                min="0"
+                                value="1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Resultados">
+                                Resultados pendientes
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Resultados"
+                                min="0"
+                                value="3"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Imagenes">
+                                Imágenes pendientes
+                            </label>
+
+                            <input
+                                type="number"
+                                id="semana13Imagenes"
+                                min="0"
+                                value="2"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana13Motivo">
+                                Motivo de consulta
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana13Motivo"
+                                value="Paciente para revisión"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Analizar caso
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="resultadoSemana13"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
     </main>
 
 
@@ -5745,6 +5955,13 @@
     <script
         src="{{ url_for('static', filename='js/prioridad_consenso.js') }}"
     ></script>
+
+
+
+    <script
+        src="{{ url_for('static', filename='js/semana13.js') }}"
+    ></script>
+
 
 </body>
 
