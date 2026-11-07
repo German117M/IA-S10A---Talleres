@@ -74,6 +74,21 @@ from semana13_motor_inferencia import (  # noqa: E402
 
 
 # ==========================================================
+# SEMANA 14
+# RED SEMÁNTICA
+# ==========================================================
+
+from semana14_red_semantica import (  # noqa: E402
+    crear_red_his_ia,
+    buscar_camino,
+    consultar_propiedad_heredada,
+    interpretar_oracion,
+    agregar_oracion,
+)
+
+
+
+# ==========================================================
 # FLASK
 # ==========================================================
 
