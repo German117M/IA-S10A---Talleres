@@ -551,6 +551,20 @@
             </button>
 
 
+        
+
+            <button
+                class="nav-item"
+                data-section="semana15"
+            >
+                <span class="nav-icon">▣</span>
+
+                <span>
+                    Semana 15
+                </span>
+            </button>
+
+
         </nav>
 
 
@@ -5917,6 +5931,506 @@
         </section>
 
 
+    
+
+        <!-- ==================================================
+             SEMANA 14 - REDES SEMÁNTICAS
+        =================================================== -->
+
+        <section
+            id="semana14"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 14
+                    </span>
+
+                    <h2>
+                        Red semántica HIS - LIS - RIS
+                    </h2>
+
+                    <p>
+                        Representa conceptos del dominio mediante
+                        relaciones semánticas, permite realizar
+                        inferencias y convertir oraciones simples
+                        en triples sujeto-relación-objeto.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 CONSULTAR RED
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Consultar conocimiento
+                </h3>
+
+                <p>
+                    Consulta relaciones e inferencias de la red
+                    semántica de HIS_IA.
+                </p>
+
+
+                <form id="formSemana14Consulta">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="semana14Tipo">
+                                Tipo de consulta
+                            </label>
+
+                            <select id="semana14Tipo">
+
+                                <option value="relacion">
+                                    Relación directa
+                                </option>
+
+                                <option value="es_un">
+                                    Jerarquía ES_UN
+                                </option>
+
+                                <option value="herencia">
+                                    Propiedad heredada
+                                </option>
+
+                                <option value="camino">
+                                    Buscar camino
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana14Origen">
+                                Concepto / sujeto
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana14Origen"
+                                value="ris"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana14Relacion">
+                                Relación / categoría
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana14Relacion"
+                                value="genera"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="semana14Destino">
+                                Destino
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana14Destino"
+                                placeholder="Ejemplo: his"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Consultar red
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="resultadoSemana14Consulta"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 ORACIÓN A TRIPLE
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Oración a triple semántico
+                </h3>
+
+                <p>
+                    Escribe una oración sencilla relacionada con
+                    HIS, LIS o RIS.
+                </p>
+
+
+                <form id="formSemana14Oracion">
+
+                    <div class="form-group">
+
+                        <label for="semana14Oracion">
+                            Oración
+                        </label>
+
+                        <input
+                            type="text"
+                            id="semana14Oracion"
+                            value="La orden de laboratorio se envía al LIS"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Convertir a triple
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="resultadoSemana14Oracion"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 RED COMPLETA
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Conocimiento registrado
+                </h3>
+
+                <p>
+                    Muestra los triples actualmente almacenados
+                    en la red semántica del proyecto.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    id="btnSemana14Red"
+                >
+                    Ver red semántica
+                </button>
+
+
+                <div
+                    id="resultadoSemana14Red"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
+    
+
+        <!-- ==================================================
+             SEMANA 15 - BASE DE CONOCIMIENTO
+        =================================================== -->
+
+        <section
+            id="semana15"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 15
+                    </span>
+
+                    <h2>
+                        Base de conocimiento HIS_IA
+                    </h2>
+
+                    <p>
+                        Organización del conocimiento mediante
+                        dominios, aplicaciones, expertos,
+                        herramientas, fuentes y estados de validación.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 BUSCAR CONOCIMIENTO
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Buscar conocimiento validado
+                </h3>
+
+                <p>
+                    Solo se muestran artículos que hayan sido
+                    revisados y tengan estado VALIDADO.
+                </p>
+
+                <form id="formSemana15Buscar">
+
+                    <div class="form-group">
+
+                        <label for="semana15DominioBuscar">
+                            Dominio
+                        </label>
+
+                        <select
+                            id="semana15DominioBuscar"
+                            required
+                        >
+                            <option value="">
+                                Seleccione un dominio
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Buscar conocimiento
+                    </button>
+
+                </form>
+
+                <div
+                    id="resultadoSemana15Buscar"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 REGISTRAR CONOCIMIENTO
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Registrar nuevo conocimiento
+                </h3>
+
+                <p>
+                    Todo artículo nuevo comienza con estado
+                    BORRADOR y debe ser validado antes de publicarse.
+                </p>
+
+                <form id="formSemana15Registrar">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="semana15Titulo">
+                                Título
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana15Titulo"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="semana15Dominio">
+                                Dominio
+                            </label>
+
+                            <select
+                                id="semana15Dominio"
+                                required
+                            >
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="semana15Aplicacion">
+                                Aplicación
+                            </label>
+
+                            <select id="semana15Aplicacion">
+
+                                <option value="">
+                                    Sin aplicación específica
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="semana15Experto">
+                                Experto responsable
+                            </label>
+
+                            <select
+                                id="semana15Experto"
+                                required
+                            >
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="semana15Herramienta">
+                                Herramienta
+                            </label>
+
+                            <select id="semana15Herramienta">
+
+                                <option value="">
+                                    Sin herramienta específica
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="semana15Fuente">
+                                Fuente
+                            </label>
+
+                            <input
+                                type="text"
+                                id="semana15Fuente"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="semana15Contenido">
+                            Contenido
+                        </label>
+
+                        <textarea
+                            id="semana15Contenido"
+                            rows="5"
+                            required
+                        ></textarea>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Registrar artículo
+                    </button>
+
+                </form>
+
+                <div
+                    id="resultadoSemana15Registrar"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 ARTÍCULOS Y VALIDACIÓN
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Gestión de artículos
+                </h3>
+
+                <p>
+                    Permite revisar artículos registrados y
+                    validar los que continúan en BORRADOR.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    id="btnSemana15Articulos"
+                >
+                    Cargar artículos
+                </button>
+
+                <div
+                    id="resultadoSemana15Articulos"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+
     </main>
 
 
@@ -5983,6 +6497,13 @@
 
     <script
         src="{{ url_for('static', filename='js/semana14.js') }}"
+    ></script>
+
+
+
+
+    <script
+        src="{{ url_for('static', filename='js/semana15.js') }}"
     ></script>
 
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 import sys
+import sqlite3
 
 import numpy as np
 from flask import (
@@ -84,6 +85,25 @@ from semana14_red_semantica import (  # noqa: E402
     consultar_propiedad_heredada,
     interpretar_oracion,
     agregar_oracion,
+)
+
+
+
+# ==========================================================
+# SEMANA 15
+# BASE DE CONOCIMIENTO
+# ==========================================================
+
+from semana15_base_conocimiento import (  # noqa: E402
+    inicializar_base,
+    listar_dominios,
+    listar_aplicaciones,
+    listar_expertos,
+    listar_herramientas,
+    listar_articulos,
+    buscar_articulos,
+    registrar_articulo,
+    validar_articulo,
 )
 
 
@@ -1728,6 +1748,543 @@ def api_semana13_analizar():
                     str(
                         error
                     )
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# SEMANA 14
+# CONSULTAR RED SEMÁNTICA
+# ==========================================================
+
+@app.post("/api/semana14/consultar")
+def api_semana14_consultar():
+
+    try:
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+        tipo = str(
+            datos.get(
+                "tipo",
+                ""
+            )
+        ).strip().lower()
+
+        red = crear_red_his_ia()
+
+
+        # --------------------------------------------------
+        # RELACIÓN DIRECTA
+        # --------------------------------------------------
+
+        if tipo == "relacion":
+
+            sujeto = datos.get(
+                "sujeto",
+                ""
+            )
+
+            relacion = datos.get(
+                "relacion",
+                ""
+            )
+
+            resultado = red.consultar(
+                sujeto,
+                relacion
+            )
+
+            return jsonify(
+                {
+                    "success": True,
+                    "tipo": "relacion",
+                    "resultado": resultado
+                }
+            )
+
+
+        # --------------------------------------------------
+        # JERARQUÍA ES_UN
+        # --------------------------------------------------
+
+        if tipo == "es_un":
+
+            origen = datos.get(
+                "origen",
+                ""
+            )
+
+            categoria = datos.get(
+                "categoria",
+                ""
+            )
+
+            resultado = red.es_un(
+                origen,
+                categoria
+            )
+
+            return jsonify(
+                {
+                    "success": True,
+                    "tipo": "es_un",
+                    "resultado": resultado
+                }
+            )
+
+
+        # --------------------------------------------------
+        # CAMINO ENTRE CONCEPTOS
+        # --------------------------------------------------
+
+        if tipo == "camino":
+
+            origen = datos.get(
+                "origen",
+                ""
+            )
+
+            destino = datos.get(
+                "destino",
+                ""
+            )
+
+            resultado = buscar_camino(
+                red,
+                origen,
+                destino
+            )
+
+            return jsonify(
+                {
+                    "success": True,
+                    "tipo": "camino",
+                    "resultado": resultado
+                }
+            )
+
+
+        # --------------------------------------------------
+        # PROPIEDAD HEREDADA
+        # --------------------------------------------------
+
+        if tipo == "herencia":
+
+            concepto = datos.get(
+                "concepto",
+                ""
+            )
+
+            relacion = datos.get(
+                "relacion",
+                ""
+            )
+
+            resultado = (
+                consultar_propiedad_heredada(
+                    red,
+                    concepto,
+                    relacion
+                )
+            )
+
+            return jsonify(
+                {
+                    "success": True,
+                    "tipo": "herencia",
+                    "resultado": resultado
+                }
+            )
+
+
+        return jsonify(
+            {
+                "success": False,
+                "error": (
+                    "Tipo de consulta no reconocido."
+                )
+            }
+        ), 400
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+# ==========================================================
+# SEMANA 14
+# INTERPRETAR ORACIÓN
+# ==========================================================
+
+@app.post("/api/semana14/oracion")
+def api_semana14_oracion():
+
+    try:
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+        oracion = str(
+            datos.get(
+                "oracion",
+                ""
+            )
+        ).strip()
+
+
+        if not oracion:
+
+            return jsonify(
+                {
+                    "success": False,
+                    "error": (
+                        "Debe ingresar una oración."
+                    )
+                }
+            ), 400
+
+
+        red = crear_red_his_ia()
+
+
+        resultado = agregar_oracion(
+            red,
+            oracion
+        )
+
+
+        return jsonify(
+            {
+                "success": True,
+
+                "resultado": {
+
+                    "oracion":
+                        resultado["oracion"],
+
+                    "sujeto":
+                        resultado["sujeto"],
+
+                    "relacion":
+                        resultado["relacion"],
+
+                    "objeto":
+                        resultado["objeto"],
+
+                    "triple":
+                        list(
+                            resultado["triple"]
+                        )
+                }
+            }
+        )
+
+
+    except ValueError as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 400
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+# ==========================================================
+# SEMANA 14
+# RESUMEN DE LA RED
+# ==========================================================
+
+@app.get("/api/semana14/red")
+def api_semana14_red():
+
+    try:
+
+        red = crear_red_his_ia()
+
+        triples = [
+            list(triple)
+            for triple in red.obtener_triples()
+        ]
+
+        return jsonify(
+            {
+                "success": True,
+
+                "resultado": {
+
+                    "total_triples":
+                        len(triples),
+
+                    "triples":
+                        triples
+                }
+            }
+        )
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# SEMANA 15
+# CATÁLOGOS
+# ==========================================================
+
+@app.get("/api/semana15/catalogos")
+def api_semana15_catalogos():
+
+    try:
+
+        inicializar_base()
+
+        return jsonify(
+            {
+                "success": True,
+
+                "dominios":
+                    listar_dominios(),
+
+                "aplicaciones":
+                    listar_aplicaciones(),
+
+                "expertos":
+                    listar_expertos(),
+
+                "herramientas":
+                    listar_herramientas(),
+            }
+        )
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+# ==========================================================
+# SEMANA 15
+# CONSULTAR ARTÍCULOS
+# ==========================================================
+
+@app.get("/api/semana15/articulos")
+def api_semana15_articulos():
+
+    try:
+
+        inicializar_base()
+
+        dominio = request.args.get(
+            "dominio",
+            ""
+        ).strip()
+
+
+        if dominio:
+
+            articulos = buscar_articulos(
+                dominio
+            )
+
+        else:
+
+            articulos = listar_articulos()
+
+
+        return jsonify(
+            {
+                "success": True,
+                "articulos": articulos
+            }
+        )
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+# ==========================================================
+# SEMANA 15
+# REGISTRAR ARTÍCULO
+# ==========================================================
+
+@app.post("/api/semana15/articulos")
+def api_semana15_registrar():
+
+    try:
+
+        inicializar_base()
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+
+        articulo_id = registrar_articulo(
+
+            titulo=
+                datos.get(
+                    "titulo",
+                    ""
+                ),
+
+            contenido=
+                datos.get(
+                    "contenido",
+                    ""
+                ),
+
+            dominio_id=
+                int(
+                    datos.get(
+                        "dominio_id"
+                    )
+                ),
+
+            experto_id=
+                int(
+                    datos.get(
+                        "experto_id"
+                    )
+                ),
+
+            fuente=
+                datos.get(
+                    "fuente",
+                    ""
+                ),
+
+            aplicacion_id=(
+                int(datos["aplicacion_id"])
+                if datos.get("aplicacion_id")
+                else None
+            ),
+
+            herramienta_id=(
+                int(datos["herramienta_id"])
+                if datos.get("herramienta_id")
+                else None
+            ),
+        )
+
+
+        return jsonify(
+            {
+                "success": True,
+                "articulo_id": articulo_id,
+                "estado": "BORRADOR"
+            }
+        ), 201
+
+
+    except (
+        ValueError,
+        TypeError,
+        sqlite3.IntegrityError
+    ) as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 400
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+# ==========================================================
+# SEMANA 15
+# VALIDAR ARTÍCULO
+# ==========================================================
+
+@app.post("/api/semana15/articulos/<int:articulo_id>/validar")
+def api_semana15_validar(
+    articulo_id
+):
+
+    try:
+
+        inicializar_base()
+
+        validar_articulo(
+            articulo_id
+        )
+
+
+        return jsonify(
+            {
+                "success": True,
+                "articulo_id": articulo_id,
+                "estado": "VALIDADO"
+            }
+        )
+
+
+    except ValueError as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 404
+
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
             }
         ), 500
 
