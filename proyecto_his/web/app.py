@@ -109,6 +109,15 @@ from semana15_base_conocimiento import (  # noqa: E402
 
 
 # ==========================================================
+# SEMANA 16
+# MOTOR DE REFERENCIA
+# ==========================================================
+
+from semana16_motor_referencia import consultar as consultar_semana16  # noqa: E402
+
+
+
+# ==========================================================
 # FLASK
 # ==========================================================
 
@@ -2278,6 +2287,50 @@ def api_semana15_validar(
             }
         ), 404
 
+
+    except Exception as error:
+
+        return jsonify(
+            {
+                "success": False,
+                "error": str(error)
+            }
+        ), 500
+
+
+
+
+# ==========================================================
+# SEMANA 16
+# MOTOR DE REFERENCIA
+# ==========================================================
+
+@app.post("/api/semana16/consultar")
+def api_semana16_consultar():
+
+    try:
+
+        datos = request.get_json(
+            silent=True
+        ) or {}
+
+        pregunta = str(
+            datos.get(
+                "pregunta",
+                ""
+            )
+        )
+
+        resultado = consultar_semana16(
+            pregunta
+        )
+
+        return jsonify(
+            {
+                "success": True,
+                "resultado": resultado
+            }
+        )
 
     except Exception as error:
 

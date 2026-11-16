@@ -565,6 +565,20 @@
             </button>
 
 
+        
+
+            <button
+                class="nav-item"
+                data-section="semana16"
+            >
+                <span class="nav-icon">⌕</span>
+
+                <span>
+                    Semana 16
+                </span>
+            </button>
+
+
         </nav>
 
 
@@ -6431,6 +6445,141 @@
         </section>
 
 
+    
+
+        <!-- ==================================================
+             SEMANA 16 - MOTOR DE REFERENCIA
+        =================================================== -->
+
+        <section
+            id="semana16"
+            class="content-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-tag">
+                        Semana 16
+                    </span>
+
+                    <h2>
+                        Motor de referencia HIS_IA
+                    </h2>
+
+                    <p>
+                        Recupera conocimiento previamente validado,
+                        muestra su procedencia y se abstiene cuando
+                        no existe evidencia suficiente.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 CONSULTA
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    Consultar conocimiento aprobado
+                </h3>
+
+                <p>
+                    Escribe una pregunta relacionada con
+                    HIS, LIS, RIS, PACS o los procedimientos
+                    documentados en la base de conocimiento.
+                </p>
+
+                <form id="formSemana16">
+
+                    <div class="form-group">
+
+                        <label for="semana16Pregunta">
+                            Pregunta
+                        </label>
+
+                        <textarea
+                            id="semana16Pregunta"
+                            rows="4"
+                            required
+                        >¿Cómo se crea una orden de laboratorio?</textarea>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
+                        Buscar referencia
+                    </button>
+
+                </form>
+
+                <div
+                    id="resultadoSemana16"
+                    class="result-box hidden"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 EXPLICACIÓN
+            =========================================== -->
+
+            <div class="panel">
+
+                <h3>
+                    ¿Cómo funciona?
+                </h3>
+
+                <p>
+                    El motor no genera una respuesta nueva.
+                    Normaliza la pregunta, compara términos con
+                    artículos VALIDADOS de Semana 15 y selecciona
+                    la referencia con mayor coincidencia.
+                </p>
+
+                <div class="result-box">
+
+                    <p>
+                        <strong>Entrada</strong>
+                        → Pregunta del usuario
+                    </p>
+
+                    <p>
+                        <strong>Normalización</strong>
+                        → Minúsculas, sin tildes y términos útiles
+                    </p>
+
+                    <p>
+                        <strong>Motor</strong>
+                        → Compara coincidencias
+                    </p>
+
+                    <p>
+                        <strong>Base</strong>
+                        → Solo conocimiento VALIDADO
+                    </p>
+
+                    <p>
+                        <strong>Salida</strong>
+                        → Respuesta + ID + fuente
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
     </main>
 
 
@@ -6504,6 +6653,13 @@
 
     <script
         src="{{ url_for('static', filename='js/semana15.js') }}"
+    ></script>
+
+
+
+
+    <script
+        src="{{ url_for('static', filename='js/semana16.js') }}"
     ></script>
 
 
